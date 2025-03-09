@@ -1,5 +1,4 @@
 import React from "react";
-import Header from "./components/Header/Header";
 import { Routes, Route } from "react-router-dom";
 import Profile from "./components/Header/Profile";
 import Home from "./components/Home";

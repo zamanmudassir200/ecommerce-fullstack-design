@@ -32,7 +32,10 @@ const Header = () => {
     <header className="  ">
       <nav className="container mx-auto px-30 flex items-center justify-between h-[86px]">
         <div className="">
-          <img src="./logo-colored.png" alt="" />
+          <Link to={"/"}>
+            {" "}
+            <img src="./logo-colored.png" alt="" />
+          </Link>
         </div>
         <div className="w-[665px] overflow-hidden flex items-center justify-between  rounded-lg h-[40px] border-2 border-[#127FFF]">
           <input

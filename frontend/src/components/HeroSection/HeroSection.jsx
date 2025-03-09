@@ -2,6 +2,10 @@ import React from "react";
 import { TfiUser } from "react-icons/tfi";
 import { Link } from "react-router-dom";
 import DealsAndOffers from "./DealsAndOffers";
+import HomeAndOutDoor from "./HomeAndOutDoor";
+import SendInquiry from "./SendInquiry";
+import RecommendedItems from "./RecommendedItems";
+import OurServices from "./OurServices";
 const HeroSection = () => {
   const tabsLink = [
     {
@@ -42,7 +46,7 @@ const HeroSection = () => {
     },
   ];
   return (
-    <main className="bg-[#777777] min-h-screen">
+    <main className="min-h-screen">
       <div className="container py-3 mx-auto px-30">
         <div className="h-[400px] w-full bg-white flex justify-between items-start p-3 gap-4  border-[1px] border-gray-400 rounded-md">
           <div className="flex w-[30%] flex-col">
@@ -89,17 +93,16 @@ const HeroSection = () => {
                 </p>
               </div>
               <div className="flex flex-col">
-                <button className="bg-[#127FFF] py-1 rounded-md text-sm text-white w-full">
+                <button className="bg-[#127FFF] py-1 mb-2 cursor-pointer rounded-md text-sm text-white w-full">
                   Join Now
                 </button>
-                <button className="text-sm py-1 w-full text-[#127fff] text-bold bg-white rounded-md">
+                <button className="text-sm py-1 w-full cursor-pointer text-[#127fff] text-bold bg-white rounded-md">
                   Log in
                 </button>
               </div>
             </div>
             <div className="bg-orange-400 h-[95px] rounded-lg flex items-center pt-[16px] pb-[22px] pl-[16px] pr-[40px] justify-center">
               <h1 className="text-sm w-[144px] text-white h-[57px]">
-                {" "}
                 Get US $10 off <br /> with a new <br />
                 supplier
               </h1>
@@ -113,6 +116,14 @@ const HeroSection = () => {
           </div>
         </div>
         <DealsAndOffers />
+        <HomeAndOutDoor title="Home and outdoor" img="./Group 969.png" />
+        <HomeAndOutDoor
+          title="Consumer electronics and gadgets"
+          img="./image 98.png"
+        />
+        <SendInquiry />
+        <RecommendedItems />
+        <OurServices />
       </div>
     </main>
   );
