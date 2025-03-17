@@ -5,16 +5,28 @@ import Home from "./components/Home";
 import Orders from "./components/Header/Orders";
 import MyCart from "./components/Header/MyCart";
 import Message from "./components/Header/Message";
+import AdminPanel from "./components/AdminPanel/AdminPanel";
+import AdminDashboard from "./components/AdminDashboard/AdminDashboard";
+import Login from "./components/Auth/Login";
+import Signup from "./components/Auth/Signup";
+
+import { ToastContainer } from "react-toastify";
+
 const App = () => {
   return (
     <div className="">
       <Routes>
         <Route path="/" element={<Home />}></Route>
-        <Route path="/profile" element={<Profile />}></Route>
-        <Route path="/message" element={<Message />}></Route>
-        <Route path="/mycart" element={<MyCart />}></Route>
-        <Route path="/orders" element={<Orders />}></Route>
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/message" element={<Message />} />
+        <Route path="/mycart" element={<MyCart />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/admin-panel" element={<AdminPanel />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
       </Routes>
+      <ToastContainer />
     </div>
   );
 };

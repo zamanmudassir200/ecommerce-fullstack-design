@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { TfiUser } from "react-icons/tfi";
 import { Link } from "react-router-dom";
 import DealsAndOffers from "./DealsAndOffers";
@@ -6,7 +6,36 @@ import HomeAndOutDoor from "./HomeAndOutDoor";
 import SendInquiry from "./SendInquiry";
 import RecommendedItems from "./RecommendedItems";
 import OurServices from "./OurServices";
+import { useNavigate } from "react-router-dom";
+import url from "../../utils/url";
+import { GlobalContext } from "../../context/GlobalContext";
+import SuppliersByRegion from "./SuppliersByRegion";
+import Newsletter from "./Newsletter";
+
 const HeroSection = () => {
+  const [isUserLogin, setIsUserLogin] = useState();
+  const [user, setUser] = useState("");
+  const { handleApiCall } = useContext(GlobalContext);
+  const navigate = useNavigate();
+
+  const checkUserLoggedIn = async () => {
+    try {
+      const response = await handleApiCall(`${url}/checkAuth`, "get");
+      if (response.data.loggedIn) {
+        setIsUserLogin(false);
+        setUser(response.data.user);
+      } else {
+        setIsUserLogin(true);
+      }
+    } catch (error) {
+      console.error("Error checking login status:", error);
+    }
+  };
+
+  useEffect(() => {
+    checkUserLoggedIn(); // Component mount hone par login status check karega
+  }, []);
+
   const tabsLink = [
     {
       name: "Automobiles",
@@ -87,19 +116,27 @@ const HeroSection = () => {
                   {" "}
                   <TfiUser className="text-white text-2xl" />
                 </p>
-                <p>
-                  Hi, user <br />
+                <p className="text-sm">
+                  Hi, <b>{user.name}</b> <br />
                   Let's get started
                 </p>
               </div>
-              <div className="flex flex-col">
-                <button className="bg-[#127FFF] py-1 mb-2 cursor-pointer rounded-md text-sm text-white w-full">
-                  Join Now
-                </button>
-                <button className="text-sm py-1 w-full cursor-pointer text-[#127fff] text-bold bg-white rounded-md">
-                  Log in
-                </button>
-              </div>
+              {isUserLogin && (
+                <div className="flex flex-col">
+                  <button
+                    onClick={() => navigate("/signup")}
+                    className="bg-[#127FFF] py-1 mb-2 cursor-pointer rounded-md text-sm text-white w-full"
+                  >
+                    Join Now
+                  </button>
+                  <button
+                    onClick={() => navigate("/login")}
+                    className="text-sm py-1 w-full cursor-pointer text-[#127fff] text-bold bg-white rounded-md"
+                  >
+                    Log in
+                  </button>
+                </div>
+              )}
             </div>
             <div className="bg-orange-400 h-[95px] rounded-lg flex items-center pt-[16px] pb-[22px] pl-[16px] pr-[40px] justify-center">
               <h1 className="text-sm w-[144px] text-white h-[57px]">
@@ -124,7 +161,9 @@ const HeroSection = () => {
         <SendInquiry />
         <RecommendedItems />
         <OurServices />
+        <SuppliersByRegion />
       </div>
+      <Newsletter />
     </main>
   );
 };

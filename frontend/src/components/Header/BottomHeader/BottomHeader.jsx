@@ -28,7 +28,7 @@ const BottomHeader = () => {
               <Link
                 key={index}
                 className="flex gap-2 items-center justify-center"
-                to={"/all-category"}
+                to={`${link.name.split(" ").join("-").toLowerCase()}`}
               >
                 {link.name === "All Category" && <GiHamburgerMenu />}
                 {link.name}
