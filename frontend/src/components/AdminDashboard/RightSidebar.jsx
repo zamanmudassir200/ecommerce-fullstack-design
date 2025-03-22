@@ -2,31 +2,33 @@ import React, { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../../context/GlobalContext";
 import url from "../../utils/url";
 import FormModal from "./FormModal";
-
+import { toast } from "react-toastify";
+import CategoryForm from "./CategoryForm";
 const RightSidebar = () => {
-  const {
-    showTabsData,
-    handleApiCall,
-    setShowTabsData,
-    products,
-    setProducts,
-  } = useContext(GlobalContext);
+  const { showTabsData, handleApiCall, products, setProducts } =
+    useContext(GlobalContext);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(true); // State to control modal visibility
   const [productToDelete, setProductToDelete] = useState(null); // Track the product to delete
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [categoryId, setCategoryId] = useState(null);
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await handleApiCall(`${url}/products/`, "get");
+        const { products } = response.data;
+        console.log("Category", products);
+        setCategoryId(products);
         setProducts(response.data.products);
       } catch (error) {
-        console.log(error);
+        toast.error("Error occured while fetching products");
       }
     };
     fetchProducts();
-  }, [handleApiCall, setProducts]);
+  }, []);
 
   // Disable background scrolling when the modal is open
   useEffect(() => {
@@ -43,17 +45,22 @@ const RightSidebar = () => {
   }, [isDeleteModalOpen, isModalOpen]);
 
   const handleDelete = async () => {
+    setLoading(true);
     try {
       const response = await handleApiCall(
         `${url}/products/${productToDelete}`,
         "delete"
       );
+
       setProducts(
         products.filter((product) => product._id !== productToDelete)
       );
+      toast.success("Product Deleted Successfully");
+      setLoading(false);
       setIsDeleteModalOpen(false); // Close the modal after deletion
     } catch (error) {
-      console.log(error);
+      setLoading(false);
+      toast.error("Error occured during delete product");
     }
   };
 
@@ -63,21 +70,23 @@ const RightSidebar = () => {
         <>
           <main className="p-3 w-full">
             <div className="">
-              <button
-                className="bg-green-500 px-3 my-7 sm:my-4 text-white font-bold cursor-pointer py-2 rounded-2xl"
-                onClick={() => setIsModalOpen(true)} // Open modal on button click
-              >
-                Add products
-              </button>
+              <div className="flex gap-2">
+                <button
+                  className="bg-green-500 px-3 my-7 sm:my-4 text-white font-bold cursor-pointer py-2 rounded-2xl"
+                  onClick={() => setIsModalOpen(true)} // Open modal on button click
+                >
+                  Add products
+                </button>
+              </div>
 
               <div className="">
                 <h1 className="font-semibold underline my-2">Product List</h1>
                 <div className="flex flex-wrap sm:justify-start justify-center gap-4">
                   {products && products.length > 0 ? (
-                    products.map((product, index) => {
+                    products.reverse().map((product, index) => {
                       return (
                         <div
-                          className="border-2 p-2 rounded-lg w-full md:w-1/2 lg:w-1/3 xl:w-1/4 flex-shrink-0"
+                          className="border-2 p-2 rounded-lg w-full md:w-1/1.4 lg:w-1/3 xl:w-1/4 flex-shrink-0"
                           key={product._id}
                         >
                           <div className="w-full h-52 overflow-hidden ">
@@ -87,7 +96,7 @@ const RightSidebar = () => {
                               src={product.images[0]}
                             />
                           </div>
-                          <h1 className="font-bold mt-4 text-2xl ">
+                          <h1 className="font-bold mt-4 text-2xl break-words ">
                             {product.productName}
                           </h1>
                           <p className="break-words">
@@ -103,6 +112,13 @@ const RightSidebar = () => {
                             <button
                               onClick={() => {
                                 setProductToEdit(product);
+                                setCategoryId(product.category._id);
+                                console.log(
+                                  "product category._id",
+                                  product.category._id,
+                                  "product",
+                                  product
+                                );
                                 setIsEditModalOpen(true);
                               }}
                               className="bg-yellow-500 px-2 py-1 rounded-lg cursor-pointer  text-white"
@@ -129,7 +145,7 @@ const RightSidebar = () => {
               </div>
             </div>
             {isDeleteModalOpen && (
-              <div className="fixed inset-0 px-3 bg-slate-800 bg-opacity-50 z-50 flex items-center justify-center">
+              <div className="fixed inset-0 px-3 backdrop-brightness-50 bg-opacity-50 z-50 flex items-center justify-center">
                 <div className="bg-white p-5 rounded-2xl shadow-xl">
                   <h1 className="font-bold text-center text-xl py-4">
                     Delete Product Alert
@@ -148,7 +164,7 @@ const RightSidebar = () => {
                       onClick={handleDelete}
                       className="bg-red-600 cursor-pointer px-4 py-2 text-white rounded-lg"
                     >
-                      Yes, Delete
+                      {loading ? "Deleting..." : "Yes, Delete"}{" "}
                     </button>
                   </div>
                 </div>
@@ -167,10 +183,17 @@ const RightSidebar = () => {
           setIsEditModalOpen={setIsEditModalOpen}
           isEditModalOpen={isEditModalOpen}
           productToEdit={productToEdit}
+          categoryId={categoryId}
         />
       )}
       {/* Render FormModal when the state is true */}
-      {isModalOpen && <FormModal setIsModalOpen={setIsModalOpen} />}
+      {isModalOpen && (
+        <FormModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+      )}
+
+      {isCategoryModalOpen && (
+        <CategoryForm setIsCategoryModalOpen={setIsCategoryModalOpen} />
+      )}
     </div>
   );
 };

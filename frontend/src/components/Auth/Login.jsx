@@ -63,14 +63,16 @@ const Login = () => {
             onChange={(e) => setData({ ...data, password: e.target.value })} // Update password only
           />
           <input
-            className="py-2 bg-blue-800 border-white border-2  rounded-2xl px-3 cursor-pointer hover:bg-opacity-10 text-white"
+            className={`py-2 ${
+              loading ? "bg-blue-400 " : "bg-blue-800"
+            } border-white border-2  rounded-2xl px-3 cursor-pointer hover:bg-opacity-10 text-white`}
             type="submit"
             value={loading ? "Logining..." : "Login"}
           />
           <p className="text-center">
             Don't have an account?{" "}
             <Link className="text-blue-600  hover:underline" to="/signup">
-              Signup
+              Register
             </Link>
           </p>
         </form>

@@ -1,48 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 
-const HomeAndOutDoor = ({ title, img }) => {
-  const items = [
-    {
-      name: "hello",
-      price: "19",
-      image: "./rasm.png",
-    },
-    {
-      name: "hello",
-      price: "19",
-      image: "./rasm.png",
-    },
-    {
-      name: "hello",
-      price: "19",
-      image: "./rasm.png",
-    },
-    {
-      name: "hello",
-      price: "19",
-      image: "./rasm.png",
-    },
-    {
-      name: "hello",
-      price: "19",
-      image: "./rasm.png",
-    },
-    {
-      name: "hello",
-      price: "19",
-      image: "./rasm.png",
-    },
-    {
-      name: "hello",
-      price: "19",
-      image: "./rasm.png",
-    },
-    {
-      name: "hello",
-      price: "19",
-      image: "./rasm.png",
-    },
-  ];
+const HomeAndOutDoor = ({ title, img, products }) => {
+  const filteredCategoriesProducts = products.filter((product) => {
+    return product.category.name === title.toLowerCase();
+  });
+  console.log("filtered categories products", filteredCategoriesProducts);
   return (
     <main className="my-5 h-[257px] border-[1px] border-gray-300 rounded-md bg-white">
       <div className=" rounded-lg mx-auto ">
@@ -61,19 +23,23 @@ const HomeAndOutDoor = ({ title, img }) => {
             </div>
           </div>
           <div className="flex-[0.89]  w-full grid grid-cols-4 ">
-            {items.map((item, index) => {
+            {filteredCategoriesProducts.map((product, index) => {
               return (
                 <div
                   key={index}
                   className="border-r-[1px] border-b-[1px] border-gray-300 flex flex-col relative w-[242.2px] p-3  h-[128px]"
                 >
-                  <h1 className="font-bold text-2xl">{item.name}</h1>
+                  <h1 className="font-bold text-2xl">{product.productName}</h1>
                   <p className="">
                     From <br />
-                    USD {item.price}
+                    {product.price} Rs
                   </p>
-                  <div className="absolute bottom-2 right-2 flex items-end justify-end ">
-                    <img className="  " src={item.image} alt="" />
+                  <div className="absolute w-16 h-16 bottom-2 right-2 flex items-end justify-end ">
+                    <img
+                      className="w-full h-full object-contain  "
+                      src={product.images[0]}
+                      alt=""
+                    />
                   </div>
                 </div>
               );

@@ -1,60 +1,124 @@
 const productModel = require("../models/productModel");
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
-
+const categoryModel = require("../models/categoryModel");
+const subCategoryModel = require("../models/categoryModel");
 const storage = multer.diskStorage({});
 const upload = multer({ storage });
 
 const createProduct = async (req, res) => {
-  const { productName, description, price, brand, stock } = req.body;
-  const files = req.files; // The uploaded files (images)
+  const {
+    productName,
+    description,
+    price,
+    brand,
+    stock,
+    discount,
+    category, // ID of the main category
+    subCategory, // ID of the subcategory
+    rating,
+    reviews,
+  } = req.body;
+  const files = req.files;
+
   try {
-    // Check if required fields are provided
+    // Required fields check
     if (!productName || !description || !price || !brand || !stock || !files) {
-      return res
-        .status(400)
-        .json({ message: "All fields are required.", success: false });
+      return res.status(400).json({
+        message: "All fields including category and images are required.",
+        success: false,
+      });
     }
 
-    // Upload images to Cloudinary`
+    // Find category by ID
+    const categoryObj = await categoryModel.findById(category);
+    if (!categoryObj) {
+      return res.status(400).json({
+        message: "Category does not exist.",
+        success: false,
+      });
+    }
+
+    // Find subcategory by ID (if provided)
+    let subCategoryObj = null;
+    if (subCategory) {
+      subCategoryObj = await subCategoryModel.findById(subCategory);
+      if (!subCategoryObj) {
+        return res.status(400).json({
+          message: "Subcategory does not exist.",
+          success: false,
+        });
+      }
+    }
+
+    // Upload images to Cloudinary
     const uploadPromises = files.map((file) =>
-      cloudinary.uploader.upload(file.path, {
-        folder: "products", // Folder name in Cloudinary
-      })
+      cloudinary.uploader.upload(file.path, { folder: "products" })
     );
-
     const uploadedImages = await Promise.all(uploadPromises);
-    const imageUrls = uploadedImages.map((img) => img.secure_url); // Store the URLs
+    const imageUrls = uploadedImages.map((img) => img.secure_url);
 
-    // Create the product and save to the database
+    // Calculate discounted price (if discount exists)
+    let finalPrice = price;
+    if (discount > 0) {
+      finalPrice = price - (price * discount) / 100;
+    }
+
+    // Create product with category and subcategory (if provided)
     const createdProduct = await productModel.create({
       productName,
       description,
-      price,
+      price: finalPrice,
       brand,
       stock,
-      images: imageUrls, // Save the Cloudinary image URLs
+      images: imageUrls,
+      discount,
+      category: categoryObj._id,
+      subCategory: subCategoryObj._id, // Save subcategory if available
+      rating,
+      reviews,
     });
 
-    // Send response
+    // Manually populate category and subcategory
+    const populatedProduct = await productModel
+      .findById(createdProduct._id)
+      .populate("category")
+      .populate("subCategory");
+
     res.status(201).json({
-      message: "Product created successfully",
-      product: createdProduct,
+      message: "Product created successfully.",
+      product: populatedProduct, // Send the populated product in the response
       success: true,
     });
   } catch (error) {
-    res.status(500).json({ message: `Server error: ${error.message}` });
+    res
+      .status(500)
+      .json({ message: `Server error: ${error.message}`, success: false });
   }
 };
 
 const editProduct = async (req, res) => {
   const { productId } = req.params;
-  const { productName, description, price, brand, stock } = req.body;
+  const {
+    productName,
+    description,
+    price,
+    brand,
+    stock,
+    discount,
+    category, // ID of the main category
+    subCategory, // ID of the subcategory
+  } = req.body;
   const files = req.files; // Uploaded files
 
   try {
-    // Find the existing product by ID
-    const product = await productModel.findOne(productId);
+    // Find the existing product by ID and populate both category and subCategory fields
+    const product = await productModel.findById(productId).populate({
+      path: "category",
+      populate: {
+        path: "subCategories", // Populate subCategories within the category
+      },
+    });
 
     if (!product) {
       return res
@@ -68,6 +132,33 @@ const editProduct = async (req, res) => {
     product.price = price || product.price;
     product.brand = brand || product.brand;
     product.stock = stock || product.stock;
+    product.discount = discount || product.discount;
+
+    // Update category if provided
+    if (category) {
+      const categoryObj = await categoryModel
+        .findById(category)
+        .populate("subCategories");
+      if (!categoryObj) {
+        return res.status(400).json({
+          message: "Category does not exist.",
+          success: false,
+        });
+      }
+      product.category = categoryObj._id;
+    }
+
+    // Update subCategory if provided
+    if (subCategory) {
+      const subCategoryObj = await subCategoryModel.findById(subCategory);
+      if (!subCategoryObj) {
+        return res.status(400).json({
+          message: "Subcategory does not exist.",
+          success: false,
+        });
+      }
+      product.subCategory = subCategoryObj._id;
+    }
 
     // If there are new images, upload them to Cloudinary
     if (files && files.length > 0) {
@@ -92,7 +183,9 @@ const editProduct = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    res.status(500).json({ message: `Server error: ${error.message}` });
+    res
+      .status(500)
+      .json({ message: `Server error: ${error.message}`, success: false });
   }
 };
 
@@ -118,17 +211,192 @@ const deleteProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    const allProducts = await productModel.find();
-    if (!allProducts) {
-      res.status(404).json({ message: "No products found", success: false });
+    // Find all products and populate both category and subCategory fields
+    const allProducts = await productModel
+      .find()
+      .populate("category") // Populate the category field
+      .populate("subCategory"); // Populate the subCategory field
+
+    if (!allProducts || allProducts.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No products found", success: false });
     }
+
     res.status(200).json({
       message: "All Products found",
       count: allProducts.length,
       products: allProducts,
       success: true,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log("Error:", error);
+    res
+      .status(500)
+      .json({ message: `Server error: ${error.message}`, success: false });
+  }
+};
+
+// POST /categories
+const createCategory = async (req, res) => {
+  const { name, description } = req.body;
+
+  try {
+    // Check if categoryName is provided
+    if (!name) {
+      return res.status(400).json({
+        message: "Category name is required.",
+        success: false,
+      });
+    }
+
+    // Check if category already exists
+    const category = await categoryModel.findOne({ name });
+    if (category) {
+      return res.status(200).json({
+        message: "Category already exists.",
+        success: true,
+        category,
+      });
+    }
+
+    // Create new category if not already existing
+    const newCategory = await categoryModel.create({
+      name,
+      description,
+    });
+
+    res.status(201).json({
+      message: "Category created successfully.",
+      category: newCategory,
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: `Server error: ${error.message}`,
+      success: false,
+    });
+  }
+};
+
+// POST /subcategories
+const createSubCategory = async (req, res) => {
+  const { name, categoryId, description } = req.body;
+
+  try {
+    // Validate required fields
+    if (!name || !categoryId) {
+      return res.status(400).json({
+        message: "Subcategory name and category ID are required.",
+        success: false,
+      });
+    }
+
+    // Check if the category exists
+    const category = await categoryModel.findById(categoryId);
+    if (!category) {
+      return res.status(404).json({
+        message: "Category not found.",
+        success: false,
+      });
+    }
+
+    // Create the new subcategory
+    const newSubCategory = await subCategoryModel.create({
+      name,
+      description,
+    });
+    // Add the new subcategory's ID to the category's subCategories array
+    category.subCategories.push(newSubCategory._id);
+    await category.save(); // Save the updated category
+
+    // Populate the subCategories field in the category
+    const populatedCategory = await categoryModel
+      .findById(categoryId)
+      .populate("subCategories");
+    // await category.populate("subCategories").execPopulate();
+
+    res.status(201).json({
+      message: "Subcategory created successfully.",
+      subCategory: newSubCategory,
+      category: category,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res
+      .status(500)
+      .json({ message: `Server error: ${error.message}`, success: false });
+  }
+};
+const getAllCategories = async (req, res) => {
+  try {
+    const categories = await categoryModel.find();
+    if (!categories) {
+      res.status(200).json({ message: "No categories found", success: true });
+    }
+
+    res.status(200).json({
+      message: "All Categories",
+      count: categories.length,
+      categories,
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res
+      .status(500)
+      .json({ message: `Server error: ${error.message}`, success: false });
+  }
+};
+const editCategory = async (req, res) => {
+  try {
+    const { categoryId } = req.params;
+    const { name, description } = req.body;
+    const existingCategory = await categoryModel.findById(categoryId);
+    if (!existingCategory) {
+      res.status(404).json({ message: "Category not found", success: false });
+    }
+    const updatedCategory = await categoryModel.findByIdAndUpdate(
+      existingCategory._id,
+      { name, description },
+      { new: true }
+    );
+
+    res.status(201).json({
+      message: "Category Updated successfully",
+      success: true,
+      category: updatedCategory,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: `Server error: ${error.message}`, success: false });
+  }
+};
+const editSubCategory = async (req, res) => {
+  try {
+    const { subCategoryId } = req.params;
+    const { name, description } = req.body;
+    const existingSubCategory = await subCategoryModel.findById(subCategoryId);
+    if (!existingSubCategory) {
+      res.status(404).json({ message: "Category not found", success: false });
+    }
+    const updatedSubCategory = await subCategoryModel.findByIdAndUpdate(
+      existingSubCategory._id,
+      { name, description },
+      { new: true }
+    );
+
+    res.status(201).json({
+      message: "SubCategory Updated successfully",
+      success: true,
+      subCategory: updatedSubCategory,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: `Server error: ${error.message}`, success: false });
+  }
 };
 
 module.exports = {
@@ -137,4 +405,9 @@ module.exports = {
   deleteProduct,
   getAllProducts,
   upload,
+  createSubCategory,
+  createCategory,
+  editCategory,
+  editSubCategory,
+  getAllCategories,
 };

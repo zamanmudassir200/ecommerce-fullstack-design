@@ -11,28 +11,44 @@ import url from "../../utils/url";
 import { GlobalContext } from "../../context/GlobalContext";
 import SuppliersByRegion from "./SuppliersByRegion";
 import Newsletter from "./Newsletter";
+import { toast } from "react-toastify";
 
 const HeroSection = () => {
-  const [isUserLogin, setIsUserLogin] = useState();
+  const [isUserLogin, setIsUserLogin] = useState(null);
   const [user, setUser] = useState("");
-  const { handleApiCall } = useContext(GlobalContext);
+  const { handleApiCall, products, setProducts } = useContext(GlobalContext);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const response = await handleApiCall(`${url}/products/`, "get");
+      console.log("fetching all products", response.data.products);
+      setLoading(false);
+      setProducts(response.data.products);
+    } catch (error) {
+      setLoading(false);
+      toast.error("Error fetching products");
+    }
+  };
 
   const checkUserLoggedIn = async () => {
     try {
       const response = await handleApiCall(`${url}/checkAuth`, "get");
       if (response.data.loggedIn) {
-        setIsUserLogin(false);
+        setIsUserLogin(true);
         setUser(response.data.user);
       } else {
-        setIsUserLogin(true);
+        setIsUserLogin(false);
       }
     } catch (error) {
-      console.error("Error checking login status:", error);
+      toast.error("Error checking login status");
     }
   };
 
   useEffect(() => {
+    fetchProducts();
     checkUserLoggedIn(); // Component mount hone par login status check karega
   }, []);
 
@@ -121,7 +137,7 @@ const HeroSection = () => {
                   Let's get started
                 </p>
               </div>
-              {isUserLogin && (
+              {isUserLogin ? null : (
                 <div className="flex flex-col">
                   <button
                     onClick={() => navigate("/signup")}
@@ -152,11 +168,16 @@ const HeroSection = () => {
             </div>
           </div>
         </div>
-        <DealsAndOffers />
-        <HomeAndOutDoor title="Home and outdoor" img="./Group 969.png" />
+        <DealsAndOffers products={products} />
+        <HomeAndOutDoor
+          title="Home and outdoor"
+          img="./Group 969.png"
+          products={products}
+        />
         <HomeAndOutDoor
           title="Consumer electronics and gadgets"
           img="./image 98.png"
+          products={products}
         />
         <SendInquiry />
         <RecommendedItems />

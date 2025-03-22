@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 
 const Signup = ({ title }) => {
   const { handleApiCall } = useContext(GlobalContext);
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     name: "",
     email: "",
@@ -25,24 +26,27 @@ const Signup = ({ title }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
       const response = await handleApiCall(`${url}/`, "post", data);
 
       if (response && response.status === 201) {
         toast.success("You are registered. Please login now.");
+        setLoading(false);
         navigate("/login");
       } else {
-        console.log("Signup failed", response.data.message);
+        setLoading(false);
         toast.error(response.data.message);
       }
     } catch (error) {
+      setLoading(false);
+
       console.error("Error during signup", error.response.data.message);
     }
   };
 
   return (
-    <main className="mx-auto bg-slate-900 text-white font-semibold min-h-screen">
+    <main className="mx-auto p-10 bg-slate-900 text-white font-semibold min-h-screen">
       <div className="mx-auto">
         <div className="flex flex-col px-3 gap-10 items-center justify-center min-h-screen">
           <h1 className="text-3xl font-bold">{title}</h1>
@@ -162,9 +166,11 @@ const Signup = ({ title }) => {
             </div>
 
             <input
-              className="py-2 bg-blue-800 border-white border-[2px] rounded-2xl px-3 cursor-pointer hover:bg-opacity-10 w-full text-white"
+              className={`py-2 ${
+                loading ? "bg-blue-400 " : "bg-blue-800"
+              } border-white border-2  rounded-2xl px-3 cursor-pointer hover:bg-opacity-10 text-white`}
               type="submit"
-              value={"Signup"}
+              value={`${loading ? "Registering..." : "Register"}`}
             />
 
             <p className="text-center">

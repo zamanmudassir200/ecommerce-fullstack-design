@@ -10,7 +10,7 @@ const AdminDashboard = () => {
     <main className="min-h-screen flex flex-col sm:flex-row">
       {/* Left Sidebar */}
       <div
-        className={` bg-slate-600 h-[130px] sticky top-0 z-40  sm:min-h-screen sm:relative transition-all duration-300`}
+        className={` bg-slate-600 h-[130px] sticky top-0 z-40  sm:min-h-screen  transition-all duration-300`}
       >
         <LeftSidebar />
       </div>

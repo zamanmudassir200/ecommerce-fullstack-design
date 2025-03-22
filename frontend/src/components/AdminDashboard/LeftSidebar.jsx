@@ -27,7 +27,7 @@ const LeftSidebar = () => {
   };
 
   return (
-    <div className="p-5 sticky top-0  bg-slate-600 sm:min-h-screen sm:w-72 transition-all duration-300 sm:relative sm:left-0">
+    <div className="p-5 sticky  top-0  bg-slate-600 sm:min-h-screen sm:w-72 transition-all duration-300 sm:relative sm:left-0">
       <div className="flex  mb-5 items-center justify-between">
         <h1 className="text-xl font-bold underline text-white ">Dashboard</h1>
         <div

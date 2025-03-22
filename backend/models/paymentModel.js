@@ -12,7 +12,7 @@
 //     },
 //   },
 //   {
-//     timeStamps: true,
+//     timestamps: true,
 //   }
 // );
 // export const paymentModel = mongoose.model("payment", paymentSchema);
