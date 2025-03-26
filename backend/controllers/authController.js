@@ -100,23 +100,36 @@ const login = async (req, res) => {
   }
 };
 
-const checkAuth = (req, res) => {
-  const token = req.cookies.token;
-
-  if (!token) {
-    return res.status(401).json({ message: "Not logged in", loggedIn: false });
-  }
-
+const checkAuth = async (req, res) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    return res.status(200).json({
-      message: "User is logged in",
-      loggedIn: true,
-      user: decoded.user,
-    });
+    const { user } = req.user;
+    console.log("user", user);
+    const newUser = await userModel.findById(user._id).populate("wishList");
+
+    res
+      .status(200)
+      .json({
+        message: "User Logged in",
+        user: newUser,
+        success: true,
+        loggedIn: true,
+      });
   } catch (err) {
     return res.status(403).json({ message: "Invalid token", loggedIn: false });
   }
+  // if (!token) {
+  //   return res.status(401).json({ message: "Not logged in", loggedIn: false });
+  // }
+  // try {
+  //   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+  //   console.log("decode.user".decoded.user);
+  //   return res.status(200).json({
+  //     message: "User is logged in",
+  //     loggedIn: true,
+  //     user: decoded.user,
+  //   });
+  //
 };
 
 const getAllUsers = async (req, res) => {

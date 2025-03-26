@@ -13,5 +13,5 @@ router.post("/", register);
 router.post("/login", login);
 router.post("/logout", authenticationToken, logout);
 router.get("/", getAllUsers);
-router.get("/checkAuth", checkAuth);
+router.get("/checkAuth", authenticationToken, checkAuth);
 module.exports = router;

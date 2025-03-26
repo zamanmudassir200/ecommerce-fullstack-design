@@ -9,7 +9,10 @@ const {
   editCategory,
   createCategory,
   createSubCategory,
+  getProductById,
   editSubCategory,
+  removeFromWishList,
+  addToWishList,
 } = require("../controllers/productsController");
 const router = express.Router();
 const { authenticationToken } = require("../middlewares/authenticationToken");
@@ -23,6 +26,7 @@ router.patch(
 );
 router.delete("/:id", authenticationToken, deleteProduct);
 router.get("/", authenticationToken, getAllProducts);
+router.get("/:id", authenticationToken, getProductById);
 router.post("/create-category", authenticationToken, createCategory);
 router.post("/create-subcategory", authenticationToken, createSubCategory);
 router.patch("/edit-category/:categoryId", authenticationToken, editCategory);
@@ -31,6 +35,12 @@ router.patch(
   authenticationToken,
   editSubCategory
 );
-router.get("/get-categories", authenticationToken, getAllCategories);
+router.get("/getCategories", authenticationToken, getAllCategories);
+router.patch("/add-to-wishlist/:productId", authenticationToken, addToWishList);
+router.patch(
+  "/remove-from-wishlist/:productId",
+  authenticationToken,
+  removeFromWishList
+);
 
 module.exports = router;

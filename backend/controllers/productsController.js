@@ -5,6 +5,7 @@ const categoryModel = require("../models/categoryModel");
 const subCategoryModel = require("../models/categoryModel");
 const storage = multer.diskStorage({});
 const upload = multer({ storage });
+const userModel = require("../models/userModel");
 
 const createProduct = async (req, res) => {
   const {
@@ -308,8 +309,9 @@ const createSubCategory = async (req, res) => {
     });
     // Add the new subcategory's ID to the category's subCategories array
     category.subCategories.push(newSubCategory._id);
-    await category.save(); // Save the updated category
 
+    await newSubCategory.save();
+    await category.save(); // Save the updated category
     // Populate the subCategories field in the category
     const populatedCategory = await categoryModel
       .findById(categoryId)
@@ -398,15 +400,141 @@ const editSubCategory = async (req, res) => {
       .json({ message: `Server error: ${error.message}`, success: false });
   }
 };
+const getProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await productModel
+      .findById(id)
+      .populate("category")
+      .populate("subCategory");
+    if (!product) {
+      res.status(404).json({ message: "Product not found", success: false });
+    }
 
+    res.status(200).json({ message: "Product found", product, success: true });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: `Server error: ${error.message}`, success: false });
+  }
+};
+
+const addToWishList = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const userId = req.user.user._id;
+
+    // Verify product exists
+    const product = await productModel.findById(productId);
+    if (!product) {
+      return res.status(404).json({
+        message: "Product not found",
+        success: false,
+      });
+    }
+
+    // Update user's wishlist and return populated data
+    const updatedUser = await userModel
+      .findByIdAndUpdate(
+        userId,
+        { $addToSet: { wishList: productId } },
+        {
+          new: true,
+        }
+      )
+      .populate("wishList"); // Populate wishlist if needed
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    res.status(200).json({
+      message: "Product added to wishlist",
+      success: true,
+      product,
+      user: {
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        wishList: updatedUser.wishList,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+const removeFromWishList = async (req, res) => {
+  try {
+    const userId = req.user.user._id; // Changed from req.user.user._id
+    const { productId } = req.params;
+
+    // Verify product exists
+    const product = await productModel.findById(productId);
+    if (!product) {
+      return res.status(404).json({
+        message: "Product not found",
+        success: false,
+      });
+    }
+
+    // Update user's wishlist by removing the product
+    const updatedUser = await userModel
+      .findByIdAndUpdate(
+        userId,
+        { $pull: { wishList: productId } }, // Correct way to remove from array
+        {
+          new: true,
+          runValidators: true,
+        }
+      )
+      .populate("wishList");
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    res.status(200).json({
+      message: "Product removed from wishlist",
+      success: true,
+      product,
+      user: {
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        wishList: updatedUser.wishList,
+      },
+    });
+  } catch (error) {
+    console.error("Error removing from wishlist:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+      error: error.message,
+    });
+  }
+};
 module.exports = {
   createProduct,
+  addToWishList,
   editProduct,
   deleteProduct,
   getAllProducts,
+  removeFromWishList,
   upload,
   createSubCategory,
   createCategory,
+  getProductById,
   editCategory,
   editSubCategory,
   getAllCategories,

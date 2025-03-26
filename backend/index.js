@@ -6,6 +6,8 @@ const connectDb = require("./config/configDB");
 const productsRoutes = require("./routes/productsRoutes");
 const cookieParser = require("cookie-parser");
 const cloudinary = require("cloudinary").v2;
+const cartRoutes = require("./routes/cartRoutes");
+
 dotenv.config();
 
 cloudinary.config({
@@ -28,6 +30,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/", authRoutes);
 app.use("/products/", productsRoutes);
+app.use("/carts", cartRoutes);
+
 connectDb();
 app.listen(process.env.PORT, () => {
   console.log(`Server is started on port ${process.env.PORT}`);
