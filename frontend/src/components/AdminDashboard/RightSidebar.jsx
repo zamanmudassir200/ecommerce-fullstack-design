@@ -8,7 +8,7 @@ const RightSidebar = () => {
   const { showTabsData, handleApiCall, products, setProducts } =
     useContext(GlobalContext);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(true); // State to control modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const [productToDelete, setProductToDelete] = useState(null); // Track the product to delete
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null);

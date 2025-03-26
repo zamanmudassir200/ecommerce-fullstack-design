@@ -12,14 +12,42 @@ import { GlobalContext } from "../../context/GlobalContext";
 import SuppliersByRegion from "./SuppliersByRegion";
 import Newsletter from "./Newsletter";
 import { toast } from "react-toastify";
+import { GiCage } from "react-icons/gi";
 
 const HeroSection = () => {
   const [isUserLogin, setIsUserLogin] = useState(null);
   const [user, setUser] = useState("");
-  const { handleApiCall, products, setProducts } = useContext(GlobalContext);
+  const { handleApiCall, products, categories, setCategories, setProducts } =
+    useContext(GlobalContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+  const checkUserLoggedIn = async () => {
+    try {
+      const response = await handleApiCall(`${url}/checkAuth`, "get");
+      if (response.data.loggedIn) {
+        setIsUserLogin(true);
+        setUser(response.data.user);
+      } else {
+        navigate("/login");
+        setIsUserLogin(false);
+      }
+    } catch (error) {
+      toast.error("Error checking login status");
+    }
+  };
+  const fetchCategories = async () => {
+    try {
+      const response = await handleApiCall(
+        `${url}/products/getCategories`,
+        "get"
+      );
+      setCategories(response.data.categories);
+      console.log("response from getting categories", response);
+    } catch (error) {
+      toast.error("Error fetching categories");
+    }
+  };
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -33,77 +61,28 @@ const HeroSection = () => {
     }
   };
 
-  const checkUserLoggedIn = async () => {
-    try {
-      const response = await handleApiCall(`${url}/checkAuth`, "get");
-      if (response.data.loggedIn) {
-        setIsUserLogin(true);
-        setUser(response.data.user);
-      } else {
-        setIsUserLogin(false);
-      }
-    } catch (error) {
-      toast.error("Error checking login status");
-    }
-  };
-
   useEffect(() => {
     fetchProducts();
     checkUserLoggedIn(); // Component mount hone par login status check karega
+    fetchCategories();
   }, []);
 
-  const tabsLink = [
-    {
-      name: "Automobiles",
-      route: "/",
-    },
-    {
-      name: "Clothes and Wear",
-      route: "/",
-    },
-    {
-      name: "Home Interiors",
-      route: "/",
-    },
-    {
-      name: "Computer and tech",
-      route: "/",
-    },
-    {
-      name: "Tools, Equipments",
-      route: "/",
-    },
-    {
-      name: "Sports and Outdoor",
-      route: "/",
-    },
-    {
-      name: "Animal and pets",
-      route: "/",
-    },
-    {
-      name: "Machinery tools",
-      route: "/",
-    },
-    {
-      name: "More category",
-      route: "/",
-    },
-  ];
   return (
     <main className="min-h-screen">
       <div className="container py-3 mx-auto px-30">
-        <div className="h-[400px] w-full bg-white flex justify-between items-start p-3 gap-4  border-[1px] border-gray-400 rounded-md">
-          <div className="flex w-[30%] flex-col">
-            <ul>
-              {tabsLink.map((tabLink, index) => {
+        <div className="h-[400px] w-full    bg-white flex justify-between items-start p-3 gap-4  border-[1px] border-gray-400 rounded-md">
+          <div className=" flex w-[30%] flex-col">
+            <ul className="h-[370px] overflow-y-auto">
+              {categories.map((category) => {
                 return (
                   <Link
-                    key={index}
-                    className="py-2 px-2 block hover:font-semibold transition-all  rounded-md cursor-pointer hover:bg-[#E5F1FF]"
-                    to={tabLink.route}
+                    to={`./${category.name.split(" ").join("-")}`}
+                    key={category._id}
+                    className="py-2 px-2 block hover:font-semibold transition-all rounded-md cursor-pointer hover:bg-[#E5F1FF]"
                   >
-                    {tabLink.name}
+                    {category.name.replace(/\b\w/g, (char) =>
+                      char.toUpperCase()
+                    )}
                   </Link>
                 );
               })}

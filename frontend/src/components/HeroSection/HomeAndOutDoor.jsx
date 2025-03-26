@@ -22,23 +22,23 @@ const HomeAndOutDoor = ({ title, img, products }) => {
               </div>
             </div>
           </div>
-          <div className="flex-[0.89]  w-full grid grid-cols-4 ">
+          <div className="flex-[0.89] overflow-y-auto h-[257px]  w-full grid grid-cols-4 ">
             {filteredCategoriesProducts.map((product, index) => {
               return (
                 <div
+                  onClick={() => alert(product.productName)}
                   key={index}
-                  className="border-r-[1px] border-b-[1px] border-gray-300 flex flex-col relative w-[242.2px] p-3  h-[128px]"
+                  className="border-r-[1px] cursor-pointer transition-all duration-200 hover:bg-gray-200 border-b-[1px] border-gray-300 flex flex-col relative w-[242.2px] p-3  h-[128px]"
                 >
                   <h1 className="font-bold text-2xl">{product.productName}</h1>
-                  <p className="">
-                    From <br />
-                    {product.price} Rs
-                  </p>
+                  <div className="text-gray-500 flex flex-col justify-center  ">
+                    <h1 className="text-[14px]"> From</h1>{" "}
+                    <p className=""> {product.price} Rs</p>
+                  </div>
                   <div className="absolute w-16 h-16 bottom-2 right-2 flex items-end justify-end ">
                     <img
                       className="w-full h-full object-contain  "
                       src={product.images[0]}
-                      alt=""
                     />
                   </div>
                 </div>

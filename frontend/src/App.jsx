@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useContext } from "react";
 import { Routes, Route } from "react-router-dom";
 import Profile from "./components/Header/Profile";
 import Home from "./components/Home";
@@ -12,7 +12,13 @@ import Signup from "./components/Auth/Signup";
 import Header from "./components/Header/Header";
 import { ToastContainer } from "react-toastify";
 import Footer from "./components/Footer/Footer";
+import ProductsListing from "./components/ProductsListing/ProductsListing";
+import { useParams } from "react-router-dom";
+
+import ProductsDetails from "./components/ProductsDetails/ProductsDetails";
 const App = () => {
+  const { productId } = useParams(); // Extract product-id from URL
+
   return (
     <div className="">
       <Header />
@@ -27,6 +33,11 @@ const App = () => {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path={`/all-category`} element={<ProductsListing />}></Route>
+        <Route
+          path={`/product-detail/:productId`}
+          element={<ProductsDetails />}
+        ></Route>
       </Routes>
 
       <Footer />

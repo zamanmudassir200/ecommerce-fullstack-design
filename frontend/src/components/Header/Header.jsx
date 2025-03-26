@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { MdMessage } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { IoMdCart } from "react-icons/io";
 import BottomHeader from "./BottomHeader/BottomHeader";
+import { GlobalContext } from "../../context/GlobalContext";
 const Header = () => {
+  const { cartNumber } = useContext(GlobalContext);
   const navLinks = [
     {
       icon: <FaUser />,
@@ -61,9 +63,14 @@ const Header = () => {
             return (
               <div key={index} className="flex flex-col">
                 <Link
-                  className="flex flex-col items-center justify-center gap-1"
+                  className="relative flex flex-col items-center justify-center gap-1"
                   to={link.route}
                 >
+                  {link.name === "My Cart" && cartNumber > 0 && (
+                    <p className="absolute top-[-14px] bg-red-500 text-[13px] text-white rounded-full p-[3px] right-0">
+                      {cartNumber}
+                    </p>
+                  )}
                   <h1 className="text-2xl text-gray-500">{link.icon}</h1>
                   <p className="text-gray-500 text-[12px]">{link.name}</p>
                 </Link>
@@ -72,6 +79,7 @@ const Header = () => {
           })}
         </div>
       </nav>
+
       <BottomHeader />
     </header>
   );
