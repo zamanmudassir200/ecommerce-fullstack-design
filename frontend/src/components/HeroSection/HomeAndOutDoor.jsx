@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const HomeAndOutDoor = ({ title, img, products }) => {
+  const navigate = useNavigate();
+
   const filteredCategoriesProducts = products.filter((product) => {
     return product.category.name === title.toLowerCase();
   });
@@ -26,7 +29,7 @@ const HomeAndOutDoor = ({ title, img, products }) => {
             {filteredCategoriesProducts.map((product, index) => {
               return (
                 <div
-                  onClick={() => alert(product.productName)}
+                  onClick={() => navigate(`/product-detail/${product._id}`)}
                   key={index}
                   className="border-r-[1px] cursor-pointer transition-all duration-200 hover:bg-gray-200 border-b-[1px] border-gray-300 flex flex-col relative w-[242.2px] p-3  h-[128px]"
                 >

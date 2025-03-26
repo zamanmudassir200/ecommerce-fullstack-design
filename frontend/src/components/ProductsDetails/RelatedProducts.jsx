@@ -1,6 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const RelatedProducts = ({ recommendedProducts }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Location change ke baad jo bhi data fetch karna hai wo yahan kar sakte hain
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    console.log("Route changed to: ", location.pathname);
+    // Example: fetchProductDetails(location.pathname);
+  }, [location]);
+
   return (
     <div className="w-full">
       <h1 className="text-lg font-semibold py-2">Related Products</h1>
@@ -9,6 +23,11 @@ const RelatedProducts = ({ recommendedProducts }) => {
           recommendedProducts.map((recommendedProduct) => {
             return (
               <div
+                onClick={() =>
+                  navigate(`/product-detail/${recommendedProduct._id}`, {
+                    replace: true,
+                  })
+                }
                 key={recommendedProduct._id}
                 className="flex hover:bg-gray-100 cursor-pointer p-3 flex-col justify-center items-center gap-3"
               >

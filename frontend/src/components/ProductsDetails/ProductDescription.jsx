@@ -3,6 +3,7 @@ import { GlobalContext } from "../../context/GlobalContext";
 import { toast } from "react-toastify";
 import url from "../../utils/url";
 import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import RelatedProducts from "./RelatedProducts";
 
 const ProductDescription = ({ currentProduct }) => {
@@ -10,6 +11,20 @@ const ProductDescription = ({ currentProduct }) => {
     useContext(GlobalContext);
   const [recommendedProducts, setRecommendedProducts] = useState([]);
   const [selectedTab, setSelectedTab] = useState("Description");
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Location change ke baad jo bhi data fetch karna hai wo yahan kar sakte hain
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    console.log("Route changed to: ", location.pathname);
+    // Example: fetchProductDetails(location.pathname);
+  }, [location]);
+
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -35,11 +50,10 @@ const ProductDescription = ({ currentProduct }) => {
     }
   };
 
-  console.log(currentProduct);
+  console.log("recommended", recommendedProducts);
   useEffect(() => {
     fetchProducts();
   }, [currentProduct]); // Refetch when currentProduct changes
-
   const tabs = ["Description", "Reviews", "Shopping", "About seller"];
   return (
     <>
@@ -136,9 +150,14 @@ const ProductDescription = ({ currentProduct }) => {
         <div className="w-[310px] overflow-y-scroll h-[513px] border-[1px] border-gray-200 rounded-lg shadow-sm">
           <h1 className="text-md font-semibold p-2">You may like</h1>
           <div className="space-y-4 p-2">
-            {recommendedProducts.length > 0 ? (
-              recommendedProducts.map((product) => (
+            {recommendedProducts?.length > 0 ? (
+              recommendedProducts?.map((product) => (
                 <div
+                  onClick={() =>
+                    navigate(`/product-detail/${product._id}`, {
+                      replace: true,
+                    })
+                  }
                   key={product._id}
                   className="flex items-center cursor-pointer gap-3 p-2 hover:bg-gray-100 rounded"
                 >

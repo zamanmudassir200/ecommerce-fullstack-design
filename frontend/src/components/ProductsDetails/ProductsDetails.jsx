@@ -17,6 +17,7 @@ const ProductsDetails = () => {
   const [isUserLogin, setIsUserLogin] = useState(null);
   const [user, setUser] = useState("");
   const [quantity, setQuantity] = useState(1);
+
   const checkUserLoggedIn = async () => {
     try {
       const response = await handleApiCall(`${url}/checkAuth`, "get");

@@ -1,5 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+
 const DealsAndOffers = ({ products }) => {
+  const navigate = useNavigate();
+
   return (
     <main className=" my-5 min-h-[240px] border-[1px] border-gray-300 rounded-md bg-white">
       <div className=" rounded-lg mx-auto ">
@@ -13,7 +17,7 @@ const DealsAndOffers = ({ products }) => {
               return (
                 product.discount > 0 && (
                   <div
-                    onClick={() => alert(product.productName)}
+                    onClick={() => navigate(`/product-detail/${product._id}`)}
                     key={index}
                     className="flex cursor-pointer hover:bg-gray-200 duration-200 transition-colors  items-center  min-w-[200px] scroll-x-auto justify-center gap-2 flex-col h-[235px] border-r-[1px] border-gray-300"
                   >
