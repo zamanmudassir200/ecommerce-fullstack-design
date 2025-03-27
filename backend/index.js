@@ -20,7 +20,10 @@ const app = express();
 app.use(
   cors({
     methods: ["POST", "GET", "PATCH", "PUT", "DELETE"],
-    origin: ["http://localhost:5173"],
+    origin: [
+      "https://ecommerce-fullstack-design-lxvl.vercel.app",
+      "http://localhost:5173",
+    ],
     credentials: true,
   })
 );
