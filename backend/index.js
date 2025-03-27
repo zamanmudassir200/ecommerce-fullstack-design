@@ -17,34 +17,27 @@ cloudinary.config({
 });
 
 const app = express();
-// app.use(
-//   cors({
-//     methods: ["POST", "GET", "PATCH", "PUT", "DELETE"],
-//     origin: ["https://ecommerce-fullstack-design-lxvl.vercel.app"],
-//     credentials: true,
-//   })
-// );
+
+// Allow requests from any origin for development purposes
 app.use(
   cors({
     methods: ["POST", "GET", "PATCH", "PUT", "DELETE"],
-    origin: [
-      "https://ecommerce-fullstack-design-pied.vercel.app",
-      "https://ecommerce-fullstack-design-lxvl.vercel.app",
-    ],
-    credentials: true,
+    origin: "*", // Allow all origins (not recommended for production)
+    credentials: true, // Enable cookies and credentials support
   })
 );
 
 app.use(cookieParser());
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use("/", authRoutes);
 app.use("/products/", productsRoutes);
 app.use("/categories/", categoriesRoutes);
 app.use("/carts", cartRoutes);
 
 connectDb();
+
 app.listen(process.env.PORT, () => {
   console.log(`Server is started on port ${process.env.PORT}`);
 });
