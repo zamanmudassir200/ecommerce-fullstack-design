@@ -60,16 +60,16 @@ const createProduct = async (req, res) => {
     const imageUrls = uploadedImages.map((img) => img.secure_url);
 
     // Calculate discounted price (if discount exists)
-    let finalPrice = price;
-    if (discount > 0) {
-      finalPrice = price - (price * discount) / 100;
-    }
+    // let finalPrice = price;
+    // if (discount > 0) {
+    //   finalPrice = price - (price * discount) / 100;
+    // }
 
     // Create product with category and subcategory (if provided)
     const createdProduct = await productModel.create({
       productName,
       description,
-      price: finalPrice,
+      price,
       brand,
       stock,
       images: imageUrls,
@@ -213,10 +213,22 @@ const deleteProduct = async (req, res) => {
 const getAllProducts = async (req, res) => {
   try {
     // Find all products and populate both category and subCategory fields
+    // const allProducts = await productModel
+    //   .find()
+    //   .populate("category") // Populate the category field
+    //   .populate("subCategory"); // Populate the subCategory field
     const allProducts = await productModel
       .find()
-      .populate("category") // Populate the category field
-      .populate("subCategory"); // Populate the subCategory field
+      .populate({
+        path: "category",
+        model: "category",
+        options: { strictPopulate: false }, // Allow missing category
+      })
+      .populate({
+        path: "subCategory",
+        model: "category",
+        options: { strictPopulate: false }, // Allow missing subCategory
+      });
 
     if (!allProducts || allProducts.length === 0) {
       return res
@@ -238,7 +250,44 @@ const getAllProducts = async (req, res) => {
   }
 };
 
-// POST /categories
+// const getAllProducts = async (req, res) => {
+//   try {
+//     let allProducts = await productModel.find();
+//     try {
+//       allProducts = await productModel.populate(allProducts, {
+//         path: "category",
+//       });
+//     } catch (categoryError) {
+//       console.log("Error populating category:", categoryError);
+//     }
+//     try {
+//       allProducts = await productModel.populate(allProducts, {
+//         path: "subCategory",
+//       });
+//     } catch (subCategoryError) {
+//       console.log("Error populating subCategory:", subCategoryError);
+//     }
+
+//     if (!allProducts || allProducts.length === 0) {
+//       return res
+//         .status(404)
+//         .json({ message: "No products found", success: false });
+//     }
+
+//     return res.status(200).json({
+//       message: "All Products found",
+//       count: allProducts.length,
+//       products: allProducts,
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.log("Server error:", error);
+//     return res
+//       .status(500)
+//       .json({ message: `Server error: ${error.message}`, success: false });
+//   }
+// };
+
 const createCategory = async (req, res) => {
   const { name, description } = req.body;
 
@@ -331,25 +380,54 @@ const createSubCategory = async (req, res) => {
       .json({ message: `Server error: ${error.message}`, success: false });
   }
 };
+// const getAllCategories = async (_req, res) => {
+//   try {
+//     const { user } = req.user;
+//     console.log("user._id", user._id);
+//     const categories = await categoryModel.find();
+//     if (!categories) {
+//       return res
+//         .status(200)
+//         .json({ message: "No categories found", success: true });
+//     }
+
+//     return res.status(200).json({
+//       message: "All Categories",
+//       count: categories.length,
+//       categories,
+//     });
+//   } catch (error) {
+//     return res
+//       .status(500)
+//       .json({ message: `Server error: ${error.message}`, success: false });
+//   }
+// };
+
 const getAllCategories = async (req, res) => {
   try {
-    const categories = await categoryModel.find();
-    if (!categories) {
-      res.status(200).json({ message: "No categories found", success: true });
+    const categories = await categoryModel.find(); // Fetch directly from the category model
+
+    if (!categories || categories.length === 0) {
+      return res.status(404).json({
+        message: "No categories found",
+        success: false,
+      });
     }
 
-    res.status(200).json({
-      message: "All Categories",
+    return res.status(200).json({
+      message: "All categories found",
       count: categories.length,
       categories,
+      success: true,
     });
   } catch (error) {
-    console.error("Error:", error);
-    res
-      .status(500)
-      .json({ message: `Server error: ${error.message}`, success: false });
+    return res.status(500).json({
+      message: `Server error: ${error.message}`,
+      success: false,
+    });
   }
 };
+
 const editCategory = async (req, res) => {
   try {
     const { categoryId } = req.params;

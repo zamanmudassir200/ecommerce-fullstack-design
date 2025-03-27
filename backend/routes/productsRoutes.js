@@ -35,7 +35,6 @@ router.patch(
   authenticationToken,
   editSubCategory
 );
-router.get("/getCategories", authenticationToken, getAllCategories);
 router.patch("/add-to-wishlist/:productId", authenticationToken, addToWishList);
 router.patch(
   "/remove-from-wishlist/:productId",

@@ -7,7 +7,7 @@ const productsRoutes = require("./routes/productsRoutes");
 const cookieParser = require("cookie-parser");
 const cloudinary = require("cloudinary").v2;
 const cartRoutes = require("./routes/cartRoutes");
-
+const categoriesRoutes = require("./routes/categoryRoutes");
 dotenv.config();
 
 cloudinary.config({
@@ -30,6 +30,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/", authRoutes);
 app.use("/products/", productsRoutes);
+app.use("/categories/", categoriesRoutes);
 app.use("/carts", cartRoutes);
 
 connectDb();

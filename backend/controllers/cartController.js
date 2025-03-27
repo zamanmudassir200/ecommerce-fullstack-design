@@ -58,46 +58,43 @@ const addToCart = async (req, res) => {
   }
 };
 
-const getAllCarts = async (req, res) => {
-  try {
-    // Find all carts
-    let carts = await cartModel.find();
+// const getAllCarts = async (req, res) => {
+//   try {
+//     // Find all carts
+//     let carts = await cartModel.find();
 
-    if (carts && carts.length > 0) {
-      // Populate the 'product' field in 'items' for each cart
-      carts = await Promise.all(
-        carts.map(async (cart) => {
-          await cart.populate("items.product"); // Populate the product field inside items array
-          return cart;
-        })
-      );
+//     if (carts && carts.length > 0) {
+//       // Populate the 'product' field in 'items' for each cart
+//       carts = await Promise.all(
+//         carts.map(async (cart) => {
+//           await cart.populate("items.product"); // Populate the product field inside items array
+//           return cart;
+//         })
+//       );
 
-      res.status(200).json({
-        message: "All carts",
-        count: carts.length,
-        carts,
-        success: true,
-      });
-    } else {
-      res.status(200).json({ message: "No carts found", success: true });
-    }
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: `Server error: ${error.message}`, success: false });
-  }
-};
+//       res.status(200).json({
+//         message: "All carts",
+//         count: carts.length,
+//         carts,
+//         success: true,
+//       });
+//     } else {
+//       res.status(200).json({ message: "No carts found", success: true });
+//     }
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: `Server error: ${error.message}`, success: false });
+//   }
+// };
 
 const getCartsByUser = async (req, res) => {
   try {
     const userId = req.user.user._id;
-    const user = await userModel.findById(userId);
-    if (!user) {
-      res.status(404).json({ message: "User not found", success: false });
-    }
+
     const cart = await cartModel.findOne({ user: userId });
     if (!cart) {
-      res.status(404).json({
+      return res.status(200).json({
         message: "No cart available. Please put something into cart",
         success: true,
       });
@@ -110,7 +107,7 @@ const getCartsByUser = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    res
+    return res
       .status(500)
       .json({ message: `Server error: ${error.message}`, success: false });
   }
@@ -129,10 +126,9 @@ const removeFromCart = async (req, res) => {
       });
     }
 
-    // Find the user's cart and update it by removing the product
     const updatedCart = await cartModel.findOneAndUpdate(
       { user: userId }, // Find the cart by the user ID
-      { $pull: { items: { product: productId } } }, // Remove the product from the items array
+      { $pull: { items: { product: productId } } },
       { new: true, runValidators: true } // Return the updated cart
     );
 
@@ -142,6 +138,14 @@ const removeFromCart = async (req, res) => {
         success: false,
       });
     }
+
+    let totalPrice = 0;
+    updatedCart.items.forEach((item) => {
+      totalPrice += item.product.price * item.quantity;
+    });
+
+    updatedCart.totalPrice = totalPrice;
+    await updatedCart.save();
 
     res.status(200).json({
       message: "Product removed from Cart",
@@ -155,4 +159,35 @@ const removeFromCart = async (req, res) => {
   }
 };
 
-module.exports = { addToCart, getCartsByUser, removeFromCart };
+const removeAllProductsFromCart = async (req, res) => {
+  try {
+    const userId = req.user.user._id;
+    console.log(userId);
+    const cart = await cartModel.findOneAndDelete({ user: userId });
+
+    if (!cart) {
+      return res
+        .status(404)
+        .json({ message: "Cart not found", success: false });
+    }
+
+    return res
+      .status(200)
+      .json({
+        message: "All products have been deleted from the Cart.",
+        cart,
+        success: true,
+      });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `Server error: ${error.message}`, success: false });
+  }
+};
+
+module.exports = {
+  addToCart,
+  getCartsByUser,
+  removeFromCart,
+  removeAllProductsFromCart,
+};
