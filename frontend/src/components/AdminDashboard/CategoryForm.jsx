@@ -6,87 +6,49 @@
 //   subCategories,
 //   setSubCategories,
 //   description,
+//   setSubCategory,
 //   setDescription,
+//   subCategory,
 // }) => {
-//   const handleSubCategoryChange = (index, value) => {
-//     const updatedSubCategories = [...subCategories];
-//     updatedSubCategories[index].name = value;
-//     setSubCategories(updatedSubCategories);
-//   };
-
-//   const addSubCategory = () => {
-//     setSubCategories([...subCategories, { name: "" }]);
-//   };
-
-//   const removeSubCategory = (index) => {
-//     const updatedSubCategories = subCategories.filter((_, i) => i !== index);
-//     setSubCategories(updatedSubCategories);
-//   };
-
 //   return (
 //     <div className="">
 //       <div className=" ">
 //         <div className="flex gap-2">
 //           <input
 //             type="text"
-//             placeholder="Main Category (e.g, Men)"
+//             placeholder="Main Category (e.g, Electronics)"
 //             value={mainCategory}
 //             onChange={(e) => setMainCategory(e.target.value.toLowerCase())}
 //             className="p-2 flex-[0.8] w-full border rounded"
 //             required
 //             name="mainCategory"
 //           />
-
-//           {/* Add Subcategory Button */}
-//           <button
-//             type="button"
-//             onClick={addSubCategory}
-//             className="p-2 flex-[0.2] cursor-pointer  bg-blue-500 text-white rounded"
-//           >
-//             Add +
-//           </button>
+//           <textarea
+//             placeholder="Description"
+//             value={description}
+//             name="description"
+//             onChange={(e) => setDescription(e.target.value.toLowerCase())}
+//             className="p-2 border rounded"
+//           ></textarea>
 //         </div>
 //         <div className="flex flex-wrap gap-2">
-//           {subCategories.map((subCategory, index) => (
-//             <div key={index} className="flex space-x-2 items-center">
-//               <input
-//                 type="text"
-//                 placeholder={`Subcategory ${index + 1}(e.g,Tshirts)`}
-//                 value={subCategory.name}
-//                 name="subCategories"
-//                 onChange={(e) =>
-//                   handleSubCategoryChange(index, e.target.value.toLowerCase())
-//                 }
-//                 className="p-2 border rounded flex-1"
-//                 required
-//               />
-//               {/* Remove Subcategory Button */}
-//               {subCategories.length > 1 && (
-//                 <button
-//                   type="button"
-//                   onClick={() => removeSubCategory(index)}
-//                   className="p-2 rounded-[45%] cursor-pointer  bg-red-700 text-white font-bold"
-//                 >
-//                   X
-//                 </button>
-//               )}
-//             </div>
-//           ))}
+//           <input
+//             type="text"
+//             placeholder="Subcategory (e.g, Mobiles)"
+//             value={subCategory}
+//             onChange={(e) => setSubCategory(e.target.value.toLowerCase())}
+//             className="p-2 flex-[0.8] w-full border rounded"
+//             required
+//             name="mainCategory"
+//           />
 //         </div>
-//         {/* Description Input */}
-//         <textarea
-//           placeholder="Description"
-//           value={description}
-//           name="description"
-//           onChange={(e) => setDescription(e.target.value.toLowerCase())}
-//           className="p-2 border rounded"
-//         ></textarea>
 //       </div>
 //     </div>
 //   );
 // };
 
 // export default CategoryForm;
+
 import React from "react";
 
 const CategoryForm = ({
@@ -99,96 +61,74 @@ const CategoryForm = ({
   setDescription,
   subCategory,
 }) => {
-  const handleSubCategoryChange = (index, value) => {
-    const updatedSubCategories = [...subCategories];
-    updatedSubCategories[index].name = value;
-    setSubCategories(updatedSubCategories);
-  };
-
-  const addSubCategory = () => {
-    setSubCategories([...subCategories, { name: "" }]);
-  };
-
-  const removeSubCategory = (index) => {
-    const updatedSubCategories = subCategories.filter((_, i) => i !== index);
-    setSubCategories(updatedSubCategories);
-  };
-
   return (
-    <div className="">
-      <div className=" ">
-        <div className="flex gap-2">
+    <div className="space-y-4">
+      {/* Main Category and Description - stacked on mobile, side by side on larger screens */}
+      <div className="flex flex-col gap-4 sm:flex-row">
+        <div className="flex-1">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Main Category
+          </label>
           <input
             type="text"
-            placeholder="Main Category (e.g, Electronics)"
+            placeholder="e.g., Electronics"
             value={mainCategory}
             onChange={(e) => setMainCategory(e.target.value.toLowerCase())}
-            className="p-2 flex-[0.8] w-full border rounded"
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             required
             name="mainCategory"
           />
+        </div>
+
+        <div className="flex-1">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Description
+          </label>
           <textarea
-            placeholder="Description"
+            placeholder="Category description"
             value={description}
             name="description"
             onChange={(e) => setDescription(e.target.value.toLowerCase())}
-            className="p-2 border rounded"
-          ></textarea>
-
-          {/* Add Subcategory Button */}
-          {/* <button
-            type="button"
-            onClick={addSubCategory}
-            className="p-2 flex-[0.2] cursor-pointer  bg-blue-500 text-white rounded"
-          >
-            Add +
-          </button> */}
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <input
-            type="text"
-            placeholder="Subcategory (e.g, Mobiles)"
-            value={subCategory}
-            onChange={(e) => setSubCategory(e.target.value.toLowerCase())}
-            className="p-2 flex-[0.8] w-full border rounded"
-            required
-            name="mainCategory"
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 min-h-[38px]"
+            rows={2}
           />
-          {/* {subCategories.map((subCategory, index) => (
-            <div key={index} className="flex space-x-2 items-center">
-              <input
-                type="text"
-                placeholder={`Subcategory ${index + 1}(e.g,Tshirts)`}
-                value={subCategory.name}
-                name="subCategories"
-                onChange={(e) =>
-                  handleSubCategoryChange(index, e.target.value.toLowerCase())
-                }
-                className="p-2 border rounded flex-1"
-                required
-              />
-              {/* Remove Subcategory Button */}
-          {/* {subCategories.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeSubCategory(index)}
-                  className="p-2 rounded-[45%] cursor-pointer  bg-red-700 text-white font-bold"
-                >
-                  X
-                </button>
-              )}
-            </div>
-          ))} */}
         </div>
-        {/* Description Input */}
-        {/* <textarea
-          placeholder="Description"
-          value={description}
-          name="description"
-          onChange={(e) => setDescription(e.target.value.toLowerCase())}
-          className="p-2 border rounded"
-        ></textarea> */}
       </div>
+
+      {/* Subcategory - full width */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Subcategory
+        </label>
+        <input
+          type="text"
+          placeholder="e.g., Mobiles"
+          value={subCategory}
+          onChange={(e) => setSubCategory(e.target.value.toLowerCase())}
+          className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          required
+          name="subCategory"
+        />
+      </div>
+
+      {/* Display existing subcategories if needed */}
+      {subCategories?.length > 0 && (
+        <div className="mt-2">
+          <p className="text-sm font-medium text-gray-700 mb-1">
+            Subcategories:
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {subCategories.map((cat, index) => (
+              <span
+                key={index}
+                className="bg-gray-100 px-2 py-1 rounded text-sm"
+              >
+                {cat.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

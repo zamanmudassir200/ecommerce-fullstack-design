@@ -3,26 +3,26 @@ import { MdOutlineMailOutline } from "react-icons/md";
 
 const Newsletter = () => {
   return (
-    <div className="bg-[#EFF2F4] flex items-center justify-center h-[190px] ">
-      <div className="flex flex-col items-center justify-between">
-        <h1 className="text-2xl font-bold mt-4 ">
-          Subscribe on our newsletter
+    <div className="bg-[#EFF2F4] py-8 px-4 sm:py-12">
+      <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3">
+          Subscribe to our newsletter
         </h1>
-        <p className="text-lg ">
+        <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-4 sm:mb-6 max-w-2xl">
           Get daily news on upcoming offers from many suppliers all over the
           world
         </p>
-        <div className="flex gap-3 w-[392px]  items-center justify-center my-6">
-          <div className="bg-white py-1 w-[274px] flex rounded-lg items-center justify-center gap-1">
-            <MdOutlineMailOutline size={34} className="text-gray-600 pl-2" />
 
+        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md sm:max-w-lg">
+          <div className="bg-white py-1 px-3 flex items-center rounded-lg w-full">
+            <MdOutlineMailOutline className="text-gray-500 text-xl sm:text-2xl mr-2" />
             <input
-              className="text-lg w-full px-2 outline-none"
+              className="w-full py-2 px-1 outline-none text-sm sm:text-base"
               type="email"
-              placeholder="Email"
+              placeholder="Enter your email"
             />
           </div>
-          <button className="bg-[#0067FF] text-white px-5  cursor-pointer rounded-lg font-semibold py-2">
+          <button className="bg-[#0067FF] hover:bg-[#0055CC] text-white px-4 sm:px-6 py-2 rounded-lg font-medium whitespace-nowrap transition-colors">
             Subscribe
           </button>
         </div>

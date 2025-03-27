@@ -5,52 +5,62 @@ const HomeAndOutDoor = ({ title, img, products }) => {
   const navigate = useNavigate();
 
   const filteredCategoriesProducts = products.filter((product) => {
-    return product.category.name === title.toLowerCase();
+    return product.category?.name?.toLowerCase() === title.toLowerCase();
   });
-  console.log("filtered categories products", filteredCategoriesProducts);
+
   return (
-    <main className="my-5 h-[257px] border-[1px] border-gray-300 rounded-md bg-white">
-      <div className=" rounded-lg mx-auto ">
-        <div className="flex  ">
-          <div className="h-[235px] flex-[0.3] border-r-[1px] border-gray-300">
-            <div className="relative h-[256px] overflow-hidden">
-              <img className="h-full w-full object-cover" src={img} alt="" />
-              <div className=" absolute top-3 left-5">
-                <h1 className="w-[154px] mb-4 font-bold text-xl">
-                  {title} <br />
+    <div className="my-5 border border-gray-300 rounded-md bg-white">
+      <div className="rounded-lg mx-auto">
+        <div className="flex flex-col md:flex-row">
+          {/* Category Banner Section */}
+          <div className="md:w-[30%] border-b md:border-b-0 md:border-r border-gray-300">
+            <div className="relative h-48 md:h-64 overflow-hidden">
+              <img
+                className="h-full w-full object-cover"
+                src={img}
+                alt={title}
+              />
+              <div className="absolute top-3 left-3 md:left-5">
+                <h1 className="w-full md:w-[154px] mb-2 md:mb-4 font-bold text-lg md:text-xl">
+                  {title}
                 </h1>
-                <button className="px-3 cursor-pointer rounded-md py-2 text-lg font-semibold bg-white ">
+                <button className="px-2 md:px-3 py-1 md:py-2 text-sm md:text-lg font-semibold bg-white rounded-md hover:bg-gray-100 transition-colors">
                   Source now
                 </button>
               </div>
             </div>
           </div>
-          <div className="flex-[0.89] overflow-y-auto h-[257px]  w-full grid grid-cols-4 ">
-            {filteredCategoriesProducts.map((product, index) => {
-              return (
+
+          {/* Products Grid Section */}
+          <div className="md:w-[70%] overflow-y-auto h-auto md:h-64">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
+              {filteredCategoriesProducts.map((product, index) => (
                 <div
                   onClick={() => navigate(`/product-detail/${product._id}`)}
                   key={index}
-                  className="border-r-[1px] cursor-pointer transition-all duration-200 hover:bg-gray-200 border-b-[1px] border-gray-300 flex flex-col relative w-[242.2px] p-3  h-[128px]"
+                  className="border-r border-b border-gray-300 cursor-pointer transition-all duration-200 hover:bg-gray-100 flex flex-col relative p-2 h-32 sm:h-36"
                 >
-                  <h1 className="font-bold text-2xl">{product.productName}</h1>
-                  <div className="text-gray-500 flex flex-col justify-center  ">
-                    <h1 className="text-[14px]"> From</h1>{" "}
-                    <p className=""> {product.price} Rs</p>
+                  <h1 className="font-bold text-sm sm:text-base md:text-lg line-clamp-2">
+                    {product.productName}
+                  </h1>
+                  <div className="text-gray-500 mt-1">
+                    <h1 className="text-xs sm:text-sm">From</h1>
+                    <p className="text-sm sm:text-base">{product.price} Rs</p>
                   </div>
-                  <div className="absolute w-16 h-16 bottom-2 right-2 flex items-end justify-end ">
+                  <div className="absolute w-12 h-12 sm:w-14 sm:h-14 bottom-1 right-1 flex items-end justify-end">
                     <img
-                      className="w-full h-full object-contain  "
+                      className="w-full h-full object-contain"
                       src={product.images[0]}
+                      alt={product.productName}
                     />
                   </div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 };
 

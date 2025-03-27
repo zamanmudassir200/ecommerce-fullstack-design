@@ -22,7 +22,6 @@ export const GlobalContextProvider = ({ children }) => {
       return response;
     } catch (error) {
       // return error;
-      toast.error(`${error.response.data.message}`);
     }
   };
   const fetchProducts = async () => {
@@ -41,7 +40,7 @@ export const GlobalContextProvider = ({ children }) => {
   const fetchCategories = async () => {
     try {
       const response = await handleApiCall(
-        `${url}/products/getCategories`,
+        `${url}/categories/get-categories`,
         "get"
       );
       setCategories(response.data.categories);

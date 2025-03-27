@@ -1,53 +1,61 @@
 import React from "react";
 import { IoSearch } from "react-icons/io5";
+
 const OurServices = () => {
   const services = [
     {
       image: "./Mask group.png",
-      icon: <IoSearch />,
+      icon: <IoSearch className="text-blue-600" />,
       name: "Source from Industry Hubs",
     },
     {
       image: "./Mask group.png",
-      icon: <IoSearch />,
+      icon: <IoSearch className="text-blue-600" />,
       name: "Customize your product",
     },
     {
       image: "./Mask group.png",
-      icon: <IoSearch />,
+      icon: <IoSearch className="text-blue-600" />,
       name: "Fast, reliable shipping by ocean or air",
     },
     {
       image: "./Mask group.png",
-      icon: <IoSearch />,
+      icon: <IoSearch className="text-blue-600" />,
       name: "Product monitoring and inspection",
     },
   ];
-  return (
-    <main className="min-w-[1180px]  mb-10  min-h-[236px]">
-      <h1 className="text-xl font-bold">Our extra services</h1>
 
-      <div className="flex justify-between my-5">
-        {services.map((service, index) => {
-          return (
-            <div
-              key={index}
-              className="relative w-[280px] h-[200] bg-white border-[1px] border-gray-300"
-            >
-              <div className=" overflow-hidden">
-                <img className="" src={service.image} alt="" />
-              </div>
-              <p className="absolute top-24 right-5 bg-[#D1E7FF] p-3 rounded-[50%] border-2 border-white text-2xl">
-                {service.icon}
-              </p>
-              <div className="p-5">
-                <h1 className="font-semibold w-[145px]">{service.name}</h1>
-              </div>
+  return (
+    <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-10">
+      <h1 className="text-xl md:text-2xl font-bold mb-6">Our extra services</h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {services.map((service, index) => (
+          <div
+            key={index}
+            className="relative bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-300"
+          >
+            <div className="h-40 overflow-hidden">
+              <img
+                className="w-full h-full object-cover"
+                src={service.image}
+                alt={service.name}
+              />
             </div>
-          );
-        })}
+
+            <div className="absolute -top-6 right-4 bg-[#D1E7FF] p-3 rounded-full border-4 border-white text-xl md:text-2xl shadow-sm">
+              {service.icon}
+            </div>
+
+            <div className="p-4 pt-8">
+              <h2 className="font-semibold text-base md:text-lg">
+                {service.name}
+              </h2>
+            </div>
+          </div>
+        ))}
       </div>
-    </main>
+    </section>
   );
 };
 
