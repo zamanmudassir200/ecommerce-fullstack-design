@@ -1,7 +1,8 @@
 import axios from "axios";
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState } from "react";
 import { toast } from "react-toastify";
 export const GlobalContext = createContext(null);
+// import url from "../utils/url";
 
 export const GlobalContextProvider = ({ children }) => {
   const [showTabsData, setShowTabsData] = useState("products");
@@ -37,18 +38,18 @@ export const GlobalContextProvider = ({ children }) => {
     }
   };
 
-  const fetchCategories = async () => {
-    try {
-      const response = await handleApiCall(
-        `${url}/categories/get-categories`,
-        "get"
-      );
-      setCategories(response.data.categories);
-      console.log("response from getting categories", response);
-    } catch (error) {
-      toast.error("Error fetching categories");
-    }
-  };
+  // const fetchCategories = async () => {
+  //   try {
+  //     const response = await handleApiCall(
+  //       `${url}/categories/get-categories`,
+  //       "get"
+  //     );
+  //     setCategories(response.data.categories);
+  //     console.log("response from getting categories", response);
+  //   } catch (error) {
+  //     // toast.error("Error fetching categories");
+  //   }
+  // };
 
   return (
     <GlobalContext.Provider
@@ -58,7 +59,7 @@ export const GlobalContextProvider = ({ children }) => {
         loading,
         setLoading,
         setShowTabsData,
-        fetchCategories,
+        // fetchCategories,
         fetchProducts,
         products,
         setProducts,

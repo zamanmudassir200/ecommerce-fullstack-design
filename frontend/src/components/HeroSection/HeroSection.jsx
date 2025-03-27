@@ -113,7 +113,7 @@ const HeroSection = () => {
                   <TfiUser className="text-white text-xl md:text-2xl" />
                 </div>
                 <p className="text-xs md:text-sm">
-                  {user.name ? (
+                  {user?.name ? (
                     <>
                       Hi, <b>{user.name}</b> <br />
                       Let's get started
