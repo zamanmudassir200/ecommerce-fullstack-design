@@ -80,8 +80,8 @@ const login = async (req, res) => {
     // Set the token in a cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -106,14 +106,12 @@ const checkAuth = async (req, res) => {
     console.log("user", user);
     const newUser = await userModel.findById(user._id).populate("wishList");
 
-    res
-      .status(200)
-      .json({
-        message: "User Logged in",
-        user: newUser,
-        success: true,
-        loggedIn: true,
-      });
+    res.status(200).json({
+      message: "User Logged in",
+      user: newUser,
+      success: true,
+      loggedIn: true,
+    });
   } catch (err) {
     return res.status(403).json({ message: "Invalid token", loggedIn: false });
   }

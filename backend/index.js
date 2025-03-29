@@ -21,15 +21,12 @@ const app = express();
 app.use(
   cors({
     methods: ["POST", "GET", "PATCH", "PUT", "DELETE"],
-    origin: [
-      "https://ecommerce-fullstack-design-lxvl.vercel.app",
-      "http://localhost:5173",
-    ],
+    origin: [process.env.CLIENT_URL, "http://localhost:5173"],
     allowedHeaders: ["Authorization", "Content-Type"],
     credentials: true,
   })
 );
-app.options("*", cors());
+// app.options("*", cors());
 app.use(cookieParser());
 
 app.use(express.json());
