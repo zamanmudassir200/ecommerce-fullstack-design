@@ -594,7 +594,6 @@ const removeFromWishList = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error removing from wishlist:", error);
     res.status(500).json({
       message: "Internal server error",
       success: false,
@@ -602,8 +601,28 @@ const removeFromWishList = async (req, res) => {
     });
   }
 };
+
+const addCouponCode = async (req, res) => {
+  try {
+    const userId = req.user.user._id;
+    const { couponCode, discount } = req.body;
+
+    const cart = await cartModel.findOne({ user: userId });
+    if (!cart) {
+      return res
+        .status(404)
+        .json({ message: "Cart not found", success: false });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+};
 module.exports = {
   createProduct,
+  addCouponCode,
   addToWishList,
   editProduct,
   deleteProduct,
