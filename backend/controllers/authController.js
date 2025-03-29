@@ -115,19 +115,6 @@ const checkAuth = async (req, res) => {
   } catch (err) {
     return res.status(403).json({ message: "Invalid token", loggedIn: false });
   }
-  // if (!token) {
-  //   return res.status(401).json({ message: "Not logged in", loggedIn: false });
-  // }
-  // try {
-  //   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
-  //   console.log("decode.user".decoded.user);
-  //   return res.status(200).json({
-  //     message: "User is logged in",
-  //     loggedIn: true,
-  //     user: decoded.user,
-  //   });
-  //
 };
 
 const getAllUsers = async (req, res) => {
@@ -143,9 +130,9 @@ const getAllUsers = async (req, res) => {
 };
 const logout = async (req, res) => {
   res.clearCookie("token", {
-    httpOnly: true, // ensures that the cookie cannot be accessed via JavaScript
-    secure: process.env.NODE_ENV === "production", // ensures cookie is sent over HTTPS in production
-    sameSite: "strict", // prevents CSRF attacks
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
   });
 
   // Send response
