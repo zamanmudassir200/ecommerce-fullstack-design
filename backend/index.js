@@ -23,7 +23,7 @@ app.use(
     methods: ["POST", "GET", "PATCH", "PUT", "DELETE"],
     origin: [
       "https://ecommerce-fullstack-design-lxvl.vercel.app",
-      // "http://localhost:5173",
+      "http://localhost:5173",
     ],
     allowedHeaders: ["Authorization", "Content-Type"],
     credentials: true,

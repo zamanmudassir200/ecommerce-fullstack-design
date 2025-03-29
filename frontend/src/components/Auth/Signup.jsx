@@ -233,7 +233,7 @@ const Signup = ({ title }) => {
     password: "",
     confirmPassword: "",
     phoneNumber: "",
-    isAdmin: true,
+    isAdmin: `${title !== undefined ? true : false}`,
     address: {
       street: "",
       city: "",
