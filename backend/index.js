@@ -17,23 +17,19 @@ cloudinary.config({
 });
 
 const app = express();
-// app.use(
-//   cors({
-//     methods: ["POST", "GET", "PATCH", "PUT", "DELETE"],
-//     origin: ["https://ecommerce-fullstack-design-lxvl.vercel.app"],
-//     credentials: true,
-//   })
-// );
+
 app.use(
   cors({
     methods: ["POST", "GET", "PATCH", "PUT", "DELETE"],
-    origin: "https://ecommerce-fullstack-design-lxvl.vercel.app",
-    // "http://localhost:5173",
-
+    origin: [
+      "https://ecommerce-fullstack-design-lxvl.vercel.app",
+      // "http://localhost:5173",
+    ],
+    allowedHeaders: ["Authorization", "Content-Type"],
     credentials: true,
   })
 );
-app.use(cors());
+app.options("*", cors());
 app.use(cookieParser());
 
 app.use(express.json());
