@@ -34,7 +34,7 @@ export const GlobalContextProvider = ({ children }) => {
       setProducts(response.data.products);
     } catch (error) {
       setLoading(false);
-      toast.error(error.message);
+      toast.error(`${error?.reponse?.data} hello`);
     }
   };
 
