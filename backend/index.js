@@ -26,6 +26,8 @@ app.use(
     credentials: true,
   })
 );
+
+console.log(process.env.CLIENT_URL, process.env.NODE_ENV);
 app.options("*", cors());
 app.use(cookieParser());
 
