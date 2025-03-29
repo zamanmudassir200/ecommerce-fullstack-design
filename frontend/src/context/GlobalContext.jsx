@@ -22,7 +22,7 @@ export const GlobalContextProvider = ({ children }) => {
       });
       return response;
     } catch (error) {
-      // return error;
+      return error;
     }
   };
   const fetchProducts = async () => {
@@ -34,22 +34,9 @@ export const GlobalContextProvider = ({ children }) => {
       setProducts(response.data.products);
     } catch (error) {
       setLoading(false);
-      toast.error("Error fetching products");
+      toast.error(error.message);
     }
   };
-
-  // const fetchCategories = async () => {
-  //   try {
-  //     const response = await handleApiCall(
-  //       `${url}/categories/get-categories`,
-  //       "get"
-  //     );
-  //     setCategories(response.data.categories);
-  //     console.log("response from getting categories", response);
-  //   } catch (error) {
-  //     // toast.error("Error fetching categories");
-  //   }
-  // };
 
   return (
     <GlobalContext.Provider

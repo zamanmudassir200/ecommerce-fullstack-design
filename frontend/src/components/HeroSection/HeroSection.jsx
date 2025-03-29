@@ -32,7 +32,9 @@ const HeroSection = () => {
         navigate("/login");
         setIsUserLogin(false);
       }
-    } catch (error) {}
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   const fetchCategories = async () => {

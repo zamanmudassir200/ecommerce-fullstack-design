@@ -1,54 +1,3 @@
-// import React from "react";
-
-// const CategoryForm = ({
-//   mainCategory,
-//   setMainCategory,
-//   subCategories,
-//   setSubCategories,
-//   description,
-//   setSubCategory,
-//   setDescription,
-//   subCategory,
-// }) => {
-//   return (
-//     <div className="">
-//       <div className=" ">
-//         <div className="flex gap-2">
-//           <input
-//             type="text"
-//             placeholder="Main Category (e.g, Electronics)"
-//             value={mainCategory}
-//             onChange={(e) => setMainCategory(e.target.value.toLowerCase())}
-//             className="p-2 flex-[0.8] w-full border rounded"
-//             required
-//             name="mainCategory"
-//           />
-//           <textarea
-//             placeholder="Description"
-//             value={description}
-//             name="description"
-//             onChange={(e) => setDescription(e.target.value.toLowerCase())}
-//             className="p-2 border rounded"
-//           ></textarea>
-//         </div>
-//         <div className="flex flex-wrap gap-2">
-//           <input
-//             type="text"
-//             placeholder="Subcategory (e.g, Mobiles)"
-//             value={subCategory}
-//             onChange={(e) => setSubCategory(e.target.value.toLowerCase())}
-//             className="p-2 flex-[0.8] w-full border rounded"
-//             required
-//             name="mainCategory"
-//           />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default CategoryForm;
-
 import React from "react";
 
 const CategoryForm = ({
@@ -123,7 +72,7 @@ const CategoryForm = ({
                 key={index}
                 className="bg-gray-100 px-2 py-1 rounded text-sm"
               >
-                {cat.name}
+                {cat?.name}
               </span>
             ))}
           </div>
