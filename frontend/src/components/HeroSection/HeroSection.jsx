@@ -33,7 +33,11 @@ const HeroSection = () => {
         setIsUserLogin(false);
       }
     } catch (error) {
-      toast.error(error.message);
+      console.log(
+        "error from checkUserLogin",
+        error?.message || error?.name || error?.stack
+      );
+      toast.error(error?.message || error?.name || error?.stack);
     }
   };
 
