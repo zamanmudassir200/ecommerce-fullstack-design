@@ -237,7 +237,7 @@ const Header = () => {
               <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2">
                 <FaRegUserCircle className="text-2xl text-gray-500" />
               </div>
-              <span className="font-medium">{user.name}</span>
+              <span className="font-medium">{user?.name}</span>
             </>
           ) : (
             <div className="flex gap-4">
@@ -249,7 +249,7 @@ const Header = () => {
                 Sign In
               </Link>
               <Link
-                to="/register"
+                to="/signup"
                 className="text-blue-600 hover:underline"
                 onClick={() => setMobileMenuOpen(false)}
               >
