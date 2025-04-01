@@ -15,7 +15,7 @@ const Signup = ({ title }) => {
     password: "",
     confirmPassword: "",
     phoneNumber: "",
-    isAdmin: `${title !== undefined ? true : false}`,
+    userType: `${title === "Buyer Register" ? "buyer" : "seller"}`,
     address: {
       street: "",
       city: "",
@@ -98,7 +98,7 @@ const Signup = ({ title }) => {
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-4 text-slate-400 hover:text-white"
+                  className="absolute right-4 top-4 text-slate-400 hover:text-white"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}

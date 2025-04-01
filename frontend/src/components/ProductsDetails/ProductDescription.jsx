@@ -222,7 +222,7 @@ const ProductDescription = ({ currentProduct }) => {
         {/* Main Content */}
         <div className="flex-1 rounded-lg border border-gray-200">
           {/* Tabs */}
-          <div className="h-12 flex items-center border-b border-gray-200 overflow-x-auto">
+          <div className="h-12 flex items-center border-b border-gray-200 ">
             {tabs.map((tab, index) => (
               <button
                 onClick={() => setSelectedTab(tab)}

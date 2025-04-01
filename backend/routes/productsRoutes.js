@@ -3,7 +3,6 @@ const {
   createProduct,
   editProduct,
   deleteProduct,
-  getAllCategories,
   getAllProducts,
   upload,
   editCategory,
@@ -13,11 +12,17 @@ const {
   editSubCategory,
   removeFromWishList,
   addToWishList,
+  getAllProductsByUser,
 } = require("../controllers/productsController");
 const router = express.Router();
 const { authenticationToken } = require("../middlewares/authenticationToken");
 
-router.post("/", upload.array("images", 10), createProduct); // 10 is the max number of images allowed
+router.post(
+  "/",
+  upload.array("images", 10),
+  authenticationToken,
+  createProduct
+); // 10 is the max number of images allowed
 router.patch(
   "/:productId",
   authenticationToken,
@@ -40,6 +45,11 @@ router.patch(
   "/remove-from-wishlist/:productId",
   authenticationToken,
   removeFromWishList
+);
+router.get(
+  "/getAllProductsByUser/:userId",
+  authenticationToken,
+  getAllProductsByUser
 );
 
 module.exports = router;

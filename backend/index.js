@@ -8,6 +8,8 @@ const cookieParser = require("cookie-parser");
 const cloudinary = require("cloudinary").v2;
 const cartRoutes = require("./routes/cartRoutes");
 const categoriesRoutes = require("./routes/categoryRoutes");
+const couponCodeRoutes = require("./routes/couponCodeRoutes");
+
 dotenv.config();
 
 cloudinary.config({
@@ -33,9 +35,10 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/", authRoutes);
-app.use("/products/", productsRoutes);
-app.use("/categories/", categoriesRoutes);
+app.use("/products", productsRoutes);
+app.use("/categories", categoriesRoutes);
 app.use("/carts", cartRoutes);
+app.use("/couponcodes", couponCodeRoutes);
 
 app.get("/", (req, res) => {
   res.send("welcome to home page");

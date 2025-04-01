@@ -6,9 +6,16 @@ const subCategoryModel = require("../models/categoryModel");
 const storage = multer.diskStorage({});
 const upload = multer({ storage });
 const userModel = require("../models/userModel");
+const cartModel = require("../models/cartModel");
 
 const createProduct = async (req, res) => {
+  const userId = req.user.user._id;
+  const existingUser = await userModel.findById(userId);
+  if (!existingUser) {
+    return res.status(404).json({ message: "User not found", success: false });
+  }
   const {
+    user,
     productName,
     description,
     price,
@@ -67,6 +74,7 @@ const createProduct = async (req, res) => {
 
     // Create product with category and subcategory (if provided)
     const createdProduct = await productModel.create({
+      user: existingUser._id,
       productName,
       description,
       price,
@@ -228,7 +236,8 @@ const getAllProducts = async (req, res) => {
         path: "subCategory",
         model: "category",
         options: { strictPopulate: false }, // Allow missing subCategory
-      });
+      })
+      .populate("user");
 
     if (!allProducts || allProducts.length === 0) {
       return res
@@ -484,7 +493,8 @@ const getProductById = async (req, res) => {
     const product = await productModel
       .findById(id)
       .populate("category")
-      .populate("subCategory");
+      .populate("subCategory")
+      .populate("user");
     if (!product) {
       res.status(404).json({ message: "Product not found", success: false });
     }
@@ -601,28 +611,30 @@ const removeFromWishList = async (req, res) => {
     });
   }
 };
-
-const addCouponCode = async (req, res) => {
+const getAllProductsByUser = async (req, res) => {
   try {
-    const userId = req.user.user._id;
-    const { couponCode, discount } = req.body;
-
-    const cart = await cartModel.findOne({ user: userId });
-    if (!cart) {
+    const { userId } = req.params;
+    const allProducts = await productModel.find({ user: userId });
+    if (!allProducts) {
       return res
         .status(404)
-        .json({ message: "Cart not found", success: false });
+        .json({ message: "User not found", success: false });
     }
-  } catch (error) {
-    res.status(500).json({
-      message: "Internal server error",
-      success: false,
+    return res.status(200).json({
+      message: "Products found by user",
+      count: allProducts.length,
+      allProducts,
+      success: true,
     });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `Server error ${error}`, success: false });
   }
 };
+
 module.exports = {
   createProduct,
-  addCouponCode,
   addToWishList,
   editProduct,
   deleteProduct,
@@ -635,4 +647,5 @@ module.exports = {
   editCategory,
   editSubCategory,
   getAllCategories,
+  getAllProductsByUser,
 };

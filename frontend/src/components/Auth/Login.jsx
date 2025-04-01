@@ -254,11 +254,11 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await handleApiCall(`${url}/login`, "post", data);
-      const { isAdmin } = response.data.user;
+      const { userType } = response.data.user;
 
       if (response && response.status === 200) {
         toast.success(response.data.message);
-        navigate(isAdmin ? "/admin-dashboard" : "/");
+        navigate(userType === "seller" ? "/seller-dashboard" : "/");
       } else {
         toast.error("Invalid Credentials. Please Try again");
       }
@@ -302,7 +302,7 @@ const Login = () => {
               />
               <button
                 type="button"
-                className="absolute right-3 top-3 text-slate-400 hover:text-white"
+                className="absolute right-4 top-4 text-slate-400 hover:text-white"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -312,7 +312,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-3 px-4 rounded-lg font-bold transition-colors ${
+              className={`w-full cursor-pointer py-3 px-4 rounded-lg font-bold transition-colors ${
                 loading
                   ? "bg-blue-500 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700"

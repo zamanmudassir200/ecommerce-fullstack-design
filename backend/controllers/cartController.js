@@ -1,6 +1,6 @@
 const productModel = require("../models/productModel");
 const cartModel = require("../models/cartModel");
-const userModel = require("../models/userModel");
+
 const addToCart = async (req, res) => {
   try {
     const { productId } = req.params;
@@ -46,6 +46,8 @@ const addToCart = async (req, res) => {
     }
 
     // Save the updated or new cart
+    await cart.populate("items.product");
+
     await cart.save();
 
     res
@@ -162,7 +164,6 @@ const removeFromCart = async (req, res) => {
 const removeAllProductsFromCart = async (req, res) => {
   try {
     const userId = req.user.user._id;
-    console.log(userId);
     const cart = await cartModel.findOneAndDelete({ user: userId });
 
     if (!cart) {
@@ -171,13 +172,11 @@ const removeAllProductsFromCart = async (req, res) => {
         .json({ message: "Cart not found", success: false });
     }
 
-    return res
-      .status(200)
-      .json({
-        message: "All products have been deleted from the Cart.",
-        cart,
-        success: true,
-      });
+    return res.status(200).json({
+      message: "All products have been deleted from the Cart.",
+      cart,
+      success: true,
+    });
   } catch (error) {
     return res
       .status(500)

@@ -21,6 +21,7 @@ const cartSchema = mongoose.Schema(
     totalPrice: {
       type: Number,
     },
+    couponApplied: { type: Boolean, default: false }, // Add this field to track if a coupon is applied
   },
   {
     timestamps: true,

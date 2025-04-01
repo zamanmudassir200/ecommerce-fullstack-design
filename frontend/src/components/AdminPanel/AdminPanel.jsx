@@ -4,7 +4,7 @@ import Signup from "../Auth/Signup";
 const AdminPanel = () => {
   return (
     <div>
-      <Signup title={"Admin Register "} />
+      <Signup title={"Seller Register "} />
     </div>
   );
 };

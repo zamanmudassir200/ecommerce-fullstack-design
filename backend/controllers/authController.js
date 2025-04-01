@@ -1,6 +1,19 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const path = require("path");
+
+// Multer Storage Setup
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Upload folder
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage });
 
 const register = async (req, res) => {
   const {
@@ -10,7 +23,7 @@ const register = async (req, res) => {
     confirmPassword,
     address,
     phoneNumber,
-    isAdmin,
+    userType,
   } = req.body;
   try {
     if ((!name, !email, !password, !confirmPassword, !phoneNumber)) {
@@ -39,7 +52,7 @@ const register = async (req, res) => {
           confirmPassword: hash,
           address,
           phoneNumber,
-          isAdmin,
+          userType,
         });
 
         res.status(201).json({
@@ -139,4 +152,47 @@ const logout = async (req, res) => {
   res.status(200).json({ message: "Logout Successfully" });
 };
 
-module.exports = { register, login, getAllUsers, logout, checkAuth };
+const editUser = async (req, res) => {
+  try {
+    const { name, email, address, phoneNumber } = req.body;
+    const userId = req.user.id; // Assume authentication middleware is adding user info
+
+    if (!name || !email || !address) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing fields" });
+    }
+
+    let updateData = { name, email, phoneNumber, address: JSON.parse(address) };
+
+    // Check if file is uploaded
+    if (req.file) {
+      updateData.profilePic = `/uploads/${req.file.filename}`;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+    });
+
+    if (!updatedUser) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({ success: true, user: updatedUser });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports = {
+  upload,
+  register,
+  login,
+  editUser,
+  getAllUsers,
+  logout,
+  checkAuth,
+};

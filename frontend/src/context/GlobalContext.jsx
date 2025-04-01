@@ -12,6 +12,8 @@ export const GlobalContextProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [cartNumber, setCartNumber] = useState(0);
+  const [sellersAllProducts, setSellersAllProducts] = useState([]);
+
   const handleApiCall = async (url, method, data) => {
     try {
       const response = await axios({
@@ -42,6 +44,8 @@ export const GlobalContextProvider = ({ children }) => {
     <GlobalContext.Provider
       value={{
         handleApiCall,
+        setSellersAllProducts,
+        sellersAllProducts,
         showTabsData,
         loading,
         setLoading,

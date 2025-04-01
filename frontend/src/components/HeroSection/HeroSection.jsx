@@ -12,7 +12,7 @@ import { GlobalContext } from "../../context/GlobalContext";
 import SuppliersByRegion from "./SuppliersByRegion";
 import Newsletter from "./Newsletter";
 import { toast } from "react-toastify";
-import { GiCage } from "react-icons/gi";
+import JoinNowModal from "./JoinNowModal";
 
 const HeroSection = () => {
   const [isUserLogin, setIsUserLogin] = useState(null);
@@ -21,6 +21,7 @@ const HeroSection = () => {
     useContext(GlobalContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [isJoinNowModalOpen, setIsJoinNowModalOpen] = useState(false);
 
   const checkUserLoggedIn = async () => {
     try {
@@ -33,10 +34,6 @@ const HeroSection = () => {
         setIsUserLogin(false);
       }
     } catch (error) {
-      console.log(
-        "error from checkUserLogin",
-        error?.message || error?.name || error?.stack
-      );
       toast.error(error?.message || error?.name || error?.stack);
     }
   };
@@ -132,7 +129,7 @@ const HeroSection = () => {
               {!isUserLogin && (
                 <div className="flex flex-col gap-1 md:gap-2">
                   <button
-                    onClick={() => navigate("/signup")}
+                    onClick={() => setIsJoinNowModalOpen(true)}
                     className="bg-[#127FFF] py-1 md:py-1.5 cursor-pointer rounded-md text-xs md:text-sm text-white w-full"
                   >
                     Join Now
@@ -198,6 +195,10 @@ const HeroSection = () => {
         <SuppliersByRegion />
       </div>
       <Newsletter />
+
+      {isJoinNowModalOpen && (
+        <JoinNowModal setIsJoinNowModalOpen={setIsJoinNowModalOpen} />
+      )}
     </main>
   );
 };
