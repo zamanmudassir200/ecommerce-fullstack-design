@@ -6,16 +6,14 @@ const subCategoryModel = require("../models/categoryModel");
 const storage = multer.diskStorage({});
 const upload = multer({ storage });
 const userModel = require("../models/userModel");
-const cartModel = require("../models/cartModel");
 
 const createProduct = async (req, res) => {
-  const userId = req.user.user._id;
-  const existingUser = await userModel.findById(userId);
+  const { id } = req.user;
+  const existingUser = await userModel.findById(id);
   if (!existingUser) {
     return res.status(404).json({ message: "User not found", success: false });
   }
   const {
-    user,
     productName,
     description,
     price,
@@ -94,13 +92,13 @@ const createProduct = async (req, res) => {
       .populate("category")
       .populate("subCategory");
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Product created successfully.",
       product: populatedProduct, // Send the populated product in the response
       success: true,
     });
   } catch (error) {
-    res
+    return res
       .status(500)
       .json({ message: `Server error: ${error.message}`, success: false });
   }
@@ -220,11 +218,6 @@ const deleteProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    // Find all products and populate both category and subCategory fields
-    // const allProducts = await productModel
-    //   .find()
-    //   .populate("category") // Populate the category field
-    //   .populate("subCategory"); // Populate the subCategory field
     const allProducts = await productModel
       .find()
       .populate({
@@ -510,7 +503,7 @@ const getProductById = async (req, res) => {
 const addToWishList = async (req, res) => {
   try {
     const { productId } = req.params;
-    const userId = req.user.user._id;
+    const { id } = req.user;
 
     // Verify product exists
     const product = await productModel.findById(productId);
@@ -524,7 +517,7 @@ const addToWishList = async (req, res) => {
     // Update user's wishlist and return populated data
     const updatedUser = await userModel
       .findByIdAndUpdate(
-        userId,
+        id,
         { $addToSet: { wishList: productId } },
         {
           new: true,
@@ -539,7 +532,7 @@ const addToWishList = async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Product added to wishlist",
       success: true,
       product,
@@ -561,7 +554,7 @@ const addToWishList = async (req, res) => {
 
 const removeFromWishList = async (req, res) => {
   try {
-    const userId = req.user.user._id; // Changed from req.user.user._id
+    const { id } = req.user; // Changed from req.user.user._id
     const { productId } = req.params;
 
     // Verify product exists
@@ -576,7 +569,7 @@ const removeFromWishList = async (req, res) => {
     // Update user's wishlist by removing the product
     const updatedUser = await userModel
       .findByIdAndUpdate(
-        userId,
+        id,
         { $pull: { wishList: productId } }, // Correct way to remove from array
         {
           new: true,
@@ -615,6 +608,7 @@ const getAllProductsByUser = async (req, res) => {
   try {
     const { userId } = req.params;
     const allProducts = await productModel.find({ user: userId });
+    console.log("allproducts", allProducts);
     if (!allProducts) {
       return res
         .status(404)

@@ -15,6 +15,7 @@ const Profile = () => {
     const checkUserLoggedIn = async () => {
       try {
         const response = await handleApiCall(`${url}/checkAuth`, "get");
+        console.log("response:", response);
         if (response?.data?.loggedIn) {
           setUser(response.data.user);
           setUpdatedUser(response.data.user);
@@ -54,8 +55,8 @@ const Profile = () => {
   const handleUpdateProfile = async () => {
     try {
       const response = await handleApiCall(
-        `${url}/updateProfile`,
-        "put",
+        `${url}/editUser`,
+        "patch",
         updatedUser
       );
       if (response?.data?.success) {
@@ -70,6 +71,40 @@ const Profile = () => {
     }
   };
 
+  // const handleRemoveFromWishList = async (productId) => {
+  //   try {
+  //     const response = await handleApiCall(
+  //       `${url}/products/remove-from-wishlist/${productId}`,
+  //       "patch"
+  //     );
+  //     const updatedUser = user?.wishList?.filter((wl) => {
+  //       console.log(wl);
+  //     });
+
+  //     console.log("updateduser", updatedUser);
+  //     setUser(response.data.user);
+  //     console.log("remove from wishList profile:", response);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  const handleRemoveFromWishList = async (productId) => {
+    try {
+      const response = await handleApiCall(
+        `${url}/products/remove-from-wishlist/${productId}`,
+        "patch"
+      );
+
+      console.log(
+        "response after removing from wishlist:",
+        response?.data?.user
+      );
+      setUser(response.data.user);
+    } catch (error) {
+      console.log("Error removing item from wishlist:", error);
+    }
+  };
   if (!user) {
     return <p className="text-center text-lg mt-10">Loading...</p>;
   }
@@ -79,25 +114,23 @@ const Profile = () => {
       <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
         <div className="flex flex-col items-center">
           <img
-            src={user.profilePic || "/default-avatar.png"}
+            src={user?.profilePic}
             alt="Profile"
             className="w-24 h-24 rounded-full object-cover border-2 border-gray-300"
           />
-          <h2 className="text-2xl font-bold mt-3">{user.name}</h2>
-          <p className="text-gray-600">{user.email}</p>
-          <p className="text-gray-600">
-            {user.phoneNumber || "No phone number"}
-          </p>
+          <h2 className="text-2xl font-bold mt-3">{user?.name}</h2>
+          <p className="text-gray-600">{user?.email}</p>
+          <p className="text-gray-600">{user?.phoneNumber}</p>
         </div>
 
         {/* Address Section */}
-        {user.address && (
+        {user && user?.address && (
           <div className="mt-4 border-t pt-4">
             <h3 className="text-lg font-semibold">Address</h3>
-            <p className="text-gray-600">{user.address.street || "N/A"}</p>
+            <p className="text-gray-600">{user?.address?.street}</p>
             <p className="text-gray-600">
-              {user.address.city || "N/A"}, {user.address.country || "N/A"} -{" "}
-              {user.address.postalCode || "N/A"}
+              {user?.address?.city}, {user?.address?.country} -{" "}
+              {user?.address?.postalCode}
             </p>
           </div>
         )}
@@ -105,12 +138,25 @@ const Profile = () => {
         {/* Wishlist Section */}
         <div className="mt-4 border-t pt-4">
           <h3 className="text-lg font-semibold">Wishlist</h3>
-          {user.wishList?.length > 0 ? (
+          {user?.wishList?.length > 0 ? (
             <ul className="mt-2 space-y-2">
-              {user.wishList.map((product) => (
-                <li key={product._id} className="p-2 border-b">
-                  <span className="font-semibold">{product.productName}</span> -{" "}
-                  {product.price} Rs
+              {user?.wishList.map((product) => (
+                <li
+                  key={product._id}
+                  className="p-2 flex items-center justify-between border-b"
+                >
+                  <div className="">
+                    <span className="font-semibold">{product.productName}</span>{" "}
+                    - {product.price} Rs
+                  </div>
+                  <div className="">
+                    <button
+                      onClick={() => handleRemoveFromWishList(product._id)}
+                      className="bg-red-600 text-white w-6 h-6 cursor-pointer flex items-center justify-center   rounded-full"
+                    >
+                      X
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>

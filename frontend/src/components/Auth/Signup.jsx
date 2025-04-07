@@ -39,11 +39,11 @@ const Signup = ({ title }) => {
         navigate("/login");
       } else {
         setLoading(false);
-        toast.error(response.data.message);
+        toast.error(response?.data?.message);
       }
     } catch (error) {
       setLoading(false);
-      toast.error(error.response?.data?.message || "Registration failed");
+      // toast.error(error.response?.data?.message);
     }
   };
 

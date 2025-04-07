@@ -5,7 +5,7 @@ dotenv.config();
 // Middleware to authenticate using token from cookies
 const authenticationToken = (req, res, next) => {
   // Access the token from cookies
-  const token = req.cookies?.token; // 'authToken' is the key used to store the token in cookies
+  const token = req.cookies?.token;
   if (!token) {
     return res.status(401).json({ message: "Authentication token missing!" });
   }
@@ -13,6 +13,7 @@ const authenticationToken = (req, res, next) => {
   try {
     // Verify the token using the secret key
     const verifiedUser = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    console.log("verified user:", verifiedUser);
     req.user = verifiedUser;
 
     next();

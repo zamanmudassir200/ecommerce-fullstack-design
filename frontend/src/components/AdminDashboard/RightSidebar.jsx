@@ -20,36 +20,40 @@ const RightSidebar = () => {
   const [isCouponCodeModalOpen, setIsCouponCodeModalOpen] = useState(false);
   const [isUserLogin, setIsUserLogin] = useState(false);
   const [user, setUser] = useState([]);
+  const [userId, setUserId] = useState(null);
+
   const checkUserLoggedIn = async () => {
     try {
       const response = await handleApiCall(`${url}/checkAuth`, "get");
       if (response.data.loggedIn) {
         setIsUserLogin(true);
         setUser(response.data.user);
+
+        setUserId(response.data.user._id);
       } else {
         navigate("/login");
         setIsUserLogin(false);
       }
-    } catch (error) {
-      toast.error(error?.message || error?.name || error?.stack);
-    }
+    } catch (error) {}
   };
-  console.log("user", user);
-  const userId = user._id;
-  const fetchProductsByUser = async (userId) => {
+  const { _id } = user;
+  const fetchProductsByUser = async (_id) => {
     try {
       const response = await handleApiCall(
-        `${url}/products/getAllProductsByUser/${userId}`,
+        `${url}/products/getAllProductsByUser/${_id}`,
         "get"
       );
       setProducts(response.data.allProducts);
-    } catch (error) {}
+    } catch (error) {
+      console.log("Error fetching products:", error);
+    }
   };
   useEffect(() => {
     checkUserLoggedIn();
-    fetchProductsByUser(userId);
-  }, [user]);
-  console.log(products);
+    if (_id) {
+      fetchProductsByUser(_id);
+    }
+  }, [_id]);
   useEffect(() => {
     if (isDeleteModalOpen || isModalOpen) {
       document.body.style.overflow = "hidden";
@@ -117,21 +121,21 @@ const RightSidebar = () => {
                     </h2>
                     <p className="text-gray-600 text-sm mb-1">
                       <span className="font-medium">Description:</span>{" "}
-                      {product.description}
+                      {product?.description}
                     </p>
                     <p className="text-gray-600 text-sm mb-1">
                       <span className="font-medium">Brand:</span>{" "}
-                      {product.brand}
+                      {product?.brand}
                     </p>
                     <p className="text-gray-600 text-sm mb-3">
                       <span className="font-medium">Stock:</span>{" "}
-                      {product.stock}
+                      {product?.stock}
                     </p>
                     <div className="flex gap-2">
                       <button
                         onClick={() => {
                           setProductToEdit(product);
-                          setCategoryId(product.category._id);
+                          setCategoryId(product?.category?._id);
                           setIsEditModalOpen(true);
                         }}
                         className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm"
@@ -140,7 +144,7 @@ const RightSidebar = () => {
                       </button>
                       <button
                         onClick={() => {
-                          setProductToDelete(product._id);
+                          setProductToDelete(product?._id);
                           setIsDeleteModalOpen(true);
                         }}
                         className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"

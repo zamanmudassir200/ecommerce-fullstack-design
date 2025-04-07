@@ -14,7 +14,7 @@ const SaveForLater = () => {
     try {
       const response = await handleApiCall(`${url}/checkAuth`, "get");
       if (response.data.loggedIn) {
-        setUser(response.data.user.wishList);
+        setUser(response.data.wishList);
       } else {
         navigate("/login");
       }

@@ -26,6 +26,7 @@ const HeroSection = () => {
   const checkUserLoggedIn = async () => {
     try {
       const response = await handleApiCall(`${url}/checkAuth`, "get");
+      console.log("response from herosection checkauth:", response);
       if (response.data.loggedIn) {
         setIsUserLogin(true);
         setUser(response.data.user);
@@ -34,7 +35,7 @@ const HeroSection = () => {
         setIsUserLogin(false);
       }
     } catch (error) {
-      toast.error(error?.message || error?.name || error?.stack);
+      toast.error("hello");
     }
   };
 
@@ -60,8 +61,8 @@ const HeroSection = () => {
   };
 
   useEffect(() => {
-    fetchProducts();
     checkUserLoggedIn();
+    fetchProducts();
     fetchCategories();
   }, []);
 

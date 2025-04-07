@@ -11,7 +11,6 @@ const FormModal = ({
   isEditModalOpen,
   productToEdit,
   isModalOpen,
-  categoryId,
 }) => {
   const { handleApiCall, products, setProducts } = useContext(GlobalContext);
   const [selectedImages, setSelectedImages] = useState([]);

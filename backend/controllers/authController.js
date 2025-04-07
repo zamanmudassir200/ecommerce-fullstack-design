@@ -27,19 +27,19 @@ const register = async (req, res) => {
   } = req.body;
   try {
     if ((!name, !email, !password, !confirmPassword, !phoneNumber)) {
-      res
+      return res
         .status(400)
         .json({ message: "All fields are required.", success: false });
     }
     const user = await userModel.findOne({ email });
 
     if (user) {
-      res
+      return res
         .status(404)
         .json({ message: "User already registered. please login " });
     }
     if (password !== confirmPassword) {
-      res
+      return res
         .status(400)
         .json({ message: "Password didnot match with the confirm password." });
     }
@@ -55,7 +55,7 @@ const register = async (req, res) => {
           userType,
         });
 
-        res.status(201).json({
+        return res.status(201).json({
           message: "User registered successfully",
           success: true,
           user: createdUser,
@@ -63,7 +63,7 @@ const register = async (req, res) => {
       });
     });
   } catch (err) {
-    res.status(500).json({ message: `Server error ${err}` });
+    return res.status(500).json({ message: `Server error ${err}` });
   }
 };
 const login = async (req, res) => {
@@ -84,9 +84,15 @@ const login = async (req, res) => {
         .status(404)
         .json({ message: "Email or Password is invalid.", success: false });
     }
-
+    const isMatch = await bcrypt.compare(password, user.password);
+    console.log("isMatch", isMatch);
+    if (!isMatch) {
+      return res
+        .status(400)
+        .json({ message: "Invalid Crendials! Email or password is invalid" });
+    }
     // Generate JWT token
-    const token = jwt.sign({ user }, process.env.JWT_SECRET_KEY, {
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
       expiresIn: "24hr",
     });
 
@@ -101,7 +107,8 @@ const login = async (req, res) => {
     // Respond with success and user data
     return res.status(200).json({
       message: "User logged in successfully",
-      user,
+      userType: user.userType,
+      wishList: user.wishList,
       token,
       success: true,
     });
@@ -115,13 +122,14 @@ const login = async (req, res) => {
 
 const checkAuth = async (req, res) => {
   try {
-    const { user } = req.user;
-    console.log("user", user);
-    const newUser = await userModel.findById(user._id).populate("wishList");
+    const { id } = req.user;
+    // console.log("user", user);
+    const newUser = await userModel.findById(id).populate("wishList");
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "User Logged in",
       user: newUser,
+      wishList: newUser.wishList,
       success: true,
       loggedIn: true,
     });
@@ -135,10 +143,10 @@ const getAllUsers = async (req, res) => {
     const allUsers = await userModel.find();
 
     if (allUsers) {
-      res.status(200).json({ message: "Users available", allUsers });
+      return res.status(200).json({ message: "Users available", allUsers });
     }
   } catch (error) {
-    res.status(500).json({ message: `Server error ${error}` });
+    return res.status(500).json({ message: `Server error ${error}` });
   }
 };
 const logout = async (req, res) => {
@@ -149,7 +157,7 @@ const logout = async (req, res) => {
   });
 
   // Send response
-  res.status(200).json({ message: "Logout Successfully" });
+  return res.status(200).json({ message: "Logout Successfully" });
 };
 
 const editUser = async (req, res) => {
@@ -183,7 +191,9 @@ const editUser = async (req, res) => {
     res.status(200).json({ success: true, user: updatedUser });
   } catch (error) {
     console.error("Error updating profile:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
 

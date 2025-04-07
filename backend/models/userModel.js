@@ -6,6 +6,12 @@ const userSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
+    products: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "product",
+      },
+    ],
     email: {
       type: String,
       required: true,
@@ -24,6 +30,7 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      enum: ["seller", "buyer"],
     },
     address: {
       type: {

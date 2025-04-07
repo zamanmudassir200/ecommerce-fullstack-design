@@ -254,16 +254,18 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await handleApiCall(`${url}/login`, "post", data);
-      const { userType } = response.data.user;
-
+      console.log("response from login", response);
+      console.log("user type", response.data.userType);
       if (response && response.status === 200) {
         toast.success(response.data.message);
-        navigate(userType === "seller" ? "/seller-dashboard" : "/");
+        navigate(
+          response.data.userType === "seller" ? "/seller-dashboard" : "/"
+        );
       } else {
         toast.error("Invalid Credentials. Please Try again");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Login failed");
+      toast.error(error.response?.data?.message);
     } finally {
       setLoading(false);
     }

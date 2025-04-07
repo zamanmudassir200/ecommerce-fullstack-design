@@ -4,7 +4,7 @@ const cartModel = require("../models/cartModel");
 const addToCart = async (req, res) => {
   try {
     const { productId } = req.params;
-    const userId = req.user.user._id; // Assuming user is added to req in a middleware
+    const { id } = req.user; // Assuming user is added to req in a middleware
     const { quantity } = req.body;
 
     // Fetch the product by ID
@@ -16,7 +16,7 @@ const addToCart = async (req, res) => {
     }
 
     // Find the user's cart or create a new one
-    let cart = await cartModel.findOne({ user: userId });
+    let cart = await cartModel.findOne({ user: id });
 
     const productPrice = product.price * quantity;
 
@@ -39,7 +39,7 @@ const addToCart = async (req, res) => {
     } else {
       // Create a new cart for the user
       cart = new cartModel({
-        user: userId,
+        user: id,
         items: [{ product: productId, quantity }],
         totalPrice: productPrice,
       });
@@ -92,9 +92,9 @@ const addToCart = async (req, res) => {
 
 const getCartsByUser = async (req, res) => {
   try {
-    const userId = req.user.user._id;
+    const { id } = req.user;
 
-    const cart = await cartModel.findOne({ user: userId });
+    const cart = await cartModel.findOne({ user: id });
     if (!cart) {
       return res.status(200).json({
         message: "No cart available. Please put something into cart",
@@ -116,7 +116,7 @@ const getCartsByUser = async (req, res) => {
 };
 const removeFromCart = async (req, res) => {
   try {
-    const userId = req.user.user._id;
+    const { id } = req.user;
     const { productId } = req.params;
 
     // Check if the product exists
@@ -129,7 +129,7 @@ const removeFromCart = async (req, res) => {
     }
 
     const updatedCart = await cartModel.findOneAndUpdate(
-      { user: userId }, // Find the cart by the user ID
+      { user: id }, // Find the cart by the user ID
       { $pull: { items: { product: productId } } },
       { new: true, runValidators: true } // Return the updated cart
     );
@@ -149,13 +149,13 @@ const removeFromCart = async (req, res) => {
     updatedCart.totalPrice = totalPrice;
     await updatedCart.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Product removed from Cart",
       cart: updatedCart,
       success: true,
     });
   } catch (error) {
-    res
+    return res
       .status(500)
       .json({ message: `Server error: ${error.message}`, success: false });
   }
@@ -163,8 +163,8 @@ const removeFromCart = async (req, res) => {
 
 const removeAllProductsFromCart = async (req, res) => {
   try {
-    const userId = req.user.user._id;
-    const cart = await cartModel.findOneAndDelete({ user: userId });
+    const { id } = req.user;
+    const cart = await cartModel.findOneAndDelete({ user: id });
 
     if (!cart) {
       return res

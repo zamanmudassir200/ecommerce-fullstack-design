@@ -16,6 +16,8 @@ import ProductsListing from "./components/ProductsListing/ProductsListing";
 import ProductsDetails from "./components/ProductsDetails/ProductsDetails";
 import SaveForLater from "./components/Header/SaveForLater";
 import AllProductsByUser from "./components/ProductsDetails/AllProductsByUser";
+
+import CheckOut from "./components/CheckOut/CheckOut";
 const App = () => {
   return (
     <div className="">
@@ -39,6 +41,7 @@ const App = () => {
                   path="/product-detail/:productId"
                   element={<ProductsDetails />}
                 />
+                <Route path="/checkout/order" element={<CheckOut />} />
               </Routes>
               <Footer />
             </>

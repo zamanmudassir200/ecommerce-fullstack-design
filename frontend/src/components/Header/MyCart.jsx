@@ -16,6 +16,7 @@ const MyCart = () => {
   const [coupon, setCoupon] = useState("");
   const [couponCodeResponse, setCouponCodeResponse] = useState([]);
   const [errMsg, setErrMsg] = useState(null);
+
   const fetchCartByUser = async () => {
     setLoading(true);
     try {
@@ -285,7 +286,7 @@ const MyCart = () => {
                     </span>
                   </div>
                   <button
-                    onClick={() => toast.info("Checkout feature coming soon!")}
+                    onClick={() => navigate("/checkout/order")}
                     className="bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg w-full py-3 transition-colors"
                   >
                     Checkout

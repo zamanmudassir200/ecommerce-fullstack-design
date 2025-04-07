@@ -3,10 +3,7 @@ import { GlobalContext } from "../../context/GlobalContext";
 import { AiOutlineProduct } from "react-icons/ai";
 import { MdHistoryToggleOff } from "react-icons/md";
 import { IoIosLogOut } from "react-icons/io";
-import { toast } from "react-toastify";
-import url from "../../utils/url";
 import Logout from "./Logout";
-import { useNavigate } from "react-router-dom";
 
 const tabs = [
   { name: "products", label: "Products", icon: <AiOutlineProduct size={20} /> },

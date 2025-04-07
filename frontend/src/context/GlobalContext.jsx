@@ -1,8 +1,7 @@
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import React, { createContext, useState } from "react";
 import { toast } from "react-toastify";
 export const GlobalContext = createContext(null);
-// import url from "../utils/url";
 
 export const GlobalContextProvider = ({ children }) => {
   const [showTabsData, setShowTabsData] = useState("products");
@@ -24,21 +23,24 @@ export const GlobalContextProvider = ({ children }) => {
       });
       return response;
     } catch (error) {
-      return error;
+      if (isAxiosError(error)) {
+        toast.error(error?.response?.data?.message);
+        return error?.response?.data?.message;
+      }
     }
   };
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const response = await handleApiCall(`${url}/products/`, "get");
-      console.log("fetching all products", response.data.products);
-      setLoading(false);
-      setProducts(response.data.products);
-    } catch (error) {
-      setLoading(false);
-      toast.error(`${error?.reponse?.data}`);
-    }
-  };
+  // const fetchProducts = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await handleApiCall(`${url}/products/`, "get");
+  //     console.log("fetching all products", response?.data?.products);
+  //     setLoading(false);
+  //     setProducts(response.data.products);
+  //   } catch (error) {
+  //     setLoading(false);
+  //     toast.error(`${error?.reponse?.data}`);
+  //   }
+  // };
 
   return (
     <GlobalContext.Provider
@@ -51,7 +53,7 @@ export const GlobalContextProvider = ({ children }) => {
         setLoading,
         setShowTabsData,
         // fetchCategories,
-        fetchProducts,
+        // fetchProducts,
         products,
         setProducts,
         categories,

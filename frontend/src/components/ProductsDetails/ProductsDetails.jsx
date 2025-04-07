@@ -188,85 +188,91 @@ const ProductsDetails = () => {
           </div>
 
           {/* Supplier & Action Section */}
-          <div className="w-full relative lg:w-[280px]">
-            <div className="w-full flex flex-col justify-between p-3 h-auto lg:h-[325px] border rounded-lg border-gray-200 mb-4">
-              <div>
-                <h1 className="font-bold">
-                  Supplier: {product?.user?.name} <br />
-                  Shop: {product?.brand}
-                </h1>
-              </div>
-              <hr className="my-2" />
-              <div className="mb-4">
-                {product.user?.address?.street} {product.user?.address.city}{" "}
-                {product.user?.address.postalCode}{" "}
-                {product?.user?.address?.country}
-              </div>
-              <div className="flex flex-col gap-3">
-                <button className="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-2 transition-colors">
-                  Send Inquiry
-                </button>
-                <button
-                  onClick={() => setSellerProfileModalOpen(true)}
-                  className="w-full cursor-pointer text-black border border-gray-200 hover:bg-gray-100 rounded-lg py-2 transition-colors"
-                >
-                  Seller's Profile
-                </button>
-              </div>
-            </div>
-
-            <div className="text-center font-semibold">
-              <div className="flex text-blue-500 items-center justify-center gap-2 hover:text-blue-700 cursor-pointer">
-                <FaRegHeart size={20} />
-                <span>Save for later</span>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-3">
-                <h1 className="px-2">Quantity:</h1>
-                <div className="border flex border-gray-300 rounded-lg">
-                  <button
-                    onClick={() => quantity > 1 && setQuantity(quantity - 1)}
-                    className="border-r border-gray-300 rounded-l-lg cursor-pointer px-3 sm:px-4 py-2 bg-white text-black hover:bg-gray-100"
-                    disabled={quantity <= 1}
-                  >
-                    ➖
+          <div className="">
+            <div className="w-full relative lg:w-[280px]">
+              <div className="w-full flex flex-col justify-between p-3 h-auto lg:h-[325px] border rounded-lg border-gray-200 mb-4">
+                <div>
+                  <h1 className="font-bold">
+                    Supplier: {product?.user?.name} <br />
+                    Shop: {product?.brand}
+                  </h1>
+                </div>
+                <hr className="my-2" />
+                <div className="mb-4">
+                  {product.user?.address?.street} {product.user?.address.city}{" "}
+                  {product.user?.address.postalCode}{" "}
+                  {product?.user?.address?.country}
+                </div>
+                <div className="flex flex-col gap-3">
+                  <button className="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-2 transition-colors">
+                    Send Inquiry
                   </button>
-                  <input
-                    className="w-[60px] sm:w-[80px] text-center border-none focus:ring-0"
-                    value={quantity}
-                    type="number"
-                    min="1"
-                    onChange={(e) => {
-                      const value = parseInt(e.target.value);
-                      if (!isNaN(value) && value > 0) {
-                        setQuantity(value);
-                      }
-                    }}
-                  />
                   <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="border-l border-gray-300 rounded-r-lg px-3 sm:px-4 cursor-pointer py-2 bg-white text-black hover:bg-gray-100"
+                    onClick={() => setSellerProfileModalOpen(true)}
+                    className="w-full cursor-pointer text-black border border-gray-200 hover:bg-gray-100 rounded-lg py-2 transition-colors"
                   >
-                    ➕
+                    Seller's Profile
                   </button>
                 </div>
               </div>
 
-              <div className="mt-5">
-                <button
-                  onClick={handleAddToCart}
-                  className="cursor-pointer border px-3 py-2 text-white rounded-lg bg-green-600 hover:bg-green-700 w-full transition-colors"
-                >
-                  Add to Cart
-                </button>
+              <div className="text-center font-semibold">
+                <div className="flex text-blue-500 items-center justify-center gap-2 hover:text-blue-700 cursor-pointer">
+                  <FaRegHeart size={20} />
+                  <span>Save for later</span>
+                </div>
+
+                <div className="">
+                  <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-3">
+                    <h1 className="px-2">Quantity:</h1>
+                    <div className="border flex border-gray-300 rounded-lg">
+                      <button
+                        onClick={() =>
+                          quantity > 1 && setQuantity(quantity - 1)
+                        }
+                        className="border-r border-gray-300 rounded-l-lg cursor-pointer px-3 sm:px-4 py-2 bg-white text-black hover:bg-gray-100"
+                        disabled={quantity <= 1}
+                      >
+                        ➖
+                      </button>
+                      <input
+                        className="w-[60px] sm:w-[80px] text-center border-none focus:ring-0"
+                        value={quantity}
+                        type="number"
+                        min="1"
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value);
+                          if (!isNaN(value) && value > 0) {
+                            setQuantity(value);
+                          }
+                        }}
+                      />
+                      <button
+                        onClick={() => setQuantity(quantity + 1)}
+                        className="border-l border-gray-300 rounded-r-lg px-3 sm:px-4 cursor-pointer py-2 bg-white text-black hover:bg-gray-100"
+                      >
+                        ➕
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-5">
+                    <button
+                      onClick={handleAddToCart}
+                      className="cursor-pointer border px-3 py-2 text-white rounded-lg bg-green-600 hover:bg-green-700 w-full transition-colors"
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
+                </div>
               </div>
+              {sellerProfileModalOpen && (
+                <SellerProfile
+                  product={product}
+                  setSellerProfileModalOpen={setSellerProfileModalOpen}
+                />
+              )}
             </div>
-            {sellerProfileModalOpen && (
-              <SellerProfile
-                product={product}
-                setSellerProfileModalOpen={setSellerProfileModalOpen}
-              />
-            )}
           </div>
         </div>
       </div>
