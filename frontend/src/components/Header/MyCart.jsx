@@ -244,16 +244,14 @@ const MyCart = () => {
                           Coupon Discount:
                         </span>
                         <span className="text-red-500 font-medium">
-                          - {couponCodeResponse?.discount || 0}% {" -"}
+                          - {couponCodeResponse?.discount}% {" -"}
                           {Number(
                             (
                               cart?.items?.reduce(
                                 (acc, item) =>
-                                  acc +
-                                  (item?.product?.price || 0) *
-                                    (item?.quantity || 0),
+                                  acc + item?.product?.price * item?.quantity,
                                 0
-                              ) * (couponCodeResponse?.discount || 0)
+                              ) * couponCodeResponse?.discount
                             ).toFixed(2) / 100
                           )}{" "}
                           Rs
@@ -286,7 +284,7 @@ const MyCart = () => {
                     </span>
                   </div>
                   <button
-                    onClick={() => navigate("/checkout/order")}
+                    onClick={() => navigate(`/checkout/order/${cart._id}`)}
                     className="bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg w-full py-3 transition-colors"
                   >
                     Checkout

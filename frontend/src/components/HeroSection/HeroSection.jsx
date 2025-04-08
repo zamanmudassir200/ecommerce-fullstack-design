@@ -65,7 +65,7 @@ const HeroSection = () => {
     fetchProducts();
     fetchCategories();
   }, []);
-
+  console.log("user", user);
   return (
     <main className="min-h-screen">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
@@ -120,7 +120,15 @@ const HeroSection = () => {
                   {user?.name ? (
                     <>
                       Hi, <b>{user.name}</b> <br />
-                      Let's get started
+                      Let's get started <br />
+                      {user.userType === "seller" && (
+                        <button
+                          onClick={() => navigate("/seller-dashboard")}
+                          className="rounded-lg bg-green-400 text-white p-2 my-2"
+                        >
+                          Admin Dashboard
+                        </button>
+                      )}
                     </>
                   ) : (
                     "Welcome Guest"

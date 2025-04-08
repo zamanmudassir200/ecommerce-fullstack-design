@@ -16,7 +16,7 @@ const tabs = [
 
 const LeftSidebar = () => {
   const { setShowTabsData } = useContext(GlobalContext);
-  const [activeTab, setActiveTab] = useState("products");
+  const [activeTab, setActiveTab] = useState("order history");
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const handleTabClick = (tabName) => {

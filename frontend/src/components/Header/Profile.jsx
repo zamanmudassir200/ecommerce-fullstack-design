@@ -15,7 +15,6 @@ const Profile = () => {
     const checkUserLoggedIn = async () => {
       try {
         const response = await handleApiCall(`${url}/checkAuth`, "get");
-        console.log("response:", response);
         if (response?.data?.loggedIn) {
           setUser(response.data.user);
           setUpdatedUser(response.data.user);
@@ -27,7 +26,7 @@ const Profile = () => {
       }
     };
     checkUserLoggedIn();
-  }, [navigate, handleApiCall]);
+  }, [navigate, handleApiCall, user]);
 
   const handleLogout = async () => {
     try {
@@ -71,24 +70,6 @@ const Profile = () => {
     }
   };
 
-  // const handleRemoveFromWishList = async (productId) => {
-  //   try {
-  //     const response = await handleApiCall(
-  //       `${url}/products/remove-from-wishlist/${productId}`,
-  //       "patch"
-  //     );
-  //     const updatedUser = user?.wishList?.filter((wl) => {
-  //       console.log(wl);
-  //     });
-
-  //     console.log("updateduser", updatedUser);
-  //     setUser(response.data.user);
-  //     console.log("remove from wishList profile:", response);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const handleRemoveFromWishList = async (productId) => {
     try {
       const response = await handleApiCall(
@@ -96,10 +77,6 @@ const Profile = () => {
         "patch"
       );
 
-      console.log(
-        "response after removing from wishlist:",
-        response?.data?.user
-      );
       setUser(response.data.user);
     } catch (error) {
       console.log("Error removing item from wishlist:", error);

@@ -1,9 +1,10 @@
 const express = require("express");
 
 const { authenticationToken } = require("../middlewares/authenticationToken");
-const { createOrder } = require("../controllers/orderController");
+const { createOrder, getAllOrders } = require("../controllers/orderController");
 
 const router = express.Router();
 
-router.post("/", authenticationToken, createOrder);
+router.post("/:cartId", authenticationToken, createOrder);
+router.get("/", authenticationToken, getAllOrders);
 module.exports = router;

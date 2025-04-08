@@ -23,6 +23,10 @@ const productSchema = new mongoose.Schema({
     default: 0,
     max: 100,
   },
+  discountedPrice: {
+    type: Number,
+    default: 0,
+  },
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "category", // Reference to the category

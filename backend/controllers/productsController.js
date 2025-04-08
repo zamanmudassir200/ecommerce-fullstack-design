@@ -22,6 +22,7 @@ const createProduct = async (req, res) => {
     discount,
     category, // ID of the main category
     subCategory, // ID of the subcategory
+    discountedPrice,
     rating,
     reviews,
   } = req.body;
@@ -65,10 +66,10 @@ const createProduct = async (req, res) => {
     const imageUrls = uploadedImages.map((img) => img.secure_url);
 
     // Calculate discounted price (if discount exists)
-    // let finalPrice = price;
-    // if (discount > 0) {
-    //   finalPrice = price - (price * discount) / 100;
-    // }
+    let finalDiscountedPrice = discountedPrice;
+    if (discount > 0) {
+      finalDiscountedPrice = price - (price * discount) / 100;
+    }
 
     // Create product with category and subcategory (if provided)
     const createdProduct = await productModel.create({
@@ -82,6 +83,7 @@ const createProduct = async (req, res) => {
       discount,
       category: categoryObj._id,
       subCategory: subCategoryObj._id, // Save subcategory if available
+      discountedPrice: finalDiscountedPrice,
       rating,
       reviews,
     });
