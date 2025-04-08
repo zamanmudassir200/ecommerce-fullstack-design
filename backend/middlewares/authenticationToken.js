@@ -13,9 +13,7 @@ const authenticationToken = (req, res, next) => {
   try {
     // Verify the token using the secret key
     const verifiedUser = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    console.log("verified user:", verifiedUser);
     req.user = verifiedUser;
-
     next();
   } catch (error) {
     // Handle token verification failure

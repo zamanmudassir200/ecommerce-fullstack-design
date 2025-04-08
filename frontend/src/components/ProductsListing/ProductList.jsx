@@ -16,12 +16,9 @@ const ProductList = ({ product }) => {
     try {
       const response = await handleApiCall(`${url}/checkAuth`, "get");
 
-      console.log("response from checkAuth:", response);
       if (response.data.loggedIn) {
         const currentUser = response.data.user;
-        console.log("currentUser", currentUser);
         setUser(currentUser);
-        // const { wishList } = currentUser;
         const { wishList } = response.data;
 
         // Check if the product is in the user's wishlist

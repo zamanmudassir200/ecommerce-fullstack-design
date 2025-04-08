@@ -271,14 +271,14 @@ const MyCart = () => {
                       {Number(
                         cart?.totalPrice -
                           cart?.items
-                            ?.filter((item) => (item.product.discount || 0) > 0)
+                            ?.filter((item) => item.product.discount > 0)
                             ?.reduce(
                               (total, item) =>
                                 total +
-                                (((item.product.price || 0) *
+                                ((item.product.price *
                                   (item.product.discount || 0)) /
                                   100) *
-                                  (item.quantity || 0),
+                                  item.quantity,
                               0
                             )
                       ).toFixed(2)}{" "}

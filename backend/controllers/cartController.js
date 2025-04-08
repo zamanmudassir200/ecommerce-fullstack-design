@@ -128,12 +128,13 @@ const removeFromCart = async (req, res) => {
       });
     }
 
-    const updatedCart = await cartModel.findOneAndUpdate(
-      { user: id }, // Find the cart by the user ID
-      { $pull: { items: { product: productId } } },
-      { new: true, runValidators: true } // Return the updated cart
-    );
-
+    const updatedCart = await cartModel
+      .findOneAndUpdate(
+        { user: id }, // Find the cart by the user ID
+        { $pull: { items: { product: productId } } },
+        { new: true, runValidators: true } // Return the updated cart
+      )
+      .populate("items.product");
     if (!updatedCart) {
       return res.status(404).json({
         message: "Cart not found",
@@ -143,21 +144,21 @@ const removeFromCart = async (req, res) => {
 
     let totalPrice = 0;
     updatedCart.items.forEach((item) => {
+      console.log("item.product", item.product);
       totalPrice += item.product.price * item.quantity;
     });
-
     updatedCart.totalPrice = totalPrice;
     await updatedCart.save();
-
     return res.status(200).json({
       message: "Product removed from Cart",
       cart: updatedCart,
       success: true,
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: `Server error: ${error.message}`, success: false });
+    return res.status(500).json({
+      message: `Server error hskdhks: ${error.message}`,
+      success: false,
+    });
   }
 };
 

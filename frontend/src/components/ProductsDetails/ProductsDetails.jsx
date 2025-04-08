@@ -34,7 +34,6 @@ const ProductsDetails = () => {
       toast.error("Error checking login status");
     }
   };
-  console.log("user", user);
   const fetchProductById = async () => {
     try {
       const response = await handleApiCall(`${url}/products/${productId}`);
@@ -78,7 +77,6 @@ const ProductsDetails = () => {
   if (!product) {
     return <div className="text-center py-10">Loading...</div>;
   }
-  console.log("product", product);
   return (
     <main className="container relative  mx-auto px-4 sm:px-6 lg:px-8">
       <div className="w-full my-5 min-h-[580px] p-3 border rounded-lg border-gray-200">
