@@ -30,7 +30,7 @@ const OrderHistory = () => {
         <p>No orders yet.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {orders.map((order) => (
+          {orders.reverse().map((order) => (
             <div
               key={order._id}
               className="border p-4 rounded-lg shadow-md bg-white"
@@ -39,7 +39,7 @@ const OrderHistory = () => {
                 <strong>Order ID:</strong> {order._id}
               </div>
 
-              <div className="my-3 border-[1px] break-all border-gray-500 p-2 rounded-lg">
+              <div className="my-3 border-[1px] break-alxxl border-gray-500 p-2 rounded-lg">
                 <h1>
                   <strong>Username:</strong> {order.user.name}
                 </h1>
@@ -56,6 +56,10 @@ const OrderHistory = () => {
                 <ul className="ml-4 list-disc text-sm text-gray-700">
                   {order.products.map((prod) => (
                     <li key={prod._id}>
+                      <span className="text-lg">Name: </span>{" "}
+                      <strong className="text-lg">
+                        {prod.product.productName}
+                      </strong>{" "}
                       <span className="font-medium">Qty:</span> {prod.quantity},
                       <span className="font-medium ml-1">Price:</span> per qty{" "}
                       <b>{prod.product.discountedPrice} Rs</b>
@@ -66,14 +70,14 @@ const OrderHistory = () => {
 
               <div className="text-sm flex gap-2 justify-between items-center mb-3">
                 <p className="text-gray-600">
-                  <strong>Payment:</strong> {order.paymentMethod} -{" "}
+                  <strong>Payment:</strong> {order.payMethod} -{" "}
                   {order.paymentStatus}
                 </p>
                 <div className="flex gap-3 flex-wrap">
-                  <button className="bg-green-400 px-2 cursor-pointer text-white rounded-2xl">
+                  <button className="bg-green-500 px-2 cursor-pointer text-white rounded-2xl">
                     Approved{" "}
                   </button>
-                  <button className="bg-red-400 px-2 cursor-pointer text-white rounded-2xl">
+                  <button className="bg-red-500 px-2 cursor-pointer text-white rounded-2xl">
                     Cancel
                   </button>
                 </div>
@@ -82,7 +86,7 @@ const OrderHistory = () => {
                 <p className="text-gray-600">
                   <strong>Order Status:</strong> {order.orderStatus}
                 </p>
-                <button className="bg-green-400 px-2 cursor-pointer text-white rounded-2xl">
+                <button className="bg-green-500 px-2 cursor-pointer text-white rounded-2xl">
                   Change status
                 </button>
               </div>
