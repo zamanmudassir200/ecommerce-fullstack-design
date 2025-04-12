@@ -5,6 +5,7 @@ import { GlobalContext } from "../../context/GlobalContext";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaAngleLeft } from "react-icons/fa";
 
 const Signup = ({ title }) => {
   const { handleApiCall } = useContext(GlobalContext);
@@ -43,13 +44,21 @@ const Signup = ({ title }) => {
       }
     } catch (error) {
       setLoading(false);
-      // toast.error(error.response?.data?.message);
+      toast.error(error.response?.data?.message);
     }
   };
 
   return (
     <main className="min-h-screen bg-slate-900 text-white">
       <div className="container mx-auto px-4 py-8 sm:py-12">
+        <div className="">
+          <button
+            onClick={() => navigate("/")}
+            className="bg-white text-black px-3 py-2 rounded-2xl"
+          >
+            <FaAngleLeft size={20} />
+          </button>
+        </div>
         <div className="max-w-md mx-auto">
           <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6">
             {title}

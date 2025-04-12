@@ -13,7 +13,7 @@ const Orders = () => {
     try {
       setLoading(true);
       const response = await handleApiCall(
-        `${url}/orders/getOrdersByUser`,
+        `${url}/orders/user/getOrdersByUser`,
         "get"
       );
       console.log("response from getOrdersByUser", response);

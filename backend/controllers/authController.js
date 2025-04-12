@@ -66,58 +66,6 @@ const register = async (req, res) => {
     return res.status(500).json({ message: `Server error ${err}` });
   }
 };
-// const login = async (req, res) => {
-//   const { email, password } = req.body;
-
-//   // Check if email and password are provided
-//   if (!email || !password) {
-//     return res
-//       .status(400)
-//       .json({ message: "All fields are required.", success: false });
-//   }
-
-//   try {
-//     // Find the user by email
-//     const user = await userModel.findOne({ email });
-//     if (!user) {
-//       return res
-//         .status(404)
-//         .json({ message: "Email or Password is invalid.", success: false });
-//     }
-//     const isMatch = await bcrypt.compare(password, user.password);
-//     if (!isMatch) {
-//       return res
-//         .status(400)
-//         .json({ message: "Invalid Crendials! Email or password is invalid" });
-//     }
-//     // Generate JWT token
-//     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-//       expiresIn: "24hr",
-//     });
-
-//     // Set the token in a cookie
-//     res.cookie("token", token, {
-//       httpOnly: true,
-//       secure: (process.env.NODE_ENV === "production") | true,
-//       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-//       maxAge: 24 * 60 * 60 * 1000,
-//     });
-
-//     // Respond with success and user data
-//     return res.status(200).json({
-//       message: "User logged in successfully",
-//       userType: user.userType,
-//       wishList: user.wishList,
-//       token,
-//       success: true,
-//     });
-//   } catch (error) {
-//     // Catch and handle any server errors
-//     return res
-//       .status(500)
-//       .json({ message: `Server error: ${error.message}`, success: false });
-//   }
-// };
 
 const login = async (req, res) => {
   const { email, password } = req.body;

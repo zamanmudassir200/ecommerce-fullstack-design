@@ -30,7 +30,7 @@ router.patch(
   editProduct
 );
 router.delete("/:id", authenticationToken, deleteProduct);
-router.get("/", authenticationToken, getAllProducts);
+router.get("/", getAllProducts);
 router.get("/:id", authenticationToken, getProductById);
 router.post("/create-category", authenticationToken, createCategory);
 router.post("/create-subcategory", authenticationToken, createSubCategory);

@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 export const GlobalContext = createContext(null);
 
 export const GlobalContextProvider = ({ children }) => {
-  const [showTabsData, setShowTabsData] = useState("order history");
+  const [showTabsData, setShowTabsData] = useState("products");
   const [showDashboard, setShowDashboard] = useState(true);
   const [productViewType, setProductViewType] = useState("list");
   const [products, setProducts] = useState([]);

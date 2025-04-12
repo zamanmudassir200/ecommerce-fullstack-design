@@ -180,7 +180,7 @@ const Header = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="w-full md:w-[40%] lg:w-[35%] xl:w-[30%] flex items-center rounded-lg h-10 border-2 border-[#127FFF]">
+        <div className="md:w-[60%] w-full flex items-center rounded-lg h-10 border-2 border-[#127FFF]">
           <input
             className="flex-1 p-2 outline-none text-sm sm:text-base"
             type="text"

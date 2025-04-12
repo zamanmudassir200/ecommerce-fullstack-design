@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { TfiUser } from "react-icons/tfi";
 import { Link } from "react-router-dom";
 import DealsAndOffers from "./DealsAndOffers";
 import HomeAndOutDoor from "./HomeAndOutDoor";
@@ -11,17 +10,15 @@ import url from "../../utils/url";
 import { GlobalContext } from "../../context/GlobalContext";
 import SuppliersByRegion from "./SuppliersByRegion";
 import Newsletter from "./Newsletter";
-import { toast } from "react-toastify";
-import JoinNowModal from "./JoinNowModal";
+import WelcomeUser from "./WelcomeUser";
 
 const HeroSection = () => {
-  const [isUserLogin, setIsUserLogin] = useState(null);
-  const [user, setUser] = useState("");
   const { handleApiCall, products, categories, setCategories, setProducts } =
     useContext(GlobalContext);
-  const navigate = useNavigate();
+  const [user, setUser] = useState("");
+  const [isUserLogin, setIsUserLogin] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [isJoinNowModalOpen, setIsJoinNowModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const checkUserLoggedIn = async () => {
     try {
@@ -34,11 +31,11 @@ const HeroSection = () => {
         navigate("/login");
         setIsUserLogin(false);
       }
-    } catch (error) {
-      toast.error("hello");
-    }
+    } catch (error) {}
   };
-
+  useEffect(() => {
+    checkUserLoggedIn();
+  }, []);
   const fetchCategories = async () => {
     try {
       const response = await handleApiCall(
@@ -61,11 +58,9 @@ const HeroSection = () => {
   };
 
   useEffect(() => {
-    checkUserLoggedIn();
     fetchProducts();
     fetchCategories();
   }, []);
-  console.log("user", user);
   return (
     <main className="min-h-screen">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
@@ -87,7 +82,7 @@ const HeroSection = () => {
           </div>
 
           {/* Main Banner - Takes full width on mobile, 2/3 on desktop */}
-          <div className="relative h-64 md:h-auto w-full lg:w-[50%] rounded-lg overflow-hidden">
+          <div className="relative h-full xl:h-[50%] w-full xl:w-[50%] rounded-lg overflow-hidden">
             <img
               className="w-full h-full object-cover"
               src="./Banner-board-800x420 2.png"
@@ -112,45 +107,7 @@ const HeroSection = () => {
           <div className="flex flex-col w-full lg:w-[23%] gap-3">
             {/* User Card */}
             <div className="bg-[#E3F0FF] p-3 md:p-4 rounded-md">
-              <div className="flex gap-2 my-1 md:my-2 items-center">
-                <div className="bg-blue-400 rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center">
-                  <TfiUser className="text-white text-xl md:text-2xl" />
-                </div>
-                <p className="text-xs md:text-sm">
-                  {user?.name ? (
-                    <>
-                      Hi, <b>{user.name}</b> <br />
-                      Let's get started <br />
-                      {user.userType === "seller" && (
-                        <button
-                          onClick={() => navigate("/seller-dashboard")}
-                          className="rounded-lg bg-green-400 text-white p-2 my-2"
-                        >
-                          Admin Dashboard
-                        </button>
-                      )}
-                    </>
-                  ) : (
-                    "Welcome Guest"
-                  )}
-                </p>
-              </div>
-              {!isUserLogin && (
-                <div className="flex flex-col gap-1 md:gap-2">
-                  <button
-                    onClick={() => setIsJoinNowModalOpen(true)}
-                    className="bg-[#127FFF] py-1 md:py-1.5 cursor-pointer rounded-md text-xs md:text-sm text-white w-full"
-                  >
-                    Join Now
-                  </button>
-                  <button
-                    onClick={() => navigate("/login")}
-                    className="text-xs md:text-sm py-1 md:py-1.5 w-full cursor-pointer text-[#127fff] font-medium bg-white rounded-md border border-[#127FFF]"
-                  >
-                    Log in
-                  </button>
-                </div>
-              )}
+              <WelcomeUser user={user} isUserLogin={isUserLogin} />
             </div>
 
             {/* Offer Cards */}
@@ -204,10 +161,6 @@ const HeroSection = () => {
         <SuppliersByRegion />
       </div>
       <Newsletter />
-
-      {isJoinNowModalOpen && (
-        <JoinNowModal setIsJoinNowModalOpen={setIsJoinNowModalOpen} />
-      )}
     </main>
   );
 };

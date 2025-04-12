@@ -265,20 +265,54 @@ const MyCart = () => {
                     <span className="font-semibold text-sm sm:text-base">
                       Total:
                     </span>
-                    <span className="font-bold text-lg">
-                      {Number(
-                        cart?.totalPrice -
-                          cart?.items
-                            ?.filter((item) => item.product.discount > 0)
-                            ?.reduce(
-                              (total, item) =>
-                                total +
-                                ((item.product.price *
-                                  (item.product.discount || 0)) /
+                    {/* <span className="font-bold text-lg">
+                      {cart?.totalPrice -
+                        cart?.items
+                          ?.filter((item) => item.product.discount > 0)
+                          ?.reduce(
+                            (total, item) =>
+                              total +
+                              ((item.product.price *
+                                (item.product.discount || 0)) /
+                                100) *
+                                item.quantity,
+                            0
+                          )
+                          .toFixed(2)}{" "}
+                      Rs
+                    </span> */}
+
+                    {/* <span className="font-bold text-lg">
+                      {(cart?.totalPrice || 0) -
+                        cart?.items
+                          ?.filter((item) => item?.product?.discount > 0)
+                          ?.reduce(
+                            (total, item) =>
+                              total +
+                                ((((item?.product?.price || 0) *
+                                  (item?.product?.discount || 0)) /
                                   100) *
-                                  item.quantity,
-                              0
-                            )
+                                  (item?.quantity || 0),
+                                0) || 0
+                          )
+                          .toFixed(2)}{" "}
+                      Rs
+                    </span> */}
+
+                    <span className="font-bold text-lg">
+                      {(
+                        Number(cart?.totalPrice ?? 0) -
+                        Number(
+                          cart?.items?.reduce((total, item) => {
+                            return (
+                              total +
+                              ((Number(item?.product?.price ?? 0) *
+                                Number(item?.product?.discount ?? 0)) /
+                                100) *
+                                Number(item?.quantity ?? 0)
+                            );
+                          }, 0) ?? 0
+                        )
                       ).toFixed(2)}{" "}
                       Rs
                     </span>

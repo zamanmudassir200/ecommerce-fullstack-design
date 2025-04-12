@@ -56,9 +56,7 @@ const PaymentSuccess = () => {
           <div className="flex justify-between text-sm text-gray-700 mb-1">
             <span>Date:</span>
             <span className="font-bold">
-              {new Date(order.createdAt).toLocaleDateString()}
-              {" | "}
-              {new Date(order.createdAt).toLocaleTimeString()}
+              {new Date(order.createdAt).toLocaleString()}
             </span>
           </div>
           <div className="flex justify-between text-sm text-gray-700">
@@ -79,7 +77,7 @@ const PaymentSuccess = () => {
             View Your Orders
           </button>
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/all-category")}
             className="w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 py-2 px-4 rounded-md transition duration-200"
           >
             Continue Shopping
