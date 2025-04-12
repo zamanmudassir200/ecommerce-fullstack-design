@@ -82,6 +82,7 @@ const createOrder = async (req, res) => {
       totalAmount: totalAmount,
       shippingAddress,
       payMethod,
+
       paymentStatus: payMethod === "Credit Card" ? "Paid" : "Pending",
       paymentId: payMethod === "Credit Card" ? paymentResult.id : null,
     });
@@ -139,6 +140,7 @@ const getOrderById = async (req, res) => {
     return res.status(500).json({ message: `Server error ${error}` });
   }
 };
+
 const getOrdersByUser = async (req, res) => {
   try {
     const { id } = req.user;
@@ -167,4 +169,56 @@ const getOrdersByUser = async (req, res) => {
     return res.status(500).json({ message: `Server error ${error}` });
   }
 };
-module.exports = { createOrder, getAllOrders, getOrderById, getOrdersByUser };
+
+const approveOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    // Find the order and validate status
+    const order = await orderModel.findById(orderId);
+    if (!order) {
+      return res.status(404).json({
+        message: "Order not found",
+        success: false,
+      });
+    }
+
+    // Check if order is in processing state
+    if (order.orderStatus !== "Processing") {
+      return res.status(400).json({
+        message: `Order cannot be shipped from current status: ${order.orderStatus}`,
+        success: false,
+        validCurrentStatuses: ["Processing"], // For client-side reference
+      });
+    }
+
+    // Update the order status and set shipped timestamp
+    const updatedOrder = await orderModel.findByIdAndUpdate(
+      order._id,
+      {
+        orderStatus: "Shipped",
+        shippedAt: new Date(), // Optional: Track when it was shipped
+      },
+      { new: true } // Return the updated document
+    );
+
+    return res.status(200).json({
+      message: "Order shipped successfully",
+      success: true,
+      order: updatedOrder,
+    });
+  } catch (error) {
+    console.error(`Shipping error for order ${orderId}:`, error);
+    return res.status(500).json({
+      message: "Failed to update order status",
+      error: error.message,
+    });
+  }
+};
+module.exports = {
+  createOrder,
+  getAllOrders,
+  getOrderById,
+  getOrdersByUser,
+  approveOrder,
+};

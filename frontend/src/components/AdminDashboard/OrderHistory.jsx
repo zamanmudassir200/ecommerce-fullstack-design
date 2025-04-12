@@ -21,7 +21,17 @@ const OrderHistory = () => {
   useEffect(() => {
     getAllOrders();
   }, []);
-
+  const handleApproveOrder = async (orderId) => {
+    try {
+      const response = await handleApiCall(
+        `${url}/orders/approve-order/${orderId}`,
+        "patch"
+      );
+      console.log("response from approving order", response);
+    } catch (error) {
+      toast.error("Error occured while approving order");
+    }
+  };
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-6">🛍️ Order History</h1>
@@ -31,10 +41,7 @@ const OrderHistory = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {orders.reverse().map((order) => (
-            <div
-              key={order._id}
-              className="border p-4 rounded-lg shadow-md bg-white"
-            >
+            <div key={order._id} className={` border p-4 rounded-lg shadow-md`}>
               <div className="mb-2 text-gray-700 text-sm">
                 <strong>Order ID:</strong> {order._id}
               </div>
@@ -71,12 +78,27 @@ const OrderHistory = () => {
               <div className="text-sm flex gap-2 justify-between items-center mb-3">
                 <p className="text-gray-600">
                   <strong>Payment:</strong> {order.payMethod} -{" "}
-                  {order.paymentStatus}
+                  <span
+                    className={` ${
+                      order.paymentStatus.toLowerCase() === "paid"
+                        ? "text-green-400"
+                        : ""
+                    } italic font-semibold `}
+                  >
+                    {" "}
+                    {order.paymentStatus}
+                  </span>{" "}
                 </p>
                 <div className="flex gap-3 flex-wrap">
-                  <button className="bg-green-500 px-2 cursor-pointer text-white rounded-2xl">
-                    Approved{" "}
-                  </button>
+                  {order.orderStatus === "Processing" && (
+                    <button
+                      onClick={() => handleApproveOrder(order._id)}
+                      className="bg-green-500 px-2 cursor-pointer text-white rounded-2xl"
+                    >
+                      Approved
+                    </button>
+                  )}
+
                   <button className="bg-red-500 px-2 cursor-pointer text-white rounded-2xl">
                     Cancel
                   </button>
@@ -84,7 +106,16 @@ const OrderHistory = () => {
               </div>
               <div className="text-sm flex gap-2 justify-between items-center mb-3">
                 <p className="text-gray-600">
-                  <strong>Order Status:</strong> {order.orderStatus}
+                  <strong>Order Status:</strong>{" "}
+                  <span
+                    className={`${
+                      order.orderStatus === "Confirmed"
+                        ? "text-green-500  "
+                        : ""
+                    } italic font-semibold`}
+                  >
+                    {order.orderStatus}
+                  </span>
                 </p>
                 <button className="bg-green-500 px-2 cursor-pointer text-white rounded-2xl">
                   Change status
