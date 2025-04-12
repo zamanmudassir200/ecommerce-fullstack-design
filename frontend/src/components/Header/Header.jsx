@@ -22,6 +22,13 @@ const Header = () => {
 
   const desktopNavLinks = [
     {
+      icon: <MdShoppingBag />,
+      name: "My Orders",
+      route: "/orders",
+      showOnMobile: true,
+    },
+
+    {
       icon: <FaUser />,
       name: "Profile",
       route: "/profile",

@@ -1,32 +1,3 @@
-// require("dotenv").config();
-// const stripe = require("stripe")(process.env.STRIPE_SECRET);
-
-// const payment = async (token, totalAmount) => {
-//   try {
-//     // Step 1: Create a payment method from the token
-//     const paymentMethod = await stripe.paymentMethods.create({
-//       type: "card",
-//       card: { token: token }, // ✅ Convert token to paymentMethod
-//     });
-//     console.log("payment method id from payment ", paymentMethod.id);
-//     // Step 2: Create and confirm the paymentIntent
-//     const paymentIntent = await stripe.paymentIntents.create({
-//       totalAmount: totalAmount * 100, // Stripe works in cents/paise
-//       currency: "PKR",
-//       payment_method: paymentMethod.id,
-//       confirm: true,
-//       return_url: "http://localhost:3000/", // or your frontend route
-//     });
-
-//     return paymentIntent;
-//   } catch (error) {
-//     console.error("Stripe Payment Error:", error.message);
-//     throw new Error(error.message);
-//   }
-// };
-
-// module.exports = payment;
-
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 

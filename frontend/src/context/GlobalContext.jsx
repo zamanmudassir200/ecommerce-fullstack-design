@@ -29,6 +29,7 @@ export const GlobalContextProvider = ({ children }) => {
       }
     }
   };
+
   // const fetchProducts = async () => {
   //   setLoading(true);
   //   try {
