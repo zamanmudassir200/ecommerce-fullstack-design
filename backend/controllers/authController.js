@@ -85,7 +85,6 @@ const login = async (req, res) => {
         .json({ message: "Email or Password is invalid.", success: false });
     }
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("isMatch", isMatch);
     if (!isMatch) {
       return res
         .status(400)
@@ -99,7 +98,7 @@ const login = async (req, res) => {
     // Set the token in a cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: (process.env.NODE_ENV === "production") | true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 24 * 60 * 60 * 1000,
     });
