@@ -10,6 +10,7 @@ const {
   createSubCategory,
   getProductById,
   editSubCategory,
+  getSearchProducts,
   removeFromWishList,
   addToWishList,
   getAllProductsByUser,
@@ -52,4 +53,5 @@ router.get(
   getAllProductsByUser
 );
 
+router.get("/search/product", getSearchProducts);
 module.exports = router;

@@ -628,6 +628,30 @@ const getAllProductsByUser = async (req, res) => {
       .json({ message: `Server error ${error}`, success: false });
   }
 };
+const getSearchProducts = async (req, res) => {
+  try {
+    const { name } = req.query;
+    console.log("query", name);
+    const products = await productModel.find({
+      productName: { $regex: name, $options: "i" },
+    });
+
+    if (products.length === 0) {
+      return res.status(404).json({
+        message: "No products found",
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      products,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `Server error ${error}`, success: false });
+  }
+};
 
 module.exports = {
   createProduct,
@@ -644,4 +668,5 @@ module.exports = {
   editSubCategory,
   getAllCategories,
   getAllProductsByUser,
+  getSearchProducts,
 };

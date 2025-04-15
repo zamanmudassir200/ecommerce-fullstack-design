@@ -38,10 +38,13 @@ const HeroSection = () => {
   }, []);
   const fetchCategories = async () => {
     try {
+      setLoading(true);
       const response = await handleApiCall(
         `${url}/categories/get-categories`,
         "get"
       );
+      setLoading(false);
+
       setCategories(response.data.categories);
     } catch (error) {}
   };
@@ -69,6 +72,11 @@ const HeroSection = () => {
           {/* Categories Sidebar - Hidden on small screens, shown on medium and up */}
           <div className="hidden md:flex w-full lg:w-[25%] flex-col bg-gray-50 rounded-lg">
             <ul className="max-h-[370px] overflow-y-auto">
+              {loading && (
+                <h1 className="flex min-h-[400px] items-center justify-center">
+                  Loading...
+                </h1>
+              )}
               {categories.map((category) => (
                 <Link
                   to={`./${category.name.split(" ").join("-")}`}

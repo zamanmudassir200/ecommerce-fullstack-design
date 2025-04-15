@@ -15,8 +15,40 @@ const MyCart = () => {
   const navigate = useNavigate();
   const [coupon, setCoupon] = useState("");
   const [couponCodeResponse, setCouponCodeResponse] = useState([]);
-  const [errMsg, setErrMsg] = useState(null);
+  const [isInWishlist, setIsInWishlist] = useState(false);
 
+  const [errMsg, setErrMsg] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+
+  const productIds = cart?.items?.map((item, index) => {
+    return item.product._id;
+  });
+  console.log("productids", productIds);
+  const checkUserLoggedIn = async () => {
+    try {
+      const response = await handleApiCall(`${url}/checkAuth`, "get");
+      console.log("response from checkuser logged in carts  ", response);
+      if (response.data.loggedIn) {
+        const currentUser = response.data.user;
+        setUser(currentUser);
+        const { wishList } = response.data;
+
+        // Check if the product is in the user's wishlist
+        if (wishList?.some((item) => item._id === productIds)) {
+          setIsInWishlist(true);
+        } else {
+          setIsInWishlist(false);
+        }
+      } else {
+        navigate("/login");
+      }
+    } catch (error) {
+      toast.error("Error checking login status");
+    }
+  };
+  useEffect(() => {
+    checkUserLoggedIn();
+  }, []);
   const fetchCartByUser = async () => {
     setLoading(true);
     try {
@@ -67,10 +99,49 @@ const MyCart = () => {
       toast.error("Error occurred while removing all products from the cart");
     }
   };
-
+  const handleQuantityChange = (productId, newQuantity) => {
+    setCart((prevCart) => ({
+      ...prevCart,
+      items: prevCart.items.map((item) =>
+        item.product._id === productId
+          ? { ...item, quantity: newQuantity }
+          : item
+      ),
+    }));
+  };
   useEffect(() => {
     fetchCartByUser();
-  }, [cartNumber, cart]);
+  }, [cartNumber]);
+
+  const addToWishList = async (productId) => {
+    try {
+      const response = await handleApiCall(
+        `${url}/products/add-to-wishlist/${productId}`,
+        "patch"
+      );
+      setIsInWishlist(true);
+      toast.success(response.data.message);
+    } catch (error) {
+      console.log("eror");
+      toast.error("Error while adding to wishlist");
+    }
+  };
+
+  // Check if the user is logged in and update the wishlist status
+
+  const removeFromWishList = async (productId) => {
+    try {
+      const response = await handleApiCall(
+        `${url}/products/remove-from-wishlist/${productId}`,
+        "patch"
+      );
+      setIsInWishlist(false);
+      toast.success(response.data.message);
+    } catch (error) {
+      toast.error("Error while removing from wishlist");
+    }
+  };
+
   return (
     <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div>
@@ -98,7 +169,7 @@ const MyCart = () => {
                 <div className="max-h-[552px] overflow-y-auto">
                   {cart?.items?.map((item, index) => (
                     <div
-                      key={index}
+                      key={item?.product?._id || index} // Better to use product ID if available
                       className="flex flex-col sm:flex-row hover:bg-gray-50 transition-colors duration-200 p-4 border-b border-gray-200 justify-between"
                     >
                       <div className="flex gap-4 mb-4 sm:mb-0">
@@ -125,8 +196,17 @@ const MyCart = () => {
                             >
                               Remove
                             </button>
-                            <button className="text-xs sm:text-sm text-blue-500 font-medium cursor-pointer px-2 py-1 rounded border border-gray-200 hover:bg-blue-50">
-                              Save for later
+                            <button
+                              onClick={() =>
+                                isInWishlist
+                                  ? removeFromWishList(item?.product._id)
+                                  : addToWishList(item?.product?._id)
+                              }
+                              className="text-xs sm:text-sm text-blue-500 font-medium cursor-pointer px-2 py-1 rounded border border-gray-200 hover:bg-blue-50"
+                            >
+                              {isInWishlist
+                                ? "Remove from the wishList"
+                                : "Save for later"}
                             </button>
                           </div>
                         </div>
@@ -151,14 +231,41 @@ const MyCart = () => {
                             </h1>
                           )}
                         </div>
-                        <select
-                          className="border border-gray-200 px-3 py-1 rounded text-xs sm:text-sm"
-                          value={item?.quantity}
-                        >
-                          <option value={item?.quantity}>
-                            Qty: {item?.quantity}
-                          </option>
-                        </select>
+                        <div className="flex items-center justify-end gap-2">
+                          <label
+                            htmlFor={`qty-${item?.product?._id}`}
+                            className="text-sm text-gray-600"
+                          >
+                            Qty:
+                          </label>
+                          <input
+                            className="px-2 w-14 text-center border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                            id={`qty-${item?.product?._id}`}
+                            min="1"
+                            max="100"
+                            step="1"
+                            type="number"
+                            value={item?.quantity || 1}
+                            onChange={(e) => {
+                              const value = parseInt(e.target.value);
+                              if (!isNaN(value)) {
+                                const newQuantity = Math.max(
+                                  1,
+                                  Math.min(100, value)
+                                );
+                                handleQuantityChange(
+                                  item?.product?._id,
+                                  newQuantity
+                                );
+                              }
+                            }}
+                            onBlur={(e) => {
+                              if (!e.target.value) {
+                                handleQuantityChange(item?.product?._id, 1);
+                              }
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -265,39 +372,6 @@ const MyCart = () => {
                     <span className="font-semibold text-sm sm:text-base">
                       Total:
                     </span>
-                    {/* <span className="font-bold text-lg">
-                      {cart?.totalPrice -
-                        cart?.items
-                          ?.filter((item) => item.product.discount > 0)
-                          ?.reduce(
-                            (total, item) =>
-                              total +
-                              ((item.product.price *
-                                (item.product.discount || 0)) /
-                                100) *
-                                item.quantity,
-                            0
-                          )
-                          .toFixed(2)}{" "}
-                      Rs
-                    </span> */}
-
-                    {/* <span className="font-bold text-lg">
-                      {(cart?.totalPrice || 0) -
-                        cart?.items
-                          ?.filter((item) => item?.product?.discount > 0)
-                          ?.reduce(
-                            (total, item) =>
-                              total +
-                                ((((item?.product?.price || 0) *
-                                  (item?.product?.discount || 0)) /
-                                  100) *
-                                  (item?.quantity || 0),
-                                0) || 0
-                          )
-                          .toFixed(2)}{" "}
-                      Rs
-                    </span> */}
 
                     <span className="font-bold text-lg">
                       {(

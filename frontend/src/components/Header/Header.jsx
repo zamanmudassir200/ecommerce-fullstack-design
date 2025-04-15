@@ -9,17 +9,22 @@ import {
   MdLanguage,
   MdContactSupport,
   MdInfo,
-  MdPolicy,
 } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 import { FaUser, FaRegUserCircle } from "react-icons/fa";
 import { IoMdCart, IoMdMenu, IoMdClose } from "react-icons/io";
+import { toast } from "react-toastify";
+import url from "../../utils/url";
 import BottomHeader from "./BottomHeader/BottomHeader";
 import { GlobalContext } from "../../context/GlobalContext";
 
 const Header = () => {
-  const { cartNumber, user } = useContext(GlobalContext);
+  const navigate = useNavigate();
+  const { cartNumber, user, handleApiCall } = useContext(GlobalContext);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const [searchValue, setSearchValue] = useState("");
+  const [searchedResult, setSearchedResult] = useState([]);
+  const [closeSearchedResult, setCloseSearchedResult] = useState(false);
   const desktopNavLinks = [
     {
       icon: <MdShoppingBag />,
@@ -136,7 +141,21 @@ const Header = () => {
       route: "/privacy-policy",
     },
   ];
-
+  const handleSearchSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (searchValue.trim().length > 0) {
+        const response = await handleApiCall(
+          `${url}/products/search/product?name=${searchValue.trim()}`,
+          "get"
+        );
+        setCloseSearchedResult(true);
+        setSearchedResult(response.data.products);
+      } else {
+        toast.warn("Please enter product name");
+      }
+    } catch (error) {}
+  };
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
@@ -180,25 +199,90 @@ const Header = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="md:w-[60%] w-full flex items-center rounded-lg h-10 border-2 border-[#127FFF]">
-          <input
-            className="flex-1 p-2 outline-none text-sm sm:text-base"
-            type="text"
-            placeholder="Search"
-          />
-          <div className="flex items-center h-full">
-            <select
-              className="px-2 h-full outline-none border-l-[1px] border-gray-300 text-sm hidden sm:block"
-              name="category"
-            >
-              <option value="">All Category</option>
-            </select>
-            <button className="bg-[#127FFF] cursor-pointer rounded-r-md text-white px-3 sm:px-5 h-full text-sm sm:text-base">
-              Search
-            </button>
-          </div>
-        </div>
 
+        <div className="relative md:w-[60%] w-full">
+          <div className="flex flex-col rounded-t-lg border-2 border-[#127FFF]">
+            <form
+              onSubmit={handleSearchSubmit}
+              className="flex items-center h-10 w-full"
+            >
+              <div className="relative w-full">
+                <input
+                  onChange={(e) => {
+                    setCloseSearchedResult(true);
+                    setSearchValue(e.target.value);
+                  }}
+                  className="flex-1 p-2 outline-none text-sm sm:text-base rounded-l-lg  w-full"
+                  value={closeSearchedResult === false ? "" : searchValue}
+                  type="text"
+                  placeholder="Search products..."
+                />
+                {closeSearchedResult &&
+                  searchValue &&
+                  searchValue.length > 0 &&
+                  searchedResult.length > 0 && (
+                    <IoMdClose
+                      onClick={() => setCloseSearchedResult(false)}
+                      size={22}
+                      className="absolute cursor-pointer top-3 right-4"
+                    />
+                  )}
+              </div>
+              <div className="flex items-center h-full">
+                <select
+                  className="px-2 h-full outline-none border-l border-gray-300 text-sm hidden sm:block"
+                  name="category"
+                >
+                  <option value="">All Categories</option>
+                </select>
+                <button
+                  disabled={searchValue.length === 0 ? true : false}
+                  type="submit"
+                  className="bg-[#127FFF] text-white px-3 sm:px-5 h-full text-sm sm:text-base hover:bg-blue-600 transition-colors"
+                >
+                  Search
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Results dropdown */}
+
+          {closeSearchedResult &&
+            searchedResult &&
+            searchedResult.length > 0 && (
+              <div className="absolute w-full mt-[-2px] bg-white border-2 h-[200px] min-h-[450px] overflow-y-auto border-[#127FFF] border-t-0 rounded-b-lg shadow-lg z-10">
+                {searchedResult.map((product) => (
+                  <div
+                    key={product._id}
+                    className="p-2 hover:bg-gray-100 cursor-pointer border-b first:border-t-[2px] border-gray-100 flex items-center gap-2  last:border-b-0"
+                    onClick={() => {
+                      navigate(`/product-detail/${product._id}`);
+                      setCloseSearchedResult(false);
+                    }}
+                  >
+                    <div className="h-20 w-20 rounded-lg overflow-hidden">
+                      <img
+                        className="w-full h-full object-contain"
+                        src={product.images[0]}
+                        alt=""
+                      />
+                    </div>
+                    <div className="">
+                      <h1 className="text-md font-semibold">
+                        {product.productName}
+                      </h1>
+                      <p className="text-sm font-mono">
+                        {product.discountedPrice > 0
+                          ? `${product.discountedPrice} Rs`
+                          : `${product.price} Rs`}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+        </div>
         {/* Desktop Navigation Icons */}
         <div className="hidden md:flex items-center justify-center gap-4 md:gap-6">
           {desktopNavLinks.map((link, index) => (
