@@ -1,7 +1,8 @@
 import axios, { isAxiosError } from "axios";
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 export const GlobalContext = createContext(null);
+import myurl from "../utils/url";
 
 export const GlobalContextProvider = ({ children }) => {
   const [showTabsData, setShowTabsData] = useState("products");
@@ -12,7 +13,10 @@ export const GlobalContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [cartNumber, setCartNumber] = useState(0);
   const [sellersAllProducts, setSellersAllProducts] = useState([]);
-
+  // const [productReviews, setProductReviews] = useState([]);
+  const [user, setUser] = useState(null);
+  const [isUserLogin, setIsUserLogin] = useState(false);
+  const [themeMode, setThemeMode] = useState("light");
   const handleApiCall = async (url, method, data) => {
     try {
       const response = await axios({
@@ -42,16 +46,40 @@ export const GlobalContextProvider = ({ children }) => {
   //     toast.error(`${error?.reponse?.data}`);
   //   }
   // };
+  const checkUserLoggedIn = async () => {
+    try {
+      const response = await handleApiCall(`${myurl}/checkAuth`, "get");
+      console.log("response from context checkauth:", response);
+      if (response.data.loggedIn) {
+        setIsUserLogin(true);
+        setUser(response?.data?.user);
+      } else {
+        navigate("/login");
+        setIsUserLogin(false);
+      }
+    } catch (error) {}
+  };
+  useEffect(() => {
+    if (themeMode === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [themeMode]);
 
   return (
     <GlobalContext.Provider
       value={{
         handleApiCall,
+        checkUserLoggedIn,
         setSellersAllProducts,
         sellersAllProducts,
         showTabsData,
         loading,
         setLoading,
+
+        // productReviews,
+        // setProductReviews,
         setShowTabsData,
         // fetchCategories,
         // fetchProducts,
@@ -64,6 +92,8 @@ export const GlobalContextProvider = ({ children }) => {
         productViewType,
         setProductViewType,
         cartNumber,
+        themeMode,
+        setThemeMode,
         setCartNumber,
       }}
     >

@@ -7,9 +7,7 @@ const authenticationToken = (req, res, next) => {
   // Access the token from cookies
   const token = req.cookies?.token;
   if (!token) {
-    return res
-      .status(401)
-      .json({ message: "Authentication token missing! Please login" });
+    return res.status(401).json({ message: "Unauthorized! Please login" });
   }
 
   try {

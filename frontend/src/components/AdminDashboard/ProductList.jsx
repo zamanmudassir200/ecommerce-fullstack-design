@@ -1,6 +1,13 @@
 import React from "react";
 
-const ProductList = ({ products, setProductToDelete, setProductToEdit }) => {
+const ProductList = ({
+  products,
+  setIsDeleteModalOpen,
+  setProductToDelete,
+  setProductToEdit,
+  setIsEditModalOpen,
+  setCategoryId,
+}) => {
   return (
     <div>
       <h1 className="text-lg font-semibold mb-4">Product List</h1>

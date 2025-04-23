@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   MdMessage,
@@ -17,14 +17,17 @@ import { toast } from "react-toastify";
 import url from "../../utils/url";
 import BottomHeader from "./BottomHeader/BottomHeader";
 import { GlobalContext } from "../../context/GlobalContext";
+import { MdLightMode, MdDarkMode } from "react-icons/md";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { cartNumber, user, handleApiCall } = useContext(GlobalContext);
+  const { cartNumber, themeMode, setThemeMode, user, handleApiCall } =
+    useContext(GlobalContext);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [searchedResult, setSearchedResult] = useState([]);
   const [closeSearchedResult, setCloseSearchedResult] = useState(false);
+
   const desktopNavLinks = [
     {
       icon: <MdShoppingBag />,
@@ -156,8 +159,25 @@ const Header = () => {
       }
     } catch (error) {}
   };
+  const toggleThemeMode = () => {
+    const newTheme = themeMode === "light" ? "dark" : "light";
+    setThemeMode(newTheme);
+    localStorage.setItem("themeMode", newTheme);
+  };
+
+  useEffect(() => {
+    const existingTheme = localStorage.getItem("themeMode");
+    console.log("existing Theme", existingTheme);
+    setThemeMode(existingTheme);
+  }, []);
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm">
+    <header
+      className={` ${
+        themeMode === "light"
+          ? "bg-white text-black"
+          : "bg-slate-900 text-white"
+      } sticky top-0 z-50 shadow-sm`}
+    >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Logo and Mobile Menu Button */}
         <div className="w-full md:w-auto flex justify-between items-center">
@@ -177,11 +197,18 @@ const Header = () => {
                 className="h-8 sm:h-10 w-auto"
               />
             </Link>
+            <div className="cursor-pointer">
+              {themeMode === "light" ? (
+                <MdDarkMode onClick={toggleThemeMode} size={28} />
+              ) : (
+                <MdLightMode onClick={toggleThemeMode} size={28} />
+              )}
+            </div>
           </div>
 
           {/* Mobile Navigation Icons (only show cart and profile on mobile) */}
           <div className="flex md:hidden items-center gap-4">
-            {desktopNavLinks.map((link, index) => (
+            {desktopNavLinks?.map((link, index) => (
               <Link
                 key={index}
                 className="relative flex items-center justify-center p-1"
@@ -192,7 +219,9 @@ const Header = () => {
                     {cartNumber}
                   </span>
                 )}
-                <span className="text-xl text-gray-500">{link.icon}</span>
+                <span className="text-xl text-center text-gray-500">
+                  {/* {link.icon} */}
+                </span>
               </Link>
             ))}
           </div>
@@ -296,10 +325,12 @@ const Header = () => {
                     {cartNumber}
                   </p>
                 )}
-                <span className="text-xl md:text-2xl text-gray-500">
+                <span className="text-xl text-center md:text-2xl text-gray-500">
                   {link.icon}
                 </span>
-                <span className="text-gray-500 text-xs">{link.name}</span>
+                <span className="text-center text-gray-500 text-xs">
+                  {link.name}
+                </span>
               </Link>
             </div>
           ))}
@@ -308,7 +339,7 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-black bg-opacity-50 md:hidden">
+        <div className="fixed inset-0 z-40 backdrop-brightness-50 bg-opacity-50 md:hidden">
           <div className="fixed inset-y-0 left-0 w-4/5 max-w-xs bg-white shadow-lg overflow-y-auto">
             <div className="flex flex-col">
               {mobileMenuLinks.map((item, index) => {

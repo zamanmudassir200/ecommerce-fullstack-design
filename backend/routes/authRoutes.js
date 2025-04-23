@@ -6,6 +6,7 @@ const {
   logout,
   checkAuth,
   editUser,
+  isSeller,
   upload,
 } = require("../controllers/authController");
 const { authenticationToken } = require("../middlewares/authenticationToken");
@@ -22,4 +23,13 @@ router.patch(
   upload.single("profilePic"),
   editUser
 );
+// router.get(
+//   "/admin-dashboard",
+//   authenticationToken,
+//   isSeller,
+//   (req, res) => {
+//     res.json({ data: "Admin only data" });
+//   }
+// );
+
 module.exports = router;

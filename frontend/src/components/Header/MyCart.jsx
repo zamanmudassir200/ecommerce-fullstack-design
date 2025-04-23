@@ -9,8 +9,14 @@ import SaveForLater from "./SaveForLater";
 import { useNavigate } from "react-router-dom";
 
 const MyCart = () => {
-  const { handleApiCall, loading, setLoading, cartNumber, setCartNumber } =
-    useContext(GlobalContext);
+  const {
+    handleApiCall,
+    themeMode,
+    loading,
+    setLoading,
+    cartNumber,
+    setCartNumber,
+  } = useContext(GlobalContext);
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
   const [coupon, setCoupon] = useState("");
@@ -20,35 +26,36 @@ const MyCart = () => {
   const [errMsg, setErrMsg] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
-  const productIds = cart?.items?.map((item, index) => {
-    return item.product._id;
-  });
-  console.log("productids", productIds);
-  const checkUserLoggedIn = async () => {
-    try {
-      const response = await handleApiCall(`${url}/checkAuth`, "get");
-      console.log("response from checkuser logged in carts  ", response);
-      if (response.data.loggedIn) {
-        const currentUser = response.data.user;
-        setUser(currentUser);
-        const { wishList } = response.data;
+  // const productIds = cart?.items?.map((item, index) => {
+  //   return item.product._id;
+  // });
+  // console.log("productids", productIds);
 
-        // Check if the product is in the user's wishlist
-        if (wishList?.some((item) => item._id === productIds)) {
-          setIsInWishlist(true);
-        } else {
-          setIsInWishlist(false);
-        }
-      } else {
-        navigate("/login");
-      }
-    } catch (error) {
-      toast.error("Error checking login status");
-    }
-  };
-  useEffect(() => {
-    checkUserLoggedIn();
-  }, []);
+  // const checkUserLoggedIn = async () => {
+  //   try {
+  //     const response = await handleApiCall(`${url}/checkAuth`, "get");
+  //     console.log("response from checkuser logged in carts  ", response);
+  //     if (response?.data?.loggedIn) {
+  //       const currentUser = response?.data?.user;
+  //       setUser(currentUser);
+  //       const { wishList } = response?.data;
+
+  //       // Check if the product is in the user's wishlist
+  //       if (wishList?.some((item) => item?._id === productIds)) {
+  //         setIsInWishlist(true);
+  //       } else {
+  //         setIsInWishlist(false);
+  //       }
+  //     } else {
+  //       navigate("/login");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Error checking login status");
+  //   }
+  // };
+  // useEffect(() => {
+  //   checkUserLoggedIn();
+  // }, []);
   const fetchCartByUser = async () => {
     setLoading(true);
     try {
@@ -143,7 +150,11 @@ const MyCart = () => {
   };
 
   return (
-    <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <main
+      className={` mx-auto px-4 sm:px-6 lg:px-8 py-4 ${
+        themeMode === "dark" ? "bg-slate-900 text-white" : "bg-white"
+      }`}
+    >
       <div>
         <h1 className="my-5 text-xl sm:text-2xl font-semibold">
           My Cart ({cart?.items?.length ? cart?.items?.length : "0"})
@@ -196,7 +207,7 @@ const MyCart = () => {
                             >
                               Remove
                             </button>
-                            <button
+                            {/* <button
                               onClick={() =>
                                 isInWishlist
                                   ? removeFromWishList(item?.product._id)
@@ -207,7 +218,7 @@ const MyCart = () => {
                               {isInWishlist
                                 ? "Remove from the wishList"
                                 : "Save for later"}
-                            </button>
+                            </button> */}
                           </div>
                         </div>
                       </div>
@@ -332,7 +343,7 @@ const MyCart = () => {
                       <span className="text-red-500 font-medium">
                         -{" "}
                         {cart?.items
-                          ?.filter((item) => item.product.discount > 0)
+                          ?.filter((item) => item?.product?.discount > 0)
                           ?.reduce(
                             (total, item) =>
                               total +

@@ -55,9 +55,10 @@
 
 // export default BottomHeader;
 
-import React from "react";
+import React, { useContext } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { Link } from "react-router-dom";
+import { GlobalContext } from "../../../context/GlobalContext";
 
 const BottomHeader = () => {
   const navLinks = [
@@ -77,9 +78,15 @@ const BottomHeader = () => {
       name: "Menu Item",
     },
   ];
-
+  const { themeMode } = useContext(GlobalContext);
   return (
-    <header className="border-t border-gray-300 bg-white">
+    <header
+      className={`border-t border-gray-300 ${
+        themeMode === "dark"
+          ? "bg-slate-900 text-white"
+          : "bg-white text-gray-700"
+      }`}
+    >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between h-14 overflow-x-auto">
           {/* Main Navigation Links */}

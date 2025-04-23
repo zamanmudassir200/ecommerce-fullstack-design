@@ -9,7 +9,7 @@ const userModel = require("../models/userModel");
 
 const createProduct = async (req, res) => {
   const { id } = req.user;
-  const existingUser = await userModel.findById(id);
+  let existingUser = await userModel.findById(id);
   if (!existingUser) {
     return res.status(404).json({ message: "User not found", success: false });
   }
@@ -88,6 +88,15 @@ const createProduct = async (req, res) => {
       reviews,
     });
 
+    // existingUser = await userModel.findByIdAndUpdate(
+    //   id,
+    //   {
+    //     $addToSet: { products: createdProduct._id },
+    //   },
+    //   { new: true }
+    // );
+
+    // await existingUser.save();
     // Manually populate category and subcategory
     const populatedProduct = await productModel
       .findById(createdProduct._id)
@@ -232,7 +241,8 @@ const getAllProducts = async (req, res) => {
         model: "category",
         options: { strictPopulate: false }, // Allow missing subCategory
       })
-      .populate("user");
+      .populate("user")
+      .populate("reviews");
 
     if (!allProducts || allProducts.length === 0) {
       return res
@@ -489,16 +499,27 @@ const getProductById = async (req, res) => {
       .findById(id)
       .populate("category")
       .populate("subCategory")
-      .populate("user");
+      .populate("user")
+      .populate({
+        path: "reviews",
+        populate: [
+          { path: "user", model: "user" },
+          { path: "product", model: "product" },
+        ],
+      });
+
     if (!product) {
-      res.status(404).json({ message: "Product not found", success: false });
+      return res
+        .status(404)
+        .json({ message: "Product not found", success: false });
     }
 
     res.status(200).json({ message: "Product found", product, success: true });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: `Server error: ${error.message}`, success: false });
+    res.status(500).json({
+      message: `Server error: ${error.message}`,
+      success: false,
+    });
   }
 };
 
@@ -638,7 +659,7 @@ const getSearchProducts = async (req, res) => {
 
     if (products.length === 0) {
       return res.status(404).json({
-        message: "No products found",
+        message: `No ${name}, product found`,
         success: false,
       });
     }

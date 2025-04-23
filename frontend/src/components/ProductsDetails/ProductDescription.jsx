@@ -2,15 +2,28 @@ import React, { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../../context/GlobalContext";
 import { toast } from "react-toastify";
 import url from "../../utils/url";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import RelatedProducts from "./RelatedProducts";
+import ReviewForm from "./ReviewForm";
 
 const ProductDescription = ({ currentProduct }) => {
-  const { categories, products, setProducts, handleApiCall, setLoading } =
-    useContext(GlobalContext);
+  const {
+    categories,
+    products,
+    setProducts,
+    handleApiCall,
+    setLoading,
+    fetchAllProductReviews,
+    // productReviews,
+    // setProductReviews,
+  } = useContext(GlobalContext);
+  const [productReviews, setProductReviews] = useState([]);
+
   const [recommendedProducts, setRecommendedProducts] = useState([]);
-  const [selectedTab, setSelectedTab] = useState("Description");
+  const [selectedTab, setSelectedTab] = useState("Reviews");
+
+  const { productId } = useParams();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -44,10 +57,47 @@ const ProductDescription = ({ currentProduct }) => {
     }
   };
 
+  const fetchProductByIdReviews = async () => {
+    setLoading(true);
+    try {
+      const response = await handleApiCall(
+        `${url}/products/${productId}`,
+        "get"
+      );
+      setProductReviews(response.data.product.reviews || []);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      toast.error("Error while fetching reviews");
+    }
+  };
+  const handleReviewSubmit = async (data) => {
+    const reviewData = {
+      rating: data.rating,
+      comment: data.comment,
+    };
+    try {
+      const response = await handleApiCall(
+        `${url}/reviews/${productId}`,
+        "post",
+        reviewData
+      );
+
+      setProductReviews((prev) => [...prev, response?.data?.review]);
+      console.log("reposne from handleReview Submit", response.data.review);
+      toast.success(response.data.message);
+    } catch (error) {
+      toast.error("Error while submitting review");
+    }
+  };
+
+  console.log("productReviews", productReviews);
   useEffect(() => {
     fetchProducts();
   }, [currentProduct]);
-
+  useEffect(() => {
+    fetchProductByIdReviews();
+  }, [productId]);
   const tabs = ["Description", "Reviews", "Shopping", "About seller"];
 
   return (
@@ -80,18 +130,96 @@ const ProductDescription = ({ currentProduct }) => {
               </div>
             )}
             {selectedTab === "Reviews" && (
-              <div className="text-justify text-sm sm:text-base">
-                {currentProduct?.description || "No reviews available"}
+              <div className="h-[500px] overflow-y-auto text-justify text-sm sm:text-base space-y-6">
+                <ReviewForm
+                  onSubmit={(data) => {
+                    handleReviewSubmit(data);
+                  }}
+                />
+                <hr className="border-gray-200 my-2" />
+                <div className="space-y-4">
+                  {productReviews?.length === 0 && (
+                    <p className="text-gray-500">No reviews available.</p>
+                  )}
+                  {productReviews &&
+                    productReviews?.length > 0 &&
+                    productReviews?.map((review, index) => (
+                      <div
+                        key={index}
+                        className="border p-4 rounded-lg shadow-sm bg-white"
+                      >
+                        <div className="flex  items-center justify-between">
+                          <div className="flex items-center gap-3 font-semibold text-gray-800">
+                            <div className="my-2 rounded-2xl w-10 h-10 overflow-hidden">
+                              <img
+                                className="w-full h-full rounded-2xl object-cover"
+                                src={review?.user?.profilePic}
+                                alt=""
+                              />
+                            </div>
+                            <p className="capitalize">{review?.user?.name}</p>
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {new Date(review?.createdAt).toLocaleString()}
+                          </div>
+                        </div>
+
+                        <div className="mt-2">
+                          <span className="text-yellow-500 font-medium">
+                            ⭐ Rating: {review?.rating}/5
+                          </span>
+                        </div>
+
+                        <p className="text-gray-700 mt-2">{review?.comment}</p>
+                      </div>
+                    ))}
+                </div>
               </div>
             )}
+
             {selectedTab === "Shopping" && (
               <div className="text-justify text-sm sm:text-base">
                 {currentProduct?.description || "No shipping info available"}
               </div>
             )}
-            {selectedTab === "About seller" && (
-              <div className="text-justify text-sm sm:text-base">
-                {currentProduct?.description || "No seller info available"}
+            {selectedTab === "About seller" && currentProduct?.user && (
+              <div className="bg-gray-100 p-4 rounded-lg shadow-sm space-y-3 text-sm sm:text-base">
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={currentProduct.user.profilePic}
+                    alt={currentProduct.user.name}
+                    className="w-16 h-16 rounded-full object-cover border"
+                  />
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      {currentProduct.user.name}
+                    </h2>
+                    <p className="text-gray-500 text-sm">
+                      {currentProduct.user.userType}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-2 text-gray-700 space-y-1">
+                  <p>
+                    <span className="font-medium">Email:</span>{" "}
+                    {currentProduct.user.email}
+                  </p>
+                  <p>
+                    <span className="font-medium">Phone:</span>{" "}
+                    {currentProduct.user.phoneNumber || "N/A"}
+                  </p>
+                  <p>
+                    <span className="font-medium">Products Listed:</span>{" "}
+                    {currentProduct.user.products?.length || 0}
+                  </p>
+                  <p>
+                    <span className="font-medium">Joined:</span>{" "}
+                    {new Date(
+                      currentProduct.user.createdAt
+                    ).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
             )}
           </div>
@@ -129,14 +257,14 @@ const ProductDescription = ({ currentProduct }) => {
                     </h3>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-xs sm:text-sm font-semibold">
-                        $
                         {(product.price * (1 - product.discount / 100)).toFixed(
                           2
-                        )}
+                        )}{" "}
+                        Rs
                       </span>
                       {product.discount > 0 && (
                         <span className="text-xs text-gray-500 line-through">
-                          ${product.price}
+                          {product.price} Rs
                         </span>
                       )}
                     </div>

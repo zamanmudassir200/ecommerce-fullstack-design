@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import { MdOutlineMailOutline } from "react-icons/md";
+import { GlobalContext } from "../../context/GlobalContext";
 
 const Newsletter = () => {
+  const { themeMode } = useContext(GlobalContext);
   return (
-    <div className="bg-[#EFF2F4] py-8 px-4 sm:py-12">
+    <div
+      className={` py-8 px-4 sm:py-12 ${
+        themeMode === "dark" ? "bg-slate-850 text-white " : "bg-[#EFF2F4]"
+      }`}
+    >
       <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3">
           Subscribe to our newsletter
@@ -17,7 +23,9 @@ const Newsletter = () => {
           <div className="bg-white py-1 px-3 flex items-center rounded-lg w-full">
             <MdOutlineMailOutline className="text-gray-500 text-xl sm:text-2xl mr-2" />
             <input
-              className="w-full py-2 px-1 outline-none text-sm sm:text-base"
+              className={`w-full py-2 px-1 outline-none text-sm sm:text-base ${
+                themeMode === "dark" ? " text-black" : ""
+              }`}
               type="email"
               placeholder="Enter your email"
             />

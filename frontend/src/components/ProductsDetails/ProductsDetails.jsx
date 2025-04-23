@@ -8,8 +8,13 @@ import ProductDescription from "./ProductDescription";
 import SellerProfile from "./SellerProfile";
 const ProductsDetails = () => {
   const { productId } = useParams();
-  const { handleApiCall, setCartNumber, cartNumber } =
-    useContext(GlobalContext);
+  const {
+    handleApiCall,
+    productReviews,
+    themeMode,
+    setCartNumber,
+    cartNumber,
+  } = useContext(GlobalContext);
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [imageIndex, setImageIndex] = useState(0);
@@ -44,8 +49,8 @@ const ProductsDetails = () => {
   };
 
   useEffect(() => {
-    fetchProductById();
     checkUserLoggedIn();
+    fetchProductById();
   }, [productId]);
 
   const handleMouseMove = (e) => {
@@ -75,10 +80,22 @@ const ProductsDetails = () => {
   };
 
   if (!product) {
-    return <div className="text-center py-10">Loading...</div>;
+    return (
+      <div
+        className={`text-xl text-center h-[450px] flex items-center justify-center py-10 ${
+          themeMode === "dark" ? "bg-slate-900 text-white" : ""
+        }`}
+      >
+        Loading...
+      </div>
+    );
   }
   return (
-    <main className="container relative  mx-auto px-4 sm:px-6 lg:px-8">
+    <main
+      className={` relative   ${
+        themeMode === "dark" ? "bg-slate-900 text-white" : ""
+      } px-30 py-10 sm:px-6 lg:px-8`}
+    >
       <div className="w-full my-5 min-h-[580px] p-3 border rounded-lg border-gray-200">
         {/* Main Product Container */}
         <div className="flex flex-col lg:flex-row gap-6 justify-between">
@@ -132,17 +149,46 @@ const ProductsDetails = () => {
               </span>
             </div>
             <h1 className="text-xl sm:text-2xl font-bold mb-2">
-              {product.productName}
+              {product?.productName}
             </h1>
 
             <div className="flex items-center justify-between mb-4 text-sm sm:text-base">
-              <p>Rating</p>
-              <p>Reviews</p>
-              <p>Sold</p>
+              <p>
+                {product?.reviews && product?.reviews?.length > 0 ? (
+                  <span>
+                    <strong>
+                      {(
+                        product?.reviews?.reduce(
+                          (sum, review) => sum + review?.rating,
+                          0
+                        ) / product?.reviews?.length
+                      ).toFixed(1)}
+                    </strong>{" "}
+                    rating
+                  </span>
+                ) : (
+                  "No ratings yet"
+                )}
+              </p>
+              <p>
+                {product?.reviews?.length > 0 ? (
+                  <span>
+                    <b>{product?.reviews?.length}</b>{" "}
+                    {product?.reviews?.length > 1 ? "reviews" : "review"}
+                  </span>
+                ) : (
+                  "No reviews"
+                )}
+              </p>
+              <p>{product?.stock} Sold</p>
             </div>
 
             {/* Price Tiers */}
-            <div className="bg-[#FFF0DF] p-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-10 mb-4">
+            <div
+              className={`bg-[#FFF0DF] p-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-10 mb-4 ${
+                themeMode === "dark" ? "bg-slate-800 text-white" : ""
+              }`}
+            >
               <div className="p-2">
                 <h1 className="text-red-600 text-lg font-bold">
                   {product.price} Rs
@@ -207,7 +253,11 @@ const ProductsDetails = () => {
                   </button>
                   <button
                     onClick={() => setSellerProfileModalOpen(true)}
-                    className="w-full cursor-pointer text-black border border-gray-200 hover:bg-gray-100 rounded-lg py-2 transition-colors"
+                    className={`w-full cursor-pointer text-black border border-gray-200 hover:bg-gray-100 rounded-lg py-2 transition-colors ${
+                      themeMode === "dark"
+                        ? "text-white hover:text-black"
+                        : "border-gray-200"
+                    }`}
                   >
                     Seller's Profile
                   </button>

@@ -7,7 +7,7 @@ import url from "../../utils/url";
 
 const ProductList = ({ product }) => {
   const [isInWishlist, setIsInWishlist] = useState(false);
-  const { handleApiCall } = useContext(GlobalContext);
+  const { handleApiCall, themeMode } = useContext(GlobalContext);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
@@ -71,7 +71,11 @@ const ProductList = ({ product }) => {
   return (
     <div
       key={product._id}
-      className="border-[1px] hover:bg-gray-50 duration-200 transition-all relative rounded-lg border-gray-200 flex gap-7 p-2"
+      className={`border-[1px] duration-200 transition-all relative rounded-lg border-gray-200 flex gap-7 p-2 ${
+        themeMode === "dark"
+          ? "bg-slate-900 hover: text-white hover:bg-slate-800"
+          : "bg-white hover:bg-gray-50 "
+      }`}
     >
       <div
         onClick={() => navigate(`/product-detail/${product._id}`)}

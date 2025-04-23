@@ -89,6 +89,7 @@ const CheckoutForm = () => {
 
         toast.success(response.data.message);
       } catch (error) {
+        navigate(`/checkout/order/payment-failed`);
         toast.error(error.response?.data?.message || "Payment failed");
       }
     } else {
@@ -109,6 +110,8 @@ const CheckoutForm = () => {
         );
         toast.success(response.data.message);
       } catch (error) {
+        navigate(`/checkout/order/payment-failed`);
+
         toast.error(error.response?.data?.message || "Order failed");
       }
     }

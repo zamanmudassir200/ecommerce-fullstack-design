@@ -19,6 +19,7 @@ import AllProductsByUser from "./components/ProductsDetails/AllProductsByUser";
 import PaymentSuccess from "./components/CheckOut/PaymentSuccess";
 
 import CheckOut from "./components/CheckOut/CheckOut";
+import PaymentFailed from "./components/CheckOut/PaymentFailed";
 
 const App = () => {
   return (
@@ -47,6 +48,10 @@ const App = () => {
                 <Route
                   path="/checkout/order/:orderId/payment-sucessful"
                   element={<PaymentSuccess />}
+                />
+                <Route
+                  path="/checkout/order/payment-failed"
+                  element={<PaymentFailed />}
                 />
               </Routes>
               <Footer />

@@ -8,7 +8,7 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [updatedUser, setUpdatedUser] = useState({});
-  const { handleApiCall } = useContext(GlobalContext);
+  const { handleApiCall, themeMode } = useContext(GlobalContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -87,28 +87,55 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen relative flex flex-col items-center p-6">
-      <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
+    <div
+      className={`min-h-screen relative flex flex-col items-center p-6 ${
+        themeMode === "dark" ? "bg-slate-900" : "bg-white"
+      }`}
+    >
+      <div
+        className={`w-full max-w-md shadow-md rounded-lg p-6 ${
+          themeMode === "dark" ? "bg-slate-700 text-white" : "bg-white"
+        }`}
+      >
         <div className="flex flex-col items-center">
           <img
             src={user?.profilePic}
             alt="Profile"
             className="w-24 h-24 rounded-full object-cover border-2 border-gray-300"
           />
-          <h2 className="text-2xl font-bold mt-3">{user?.name}</h2>
-          <p className="text-gray-600">{user?.email}</p>
-          <p className="text-gray-600">{user?.phoneNumber}</p>
+          <h2 className="text-2xl font-bold capitalize mt-3">{user?.name}</h2>
+          <p
+            className={` ${
+              themeMode === "dark" ? "text-gray-300" : "text-gray-600"
+            }`}
+          >
+            {user?.email}
+          </p>
+          <p
+            className={` ${
+              themeMode === "dark" ? "text-gray-300" : "text-gray-600"
+            }`}
+          >
+            {user?.phoneNumber}
+          </p>
         </div>
 
         {/* Address Section */}
         {user && user?.address && (
           <div className="mt-4 border-t pt-4">
             <h3 className="text-lg font-semibold">Address</h3>
-            <p className="text-gray-600">{user?.address?.street}</p>
-            <p className="text-gray-600">
+            <p
+              className={`${
+                themeMode === "dark" ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
+              {user?.address?.street} {user?.address?.city},{" "}
+              {user?.address?.country} - {user?.address?.postalCode}
+            </p>
+            {/* <p className="text-gray-600">
               {user?.address?.city}, {user?.address?.country} -{" "}
               {user?.address?.postalCode}
-            </p>
+            </p> */}
           </div>
         )}
 

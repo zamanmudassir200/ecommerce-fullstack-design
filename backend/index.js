@@ -10,6 +10,7 @@ const cartRoutes = require("./routes/cartRoutes");
 const categoriesRoutes = require("./routes/categoryRoutes");
 const couponCodeRoutes = require("./routes/couponCodeRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const reviewsRoutes = require("./routes/reviewRoutes");
 dotenv.config();
 
 cloudinary.config({
@@ -41,6 +42,7 @@ app.use("/categories", categoriesRoutes);
 app.use("/carts", cartRoutes);
 app.use("/couponcodes", couponCodeRoutes);
 app.use("/orders", orderRoutes);
+app.use("/reviews", reviewsRoutes);
 
 app.get("/", (req, res) => {
   res.send("welcome to home page");

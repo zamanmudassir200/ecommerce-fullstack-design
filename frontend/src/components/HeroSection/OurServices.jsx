@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { IoSearch } from "react-icons/io5";
+import { GlobalContext } from "../../context/GlobalContext";
 
 const OurServices = () => {
+  const { themeMode } = useContext(GlobalContext);
+
   const services = [
     {
       image: "./Mask group.png",
@@ -26,8 +29,18 @@ const OurServices = () => {
   ];
 
   return (
-    <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-10">
-      <h1 className="text-xl md:text-2xl font-bold mb-6">Our extra services</h1>
+    <section
+      className={`container mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-10 ${
+        themeMode === "dark" ? "" : ""
+      }`}
+    >
+      <h1
+        className={`text-xl md:text-2xl font-bold mb-6 ${
+          themeMode === "dark" ? "text-white" : ""
+        }`}
+      >
+        Our extra services
+      </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {services.map((service, index) => (

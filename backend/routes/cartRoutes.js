@@ -8,6 +8,7 @@ const {
 const { authenticationToken } = require("../middlewares/authenticationToken");
 const router = express.Router();
 
+
 router.post("/:productId", authenticationToken, addToCart);
 
 router.get("/", authenticationToken, getCartsByUser);

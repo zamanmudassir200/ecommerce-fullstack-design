@@ -61,15 +61,15 @@ const OrderHistory = () => {
               <div className="my-4">
                 <strong>Products:</strong>
                 <ul className="ml-4 list-disc text-sm text-gray-700">
-                  {order.products.map((prod) => (
+                  {order?.products?.map((prod) => (
                     <li key={prod._id}>
                       <span className="text-lg">Name: </span>{" "}
                       <strong className="text-lg">
-                        {prod.product.productName}
+                        {prod?.product?.productName}
                       </strong>{" "}
-                      <span className="font-medium">Qty:</span> {prod.quantity},
-                      <span className="font-medium ml-1">Price:</span> per qty{" "}
-                      <b>{prod.product.discountedPrice} Rs</b>
+                      <span className="font-medium">Qty:</span> {prod?.quantity}
+                      ,<span className="font-medium ml-1">Price:</span> per qty{" "}
+                      <b>{prod?.product?.discountedPrice} Rs</b>
                     </li>
                   ))}
                 </ul>
@@ -77,22 +77,22 @@ const OrderHistory = () => {
 
               <div className="text-sm flex gap-2 justify-between items-center mb-3">
                 <p className="text-gray-600">
-                  <strong>Payment:</strong> {order.payMethod} -{" "}
+                  <strong>Payment:</strong> {order?.payMethod} -{" "}
                   <span
                     className={` ${
-                      order.paymentStatus.toLowerCase() === "paid"
+                      order?.paymentStatus?.toLowerCase() === "paid"
                         ? "text-green-400"
                         : ""
                     } italic font-semibold `}
                   >
                     {" "}
-                    {order.paymentStatus}
+                    {order?.paymentStatus}
                   </span>{" "}
                 </p>
                 <div className="flex gap-3 flex-wrap">
-                  {order.orderStatus === "Processing" && (
+                  {order?.orderStatus === "Processing" && (
                     <button
-                      onClick={() => handleApproveOrder(order._id)}
+                      onClick={() => handleApproveOrder(order?._id)}
                       className="bg-green-500 px-2 cursor-pointer text-white rounded-2xl"
                     >
                       Approved

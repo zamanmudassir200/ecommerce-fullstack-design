@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import RecommendedItem from "./RecommendedItem";
+import { GlobalContext } from "../../context/GlobalContext";
 
 const RecommendedItems = () => {
+  const { themeMode } = useContext(GlobalContext);
+
   const recommendedItems = [
     {
       image: "./1.png",
@@ -56,7 +59,11 @@ const RecommendedItems = () => {
   ];
 
   return (
-    <section className="my-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section
+      className={`my-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto ${
+        themeMode === "dark" ? "bg-salte-900 text-white" : "bg-white"
+      }`}
+    >
       <h1 className="font-bold text-lg sm:text-xl md:text-2xl mb-4 sm:mb-6">
         Recommended Items
       </h1>

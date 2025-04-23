@@ -13,8 +13,14 @@ import Newsletter from "./Newsletter";
 import WelcomeUser from "./WelcomeUser";
 
 const HeroSection = () => {
-  const { handleApiCall, products, categories, setCategories, setProducts } =
-    useContext(GlobalContext);
+  const {
+    handleApiCall,
+    themeMode,
+    products,
+    categories,
+    setCategories,
+    setProducts,
+  } = useContext(GlobalContext);
   const [user, setUser] = useState("");
   const [isUserLogin, setIsUserLogin] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -65,12 +71,28 @@ const HeroSection = () => {
     fetchCategories();
   }, []);
   return (
-    <main className="min-h-screen">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
+    <main
+      className={`min-h-screen ${
+        themeMode === "light" ? "bg-white " : "bg-slate-900"
+      } `}
+    >
+      <div
+        className={`${
+          themeMode === "light" ? "bg-white " : "bg-slate-900"
+        } container mx-auto px-4 sm:px-6 lg:px-8 py-3 `}
+      >
         {/* Main Hero Section */}
-        <div className="min-h-[400px] w-full bg-white flex flex-col lg:flex-row justify-between items-start p-3 gap-4 border border-gray-300 rounded-md shadow-sm">
+        <div
+          className={`min-h-[400px] w-full flex flex-col lg:flex-row justify-between items-start p-3 gap-4 border border-gray-300 rounded-md shadow-sm `}
+        >
           {/* Categories Sidebar - Hidden on small screens, shown on medium and up */}
-          <div className="hidden md:flex w-full lg:w-[25%] flex-col bg-gray-50 rounded-lg">
+          <div
+            className={`hidden md:flex w-full lg:w-[25%] flex-col bg-gray-50 rounded-lg ${
+              themeMode === "light"
+                ? "bg-white text-black "
+                : "bg-slate-900 text-white "
+            } `}
+          >
             <ul className="max-h-[370px] overflow-y-auto">
               {loading && (
                 <h1 className="flex min-h-[400px] items-center justify-center">
@@ -81,7 +103,11 @@ const HeroSection = () => {
                 <Link
                   to={`./${category.name.split(" ").join("-")}`}
                   key={category._id}
-                  className="py-2 px-3 block hover:font-semibold transition-all rounded-md cursor-pointer hover:bg-[#E5F1FF] text-sm md:text-base"
+                  className={`py-2 px-3 block hover:font-semibold transition-all rounded-md cursor-pointer  text-sm md:text-base ${
+                    themeMode === "light"
+                      ? "hover:bg-[#E5F1FF] "
+                      : "hover:bg-[#E5F1FF] hover:text-black"
+                  }`}
                 >
                   {category.name.replace(/\b\w/g, (char) => char.toUpperCase())}
                 </Link>

@@ -209,6 +209,12 @@ const editUser = async (req, res) => {
       .json({ success: false, message: "Internal server error" });
   }
 };
+// const isSeller = (req, res, next) => {
+//   if (req.user.userType !== "seller") {
+//     return res.status(403).json({ message: "Access denied" });
+//   }
+//   next();
+// };
 
 module.exports = {
   upload,

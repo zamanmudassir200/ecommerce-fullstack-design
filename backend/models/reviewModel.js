@@ -14,6 +14,8 @@ const reviewSchema = mongoose.Schema(
       type: Number,
       required: true,
       default: 1,
+      min: 1,
+      max: 5,
     },
     comment: {
       type: String,
@@ -23,4 +25,4 @@ const reviewSchema = mongoose.Schema(
     timestamps: true,
   }
 );
-export const reviewModel = mongoose.model("review", reviewSchema);
+module.exports = mongoose.model("review", reviewSchema);

@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { GlobalContext } from "../../context/GlobalContext";
 
 const RelatedProducts = ({ recommendedProducts }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const { themeMode } = useContext(GlobalContext);
   useEffect(() => {
     window.scrollTo({
       top: 0,

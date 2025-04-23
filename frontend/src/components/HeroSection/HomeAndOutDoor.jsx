@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { GlobalContext } from "../../context/GlobalContext";
 
 const HomeAndOutDoor = ({ title, img, products }) => {
   const navigate = useNavigate();
-
+  const { themeMode } = useContext(GlobalContext);
   const filteredCategoriesProducts = products.filter((product) => {
     return product.category?.name?.toLowerCase() === title.toLowerCase();
   });
 
   return (
-    <div className="my-5 border border-gray-300 rounded-md bg-white">
+    <div
+      className={`my-5 border border-gray-300 rounded-md  ${
+        themeMode === "dark" ? " bg-slate-900 " : "bg-white"
+      }`}
+    >
       <div className="rounded-lg mx-auto">
         <div className="flex flex-col md:flex-row">
           {/* Category Banner Section */}

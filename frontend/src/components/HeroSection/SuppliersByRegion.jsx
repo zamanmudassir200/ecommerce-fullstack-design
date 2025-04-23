@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
+import { GlobalContext } from "../../context/GlobalContext";
 
 const SuppliersByRegion = () => {
+  const { themeMode } = useContext(GlobalContext);
+
   const suppliersByRegion = [
     { flag: "./icon.png", name: "Arab Emirates", shopName: "shopname.ae" },
     { flag: "./icon.png", name: "Arab Emirates", shopName: "shopname.ae" },
@@ -15,8 +18,12 @@ const SuppliersByRegion = () => {
   ];
 
   return (
-    <div className="w-full px-4 sm:px-0">
-      <h1 className="text-2xl font-semibold text-center sm:text-left">
+    <div
+      className={`w-full px-4 sm:px-0 ${
+        themeMode == "dark" ? " text-white" : "bg-white"
+      }`}
+    >
+      <h1 className={`text-2xl font-semibold text-center sm:text-left`}>
         Suppliers by region
       </h1>
       <div className="my-10 flex flex-wrap justify-center sm:justify-start gap-6 sm:gap-10">
