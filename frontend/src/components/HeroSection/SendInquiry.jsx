@@ -8,6 +8,7 @@ const SendInquiry = () => {
         className="absolute h-full w-full object-cover"
         src="./Group 982.png"
         alt="Supplier inquiry background"
+        loading="lazy"
       />
 
       {/* Content Container */}

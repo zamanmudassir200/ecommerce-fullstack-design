@@ -1,10 +1,10 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, lazy, useEffect, Suspense } from "react";
 import { GlobalContext } from "../../context/GlobalContext";
 import url from "../../utils/url";
 import { toast } from "react-toastify";
-import ApprovedModal from "./ApprovedModal";
-import ChangeOrderStatus from "./ChangeOrderStatus";
-import CancelOrder from "./CancelOrder";
+const ApprovedModal = lazy(() => import("./ApprovedModal"));
+const ChangeOrderStatus = lazy(() => import("./ChangeOrderStatus"));
+const CancelOrder = lazy(() => import("./CancelOrder"));
 
 const OrderHistory = () => {
   const { handleApiCall } = useContext(GlobalContext);
@@ -249,25 +249,50 @@ const OrderHistory = () => {
         </div>
       )}
       {approvedModal && (
-        <ApprovedModal
-          orderId={selectedOrderId}
-          onConfirm={() => handleApproveOrder(selectedOrderId)}
-          onClose={() => setApprovedModal(false)}
-        />
+        <Suspense
+          fallback={
+            <div className={`text-center flex items-center h-screen `}>
+              Loading...
+            </div>
+          }
+        >
+          <ApprovedModal
+            orderId={selectedOrderId}
+            onConfirm={() => handleApproveOrder(selectedOrderId)}
+            onClose={() => setApprovedModal(false)}
+          />
+        </Suspense>
       )}
       {orderStatusModal && (
-        <ChangeOrderStatus
-          orderId={selectedOrderId}
-          onConfirm={() => handleChangeStatus(selectedOrderId)}
-          onClose={() => setOrderStatusModal(false)}
-        />
+        <Suspense
+          fallback={
+            <div className={`text-center flex items-center h-screen `}>
+              Loading...
+            </div>
+          }
+        >
+          <ChangeOrderStatus
+            orderId={selectedOrderId}
+            onConfirm={() => handleChangeStatus(selectedOrderId)}
+            onClose={() => setOrderStatusModal(false)}
+          />
+        </Suspense>
       )}
       {cancelOrderModal && (
-        <CancelOrder
-          orderId={selectedOrderId}
-          onConfirm={() => handleOrderCancel(selectedOrderId)}
-          onClose={() => setCancelOrderModal(false)}
-        />
+        <Suspense
+          fallback={
+            <div className={`text-center flex items-center h-screen `}>
+              Loading...
+            </div>
+          }
+        >
+          {" "}
+          <CancelOrder
+            orderId={selectedOrderId}
+            onConfirm={() => handleOrderCancel(selectedOrderId)}
+            onClose={() => setCancelOrderModal(false)}
+          />
+        </Suspense>
       )}
     </div>
   );

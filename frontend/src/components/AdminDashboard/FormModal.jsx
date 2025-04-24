@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { Suspense, lazy, useContext, useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { GlobalContext } from "../../context/GlobalContext";
 import url from "../../utils/url";
 import { toast } from "react-toastify";
-import CategoryForm from "./CategoryForm";
+const CategoryForm = lazy(() => import("./CategoryForm"));
 
 const FormModal = ({
   setIsModalOpen,
@@ -312,16 +312,27 @@ const FormModal = ({
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Category
                   </label>
-                  <CategoryForm
-                    subCategory={subCategory}
-                    setSubCategory={setSubCategory}
-                    mainCategory={mainCategory}
-                    subCategories={subCategories}
-                    description={description}
-                    setMainCategory={setMainCategory}
-                    setSubCategories={setSubCategories}
-                    setDescription={setDescription}
-                  />
+                  <Suspense
+                    fallback={
+                      <div
+                        className={`text-center flex items-center h-screen `}
+                      >
+                        Loading...
+                      </div>
+                    }
+                  >
+                    {" "}
+                    <CategoryForm
+                      subCategory={subCategory}
+                      setSubCategory={setSubCategory}
+                      mainCategory={mainCategory}
+                      subCategories={subCategories}
+                      description={description}
+                      setMainCategory={setMainCategory}
+                      setSubCategories={setSubCategories}
+                      setDescription={setDescription}
+                    />
+                  </Suspense>
                 </div>
 
                 <div className="col-span-2">
@@ -356,6 +367,7 @@ const FormModal = ({
                             }
                             alt="Selected"
                             className="w-full h-full object-cover"
+                            loading="lazy"
                           />
                         </div>
                       ))}

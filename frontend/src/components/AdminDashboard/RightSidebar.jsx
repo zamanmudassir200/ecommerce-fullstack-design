@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { Suspense, lazy, useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../../context/GlobalContext";
 import url from "../../utils/url";
-import FormModal from "./FormModal";
+const FormModal = lazy(() => import("./FormModal"));
 import { toast } from "react-toastify";
-import CouponCode from "./CouponCode";
+const CouponCode = lazy(() => import("./CouponCode"));
 import { useNavigate } from "react-router-dom";
-import OrderHistory from "./OrderHistory";
-import Products from "./Products";
+const OrderHistory = lazy(() => import("./OrderHistory"));
+const Products = lazy(() => import("./Products"));
 
 const RightSidebar = () => {
   const { showTabsData, handleApiCall, products, setProducts } =
@@ -86,19 +86,42 @@ const RightSidebar = () => {
   return (
     <div className="p-4">
       {showTabsData === "products" && (
-        <Products
-          setIsModalOpen={setIsModalOpen}
-          setIsCouponCodeModalOpen={setIsCouponCodeModalOpen}
-          products={products}
-          setCategoryId={setCategoryId}
-          setProductToEdit={setProductToEdit}
-          setProductToDelete={setProductToDelete}
-          setIsDeleteModalOpen={setIsDeleteModalOpen}
-          setIsEditModalOpen={setIsEditModalOpen}
-        />
+        <Suspense
+          fallback={
+            <div className={`text-center flex items-center h-screen `}>
+              Loading...
+            </div>
+          }
+        >
+          <Products
+            setIsModalOpen={setIsModalOpen}
+            setIsCouponCodeModalOpen={setIsCouponCodeModalOpen}
+            products={products}
+            setCategoryId={setCategoryId}
+            setProductToEdit={setProductToEdit}
+            setProductToDelete={setProductToDelete}
+            setIsDeleteModalOpen={setIsDeleteModalOpen}
+            setIsEditModalOpen={setIsEditModalOpen}
+          />
+        </Suspense>
       )}
 
-      {showTabsData === "order history" && <OrderHistory />}
+      {showTabsData === "order history" && (
+        <Suspense
+          fallback={
+            <div
+              className={`text-center flex items-center h-screen ${
+                themeMode === "dark" ? "text-white" : "text-black"
+              }`}
+            >
+              Loading...
+            </div>
+          }
+        >
+          {" "}
+          <OrderHistory />
+        </Suspense>
+      )}
       {/* Modals */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 backdrop-brightness-50 bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -126,19 +149,29 @@ const RightSidebar = () => {
         </div>
       )}
       {isEditModalOpen && (
-        <FormModal
-          setIsEditModalOpen={setIsEditModalOpen}
-          isEditModalOpen={isEditModalOpen}
-          productToEdit={productToEdit}
-          categoryId={categoryId}
-        />
+        <Suspense fallback={<div className="text-center p-2">Loading...</div>}>
+          <FormModal
+            setIsEditModalOpen={setIsEditModalOpen}
+            isEditModalOpen={isEditModalOpen}
+            productToEdit={productToEdit}
+            categoryId={categoryId}
+          />
+        </Suspense>
       )}
 
       {isModalOpen && (
-        <FormModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+        <Suspense fallback={<div className="text-center p-2">Loading...</div>}>
+          <FormModal
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+          />
+        </Suspense>
       )}
       {isCouponCodeModalOpen && (
-        <CouponCode setIsCouponCodeModalOpen={setIsCouponCodeModalOpen} />
+        <Suspense fallback={<div className="text-center p-2">Loading...</div>}>
+          {" "}
+          <CouponCode setIsCouponCodeModalOpen={setIsCouponCodeModalOpen} />
+        </Suspense>
       )}
     </div>
   );

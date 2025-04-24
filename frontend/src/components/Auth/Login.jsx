@@ -24,7 +24,6 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await handleApiCall(`${url}/login`, "post", data);
-      console.log("response from login", response);
 
       if (response && response.status === 200) {
         toast.success(response.data.message);

@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import React, { useState } from "react";
 import { TfiUser } from "react-icons/tfi";
-import url from "../../utils/url";
 import { useNavigate } from "react-router-dom";
 import JoinNowModal from "./JoinNowModal";
 

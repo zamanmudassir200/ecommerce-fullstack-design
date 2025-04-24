@@ -1,6 +1,6 @@
-import React from "react";
-import ProductList from "./ProductList";
+import React, { lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
+const ProductList = lazy(() => import("./ProductList"));
 
 const Products = ({
   setIsModalOpen,
@@ -36,14 +36,23 @@ const Products = ({
         </button>
       </div>
 
-      <ProductList
-        products={products}
-        setCategoryId={setCategoryId}
-        setProductToEdit={setProductToEdit}
-        setProductToDelete={setProductToDelete}
-        setIsDeleteModalOpen={setIsDeleteModalOpen}
-        setIsEditModalOpen={setIsEditModalOpen}
-      />
+      <Suspense
+        fallback={
+          <div className={`text-center flex items-center h-screen `}>
+            Loading...
+          </div>
+        }
+      >
+        {" "}
+        <ProductList
+          products={products}
+          setCategoryId={setCategoryId}
+          setProductToEdit={setProductToEdit}
+          setProductToDelete={setProductToDelete}
+          setIsDeleteModalOpen={setIsDeleteModalOpen}
+          setIsEditModalOpen={setIsEditModalOpen}
+        />
+      </Suspense>
     </>
   );
 };

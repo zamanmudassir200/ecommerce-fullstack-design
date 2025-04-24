@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, lazy, Suspense } from "react";
 import { IoIosLock } from "react-icons/io";
 import { MdMessage } from "react-icons/md";
 import { TbTruckDelivery } from "react-icons/tb";
 import { GlobalContext } from "../../context/GlobalContext";
 import url from "../../utils/url";
 import { toast } from "react-toastify";
-import SaveForLater from "./SaveForLater";
+const SaveForLater = lazy(() => import("./SaveForLater"));
 import { useNavigate } from "react-router-dom";
 
 const MyCart = () => {
@@ -29,12 +29,10 @@ const MyCart = () => {
   // const productIds = cart?.items?.map((item, index) => {
   //   return item.product._id;
   // });
-  // console.log("productids", productIds);
 
   // const checkUserLoggedIn = async () => {
   //   try {
   //     const response = await handleApiCall(`${url}/checkAuth`, "get");
-  //     console.log("response from checkuser logged in carts  ", response);
   //     if (response?.data?.loggedIn) {
   //       const currentUser = response?.data?.user;
   //       setUser(currentUser);
@@ -74,11 +72,9 @@ const MyCart = () => {
         { couponCode: coupon }
       );
       setCouponCodeResponse(response?.data?.couponCode);
-      // console.log(response.data);
       toast.success(response.data.message);
     } catch (error) {
       const { message } = error;
-      console.log(message);
       if (error?.message) {
         setErrMsg("heello");
       }
@@ -129,7 +125,6 @@ const MyCart = () => {
       setIsInWishlist(true);
       toast.success(response.data.message);
     } catch (error) {
-      console.log("eror");
       toast.error("Error while adding to wishlist");
     }
   };
@@ -217,18 +212,6 @@ const MyCart = () => {
                             >
                               Remove
                             </button>
-                            {/* <button
-                              onClick={() =>
-                                isInWishlist
-                                  ? removeFromWishList(item?.product._id)
-                                  : addToWishList(item?.product?._id)
-                              }
-                              className="text-xs sm:text-sm text-blue-500 font-medium cursor-pointer px-2 py-1 rounded border border-gray-200 hover:bg-blue-50"
-                            >
-                              {isInWishlist
-                                ? "Remove from the wishList"
-                                : "Save for later"}
-                            </button> */}
                           </div>
                         </div>
                       </div>
@@ -501,7 +484,9 @@ const MyCart = () => {
           </div>
         </div>
 
-        <SaveForLater />
+        <Suspense fallback={<div className="text-center py-2">Loading...</div>}>
+          <SaveForLater />
+        </Suspense>
       </div>
     </main>
   );

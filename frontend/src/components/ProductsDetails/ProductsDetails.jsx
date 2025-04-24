@@ -1,11 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, lazy, useState, Suspense } from "react";
+import { motion } from "framer-motion";
+
 import { GlobalContext } from "../../context/GlobalContext";
 import url from "../../utils/url";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FaRegHeart } from "react-icons/fa";
-import ProductDescription from "./ProductDescription";
-import SellerProfile from "./SellerProfile";
+const SellerProfile = lazy(() => import("./SellerProfile"));
+const ProductDescription = lazy(() => import("./ProductDescription"));
+
 const ProductsDetails = () => {
   const { productId } = useParams();
   const {
@@ -92,20 +95,28 @@ const ProductsDetails = () => {
   }
   return (
     <main
-      className={` relative   ${
+      className={`relative ${
         themeMode === "dark" ? "bg-slate-900 text-white" : ""
       } px-30 py-10 sm:px-6 lg:px-8`}
     >
       <div className="w-full my-5 min-h-[580px] p-3 border rounded-lg border-gray-200">
         {/* Main Product Container */}
-        <div className="flex flex-col lg:flex-row gap-6 justify-between">
+        <motion.div
+          className="flex flex-col lg:flex-row gap-6 justify-between"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
           {/* Product Images Section */}
           <div className="flex flex-col gap-4 w-full lg:w-auto">
-            <div
+            <motion.div
               className="w-full sm:w-[380px] h-[300px] sm:h-[380px] rounded-lg overflow-hidden relative border border-gray-200 mx-auto"
               onMouseMove={handleMouseMove}
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
             >
               {product.images?.length > 0 && (
                 <img
@@ -117,42 +128,62 @@ const ProductsDetails = () => {
                   style={{
                     transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
                   }}
+                  loading="lazy"
                 />
               )}
-            </div>
+            </motion.div>
 
             {/* Thumbnail Images */}
             <div className="w-full sm:w-[382px] h-auto flex gap-2 overflow-x-auto pb-2 mx-auto">
               {product.images?.map((image, index) => (
-                <div
+                <motion.div
                   onClick={() => setImageIndex(index)}
                   key={index}
                   className={`min-w-[60px] h-[60px] border rounded-lg border-gray-200 cursor-pointer overflow-hidden ${
                     imageIndex === index ? "ring-2 ring-blue-500" : ""
                   }`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
                 >
                   <img
                     className="h-full w-full object-contain"
                     src={image}
                     alt={`Product thumbnail ${index + 1}`}
+                    loading="lazy"
                   />
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
 
           {/* Product Info Section */}
           <div className="flex-1">
-            <div className="mb-4">
+            <motion.div
+              className="mb-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
               <span className="text-green-500 font-bold text-lg">
                 {product.stock > 0 ? "✔ In stock" : "Out of stock"}
               </span>
-            </div>
-            <h1 className="text-xl sm:text-2xl font-bold mb-2">
+            </motion.div>
+            <motion.h1
+              className="text-xl sm:text-2xl font-bold mb-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
               {product?.productName}
-            </h1>
+            </motion.h1>
 
-            <div className="flex items-center justify-between mb-4 text-sm sm:text-base">
+            <motion.div
+              className="flex items-center justify-between mb-4 text-sm sm:text-base"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
               <p>
                 {product?.reviews && product?.reviews?.length > 0 ? (
                   <span>
@@ -181,7 +212,7 @@ const ProductsDetails = () => {
                 )}
               </p>
               <p>{product?.stock} Sold</p>
-            </div>
+            </motion.div>
 
             {/* Price Tiers */}
             <div
@@ -232,7 +263,12 @@ const ProductsDetails = () => {
           </div>
 
           {/* Supplier & Action Section */}
-          <div className="">
+          <motion.div
+            className=""
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
             <div className="w-full relative lg:w-[280px]">
               <div className="w-full flex flex-col justify-between p-3 h-auto lg:h-[325px] border rounded-lg border-gray-200 mb-4">
                 <div>
@@ -288,12 +324,7 @@ const ProductsDetails = () => {
                         value={quantity}
                         type="number"
                         min="1"
-                        onChange={(e) => {
-                          const value = parseInt(e.target.value);
-                          if (!isNaN(value) && value > 0) {
-                            setQuantity(value);
-                          }
-                        }}
+                        onChange={(e) => setQuantity(parseInt(e.target.value))}
                       />
                       <button
                         onClick={() => setQuantity(quantity + 1)}
@@ -315,17 +346,41 @@ const ProductsDetails = () => {
                 </div>
               </div>
               {sellerProfileModalOpen && (
-                <SellerProfile
-                  product={product}
-                  setSellerProfileModalOpen={setSellerProfileModalOpen}
-                />
+                <Suspense
+                  fallback={
+                    <div
+                      className={`text-center flex items-center h-screen ${
+                        themeMode === "dark" ? "text-white" : "text-black"
+                      }`}
+                    >
+                      Loading...
+                    </div>
+                  }
+                >
+                  {" "}
+                  <SellerProfile
+                    product={product}
+                    setSellerProfileModalOpen={setSellerProfileModalOpen}
+                  />
+                </Suspense>
               )}
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
-
-      <ProductDescription currentProduct={product} />
+      <Suspense
+        fallback={
+          <div
+            className={`text-center flex items-center h-screen ${
+              themeMode === "dark" ? "text-white" : "text-black"
+            }`}
+          >
+            Loading...
+          </div>
+        }
+      >
+        <ProductDescription currentProduct={product} />
+      </Suspense>
     </main>
   );
 };

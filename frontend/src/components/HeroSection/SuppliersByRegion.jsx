@@ -26,7 +26,7 @@ const SuppliersByRegion = () => {
       <h1 className={`text-2xl font-semibold text-center sm:text-left`}>
         Suppliers by region
       </h1>
-      <div className="my-10 flex flex-wrap justify-center sm:justify-start gap-6 sm:gap-10">
+      <div className="my-10 flex flex-wrap justify-center sm:justify-start gap-6 sm:gap-6">
         {suppliersByRegion.map((supplier, index) => (
           <div
             key={index}

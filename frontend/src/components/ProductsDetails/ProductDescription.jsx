@@ -1,11 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, lazy, Suspense } from "react";
 import { GlobalContext } from "../../context/GlobalContext";
 import { toast } from "react-toastify";
 import url from "../../utils/url";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
-import RelatedProducts from "./RelatedProducts";
-import ReviewForm from "./ReviewForm";
+// Lazy load components
+const ReviewForm = lazy(() => import("./ReviewForm"));
+const RelatedProducts = lazy(() => import("./RelatedProducts"));
+
+import { motion } from "framer-motion";
 
 const ProductDescription = ({ currentProduct }) => {
   const {
@@ -85,14 +88,12 @@ const ProductDescription = ({ currentProduct }) => {
       );
 
       setProductReviews((prev) => [...prev, response?.data?.review]);
-      console.log("reposne from handleReview Submit", response.data.review);
       toast.success(response.data.message);
     } catch (error) {
       toast.error("Error while submitting review");
     }
   };
 
-  console.log("productReviews", productReviews);
   useEffect(() => {
     fetchProducts();
   }, [currentProduct]);
@@ -105,7 +106,12 @@ const ProductDescription = ({ currentProduct }) => {
     <>
       <main className="flex flex-col lg:flex-row my-3 gap-4 lg:gap-6">
         {/* Main Content */}
-        <div className="flex-1 rounded-lg border border-gray-200">
+        <motion.div
+          className="flex-1 rounded-lg border border-gray-200"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
           {/* Tabs */}
           <div className="h-12 flex items-center border-b border-gray-200 ">
             {tabs.map((tab, index) => (
@@ -124,7 +130,12 @@ const ProductDescription = ({ currentProduct }) => {
           </div>
 
           {/* Tab Content */}
-          <div className="p-3 sm:p-4">
+          <motion.div
+            className="p-3 sm:p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
             {selectedTab === "Description" && (
               <div className="text-justify text-sm sm:text-base">
                 {currentProduct?.description || "No description available"}
@@ -132,11 +143,24 @@ const ProductDescription = ({ currentProduct }) => {
             )}
             {selectedTab === "Reviews" && (
               <div className="h-[500px] overflow-y-auto text-justify text-sm sm:text-base space-y-6">
-                <ReviewForm
-                  onSubmit={(data) => {
-                    handleReviewSubmit(data);
-                  }}
-                />
+                <Suspense
+                  fallback={
+                    <div
+                      className={`text-center flex items-center h-screen ${
+                        themeMode === "dark" ? "text-white" : "text-black"
+                      }`}
+                    >
+                      Loading...
+                    </div>
+                  }
+                >
+                  {" "}
+                  <ReviewForm
+                    onSubmit={(data) => {
+                      handleReviewSubmit(data);
+                    }}
+                  />
+                </Suspense>
                 <hr className="border-gray-200 my-2" />
                 <div className="space-y-4">
                   {productReviews?.length === 0 && (
@@ -153,7 +177,7 @@ const ProductDescription = ({ currentProduct }) => {
                             : "bg-white"
                         }`}
                       >
-                        <div className="flex  items-center justify-between">
+                        <div className="flex items-center justify-between">
                           <div
                             className={`flex items-center gap-3 font-semibold  ${
                               themeMode === "dark"
@@ -166,6 +190,7 @@ const ProductDescription = ({ currentProduct }) => {
                                 className="w-full h-full rounded-2xl object-cover"
                                 src={review?.user?.profilePic}
                                 alt=""
+                                loading="lazy"
                               />
                             </div>
                             <p className="capitalize">{review?.user?.name}</p>
@@ -214,6 +239,7 @@ const ProductDescription = ({ currentProduct }) => {
                     src={currentProduct.user.profilePic}
                     alt={currentProduct.user.name}
                     className="w-16 h-16 rounded-full object-cover border"
+                    loading="lazy"
                   />
                   <div>
                     <h2 className="text-lg font-semibold text-gray-800">
@@ -247,11 +273,16 @@ const ProductDescription = ({ currentProduct }) => {
                 </div>
               </div>
             )}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Recommended Products Sidebar */}
-        <div className="w-full lg:w-[310px] h-auto lg:h-[513px] border border-gray-200 rounded-lg shadow-sm">
+        <motion.div
+          className="w-full lg:w-[310px] h-auto lg:h-[513px] border border-gray-200 rounded-lg shadow-sm"
+          initial={{ x: 300, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.6 }}
+        >
           <h1 className="text-sm sm:text-md font-semibold p-3">You may like</h1>
           <div className="space-y-3 p-2 overflow-y-auto">
             {recommendedProducts?.length > 0 ? (
@@ -275,6 +306,7 @@ const ProductDescription = ({ currentProduct }) => {
                         src={product.images[0]}
                         alt={product.productName}
                         className="w-full h-full object-contain"
+                        loading="lazy"
                       />
                     ) : (
                       <span className="text-xs text-gray-400">No image</span>
@@ -312,9 +344,21 @@ const ProductDescription = ({ currentProduct }) => {
               </p>
             )}
           </div>
-        </div>
+        </motion.div>
       </main>
-      <RelatedProducts recommendedProducts={recommendedProducts} />
+      <Suspense
+        fallback={
+          <div
+            className={`text-center flex items-center h-screen ${
+              themeMode === "dark" ? "text-white" : "text-black"
+            }`}
+          >
+            Loading...
+          </div>
+        }
+      >
+        <RelatedProducts recommendedProducts={recommendedProducts} />
+      </Suspense>
     </>
   );
 };

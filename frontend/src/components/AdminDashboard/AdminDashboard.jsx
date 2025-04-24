@@ -1,6 +1,6 @@
-import React, { useContext, useEffect } from "react";
-import LeftSidebar from "./LeftSidebar";
-import RightSidebar from "./RightSidebar";
+import React, { useContext, useEffect, lazy, Suspense } from "react";
+const LeftSidebar = (lazy = () => import("./LeftSidebar"));
+const RightSidebar = (lazy = () => import("./RightSidebar"));
 import url from "../../utils/url.js";
 import { GlobalContext } from "../../context/GlobalContext.jsx";
 import { useNavigate } from "react-router-dom";
@@ -24,12 +24,30 @@ const AdminDashboard = () => {
     <div className="flex flex-col sm:flex-row min-h-screen">
       {/* Left Sidebar - Sticky on mobile, fixed width on desktop */}
       <div className="sm:sticky sm:top-0 sm:h-screen sm:w-64 z-10">
-        <LeftSidebar />
+        <Suspense
+          fallback={
+            <div className={`text-center flex items-center h-screen `}>
+              Loading...
+            </div>
+          }
+        >
+          {" "}
+          <LeftSidebar />
+        </Suspense>
       </div>
 
       {/* Right Content Area */}
       <div className="flex-1 overflow-x-hidden">
-        <RightSidebar />
+        <Suspense
+          fallback={
+            <div className={`text-center flex items-center h-screen `}>
+              Loading...
+            </div>
+          }
+        >
+          {" "}
+          <RightSidebar />
+        </Suspense>
       </div>
     </div>
   );

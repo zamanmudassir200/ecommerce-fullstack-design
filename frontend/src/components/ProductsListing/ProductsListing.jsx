@@ -1,13 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, lazy, Suspense } from "react";
 import { IoGrid } from "react-icons/io5";
 import { FaListUl, FaStar } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import url from "../../utils/url";
-import ProductList from "./ProductList";
-import ProductGrid from "./ProductGrid";
-import Newsletter from "../HeroSection/Newsletter";
+const ProductGrid = lazy(() => import("./ProductGrid"));
+const ProductList = lazy(() => import("./ProductList"));
+const Newsletter = lazy(() => import("../HeroSection/Newsletter"));
 import { GlobalContext } from "../../context/GlobalContext";
 
 const ProductsListing = () => {
@@ -339,20 +339,20 @@ const ProductsListing = () => {
                   <select className="py-2 border w-full sm:w-[150px] border-gray-200 rounded text-sm sm:text-base">
                     <option value="">Featured</option>
                   </select>
-                  <div className="flex border rounded-lg border-gray-200">
+                  <div className="flex border rounded-lg border-gray-200 overflow-hidden">
                     <button
                       onClick={() => setProductViewType("grid")}
                       className={`${
-                        productViewType === "grid" ? "bg-gray-200" : ""
-                      } p-2 cursor-pointer transition-colors`}
+                        productViewType === "grid" ? "bg-gray-400" : ""
+                      } p-2 cursor-pointer transition-colors `}
                     >
                       <IoGrid size={20} />
                     </button>
                     <button
                       onClick={() => setProductViewType("list")}
                       className={`${
-                        productViewType === "list" ? "bg-gray-200" : ""
-                      } p-2 cursor-pointer transition-colors`}
+                        productViewType === "list" ? "bg-gray-400 " : ""
+                      } p-2  overflow-hidden cursor-pointer transition-colors`}
                     >
                       <FaListUl size={20} />
                     </button>
@@ -376,9 +376,35 @@ const ProductsListing = () => {
                   products.length > 0 &&
                   products.map((product) => {
                     return productViewType === "list" ? (
-                      <ProductList key={product._id} product={product} />
+                      <Suspense
+                        key={product._id}
+                        fallback={
+                          <div
+                            className={`text-center flex items-center h-screen ${
+                              themeMode === "dark" ? "text-white" : "text-black"
+                            }`}
+                          >
+                            Loading...
+                          </div>
+                        }
+                      >
+                        <ProductList product={product} />
+                      </Suspense>
                     ) : (
-                      <ProductGrid key={product._id} product={product} />
+                      <Suspense
+                        key={product._id}
+                        fallback={
+                          <div
+                            className={`text-center flex items-center h-screen ${
+                              themeMode === "dark" ? "text-white" : "text-black"
+                            }`}
+                          >
+                            Loading...
+                          </div>
+                        }
+                      >
+                        <ProductGrid key={product._id} product={product} />
+                      </Suspense>
                     );
                   })}
               </div>
@@ -386,7 +412,19 @@ const ProductsListing = () => {
           </div>
         </div>
       </main>
-      <Newsletter />
+      <Suspense
+        fallback={
+          <div
+            className={`text-center flex items-center h-screen ${
+              themeMode === "dark" ? "text-white" : "text-black"
+            }`}
+          >
+            Loading...
+          </div>
+        }
+      >
+        <Newsletter />
+      </Suspense>
     </>
   );
 };

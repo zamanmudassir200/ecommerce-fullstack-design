@@ -56,7 +56,7 @@ const OurServices = () => {
               />
             </div>
 
-            <div className="absolute -top-6 right-4 bg-[#D1E7FF] p-3 rounded-full border-4 border-white text-xl md:text-2xl shadow-sm">
+            <div className="absolute bottom-18 right-4 bg-[#D1E7FF] p-3 rounded-full border-4 border-white text-xl md:text-2xl shadow-sm">
               {service.icon}
             </div>
 

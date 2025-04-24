@@ -16,7 +16,6 @@ const ProductGrid = ({ product }) => {
     try {
       const response = await handleApiCall(`${url}/checkAuth`, "get");
 
-      console.log("response from checkAuth", response);
       if (response.data.loggedIn) {
         const currentUser = response.data.user;
         setUser(currentUser);

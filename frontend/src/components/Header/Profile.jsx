@@ -81,9 +81,7 @@ const Profile = () => {
         ...prevUser,
         ...response.data.user,
       }));
-    } catch (error) {
-      console.log("Error removing item from wishlist:", error);
-    }
+    } catch (error) {}
   };
   if (!user) {
     return (

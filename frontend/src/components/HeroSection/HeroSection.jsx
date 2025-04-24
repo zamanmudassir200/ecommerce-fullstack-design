@@ -1,16 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, Suspense } from "react";
 import { Link } from "react-router-dom";
-import DealsAndOffers from "./DealsAndOffers";
-import HomeAndOutDoor from "./HomeAndOutDoor";
-import SendInquiry from "./SendInquiry";
-import RecommendedItems from "./RecommendedItems";
-import OurServices from "./OurServices";
 import { useNavigate } from "react-router-dom";
 import url from "../../utils/url";
 import { GlobalContext } from "../../context/GlobalContext";
-import SuppliersByRegion from "./SuppliersByRegion";
-import Newsletter from "./Newsletter";
-import WelcomeUser from "./WelcomeUser";
+const DealsAndOffers = React.lazy(() => import("./DealsAndOffers"));
+const HomeAndOutDoor = React.lazy(() => import("./HomeAndOutDoor"));
+const SendInquiry = React.lazy(() => import("./SendInquiry"));
+const RecommendedItems = React.lazy(() => import("./RecommendedItems"));
+const OurServices = React.lazy(() => import("./OurServices"));
+const SuppliersByRegion = React.lazy(() => import("./SuppliersByRegion"));
+const Newsletter = React.lazy(() => import("./Newsletter"));
+const WelcomeUser = React.lazy(() => import("./WelcomeUser"));
 
 const HeroSection = () => {
   const {
@@ -29,7 +29,6 @@ const HeroSection = () => {
   const checkUserLoggedIn = async () => {
     try {
       const response = await handleApiCall(`${url}/checkAuth`, "get");
-      console.log("response from herosection checkauth:", response);
       if (response.data.loggedIn) {
         setIsUserLogin(true);
         setUser(response.data.user);
@@ -121,6 +120,7 @@ const HeroSection = () => {
               className="w-full h-full object-cover"
               src="./Banner-board-800x420 2.png"
               alt="Latest trending electronic items"
+              loading="lazy"
             />
             <div className="absolute top-4 left-4 md:top-10 md:left-10 flex flex-col gap-2 md:gap-4">
               <div>
@@ -141,7 +141,19 @@ const HeroSection = () => {
           <div className="flex flex-col w-full lg:w-[23%] gap-3">
             {/* User Card */}
             <div className="bg-[#E3F0FF] p-3 md:p-4 rounded-md">
-              <WelcomeUser user={user} isUserLogin={isUserLogin} />
+              <Suspense
+                fallback={
+                  <div
+                    className={`text-center flex items-center h-screen ${
+                      themeMode === "dark" ? "text-white" : "text-black"
+                    }`}
+                  >
+                    Loading...
+                  </div>
+                }
+              >
+                <WelcomeUser user={user} isUserLogin={isUserLogin} />
+              </Suspense>
             </div>
 
             {/* Offer Cards */}
@@ -178,23 +190,126 @@ const HeroSection = () => {
         </div>
 
         {/* Other Sections */}
-        <DealsAndOffers products={products} />
-        <HomeAndOutDoor
-          title="Home and outdoor"
-          img="./Group 969.png"
-          products={products}
-        />
-        <HomeAndOutDoor
-          title="Consumer electronics and gadgets"
-          img="./image 98.png"
-          products={products}
-        />
-        <SendInquiry />
-        <RecommendedItems />
-        <OurServices />
-        <SuppliersByRegion />
+        <Suspense
+          fallback={
+            <div
+              className={`text-center flex items-center h-screen ${
+                themeMode === "dark" ? "text-white" : "text-black"
+              }`}
+            >
+              Loading...
+            </div>
+          }
+        >
+          <DealsAndOffers products={products} />
+        </Suspense>
+        <Suspense
+          fallback={
+            <div
+              className={`text-center flex items-center h-screen ${
+                themeMode === "dark" ? "text-white" : "text-black"
+              }`}
+            >
+              Loading...
+            </div>
+          }
+        >
+          {" "}
+          <HomeAndOutDoor
+            title="Home and outdoor"
+            img="./Group 969.png"
+            products={products}
+          />
+        </Suspense>
+        <Suspense
+          fallback={
+            <div
+              className={`text-center flex items-center h-screen ${
+                themeMode === "dark" ? "text-white" : "text-black"
+              }`}
+            >
+              Loading...
+            </div>
+          }
+        >
+          {" "}
+          <HomeAndOutDoor
+            title="Consumer electronics and gadgets"
+            img="./image 98.png"
+            products={products}
+          />
+        </Suspense>
+        <Suspense
+          fallback={
+            <div
+              className={`text-center flex items-center h-screen ${
+                themeMode === "dark" ? "text-white" : "text-black"
+              }`}
+            >
+              Loading...
+            </div>
+          }
+        >
+          {" "}
+          <SendInquiry />
+        </Suspense>
+        <Suspense
+          fallback={
+            <div
+              className={`text-center flex items-center h-screen ${
+                themeMode === "dark" ? "text-white" : "text-black"
+              }`}
+            >
+              Loading...
+            </div>
+          }
+        >
+          {" "}
+          <RecommendedItems />
+        </Suspense>
+        <Suspense
+          fallback={
+            <div
+              className={`text-center flex items-center h-screen ${
+                themeMode === "dark" ? "text-white" : "text-black"
+              }`}
+            >
+              Loading...
+            </div>
+          }
+        >
+          {" "}
+          <OurServices />
+        </Suspense>
+        <Suspense
+          fallback={
+            <div
+              className={`text-center flex items-center h-screen ${
+                themeMode === "dark" ? "text-white" : "text-black"
+              }`}
+            >
+              Loading...
+            </div>
+          }
+        >
+          {" "}
+          <SuppliersByRegion />
+        </Suspense>
       </div>
-      <Newsletter />
+      <Suspense
+        fallback={
+          <div
+            className={`text-center flex items-center h-screen ${
+              themeMode === "dark" ? "text-white" : "text-black"
+            }`}
+          >
+            Loading...
+          </div>
+        }
+      >
+        {" "}
+        <Newsletter />
+      </Suspense>
     </main>
   );
 };

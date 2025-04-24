@@ -1,11 +1,24 @@
-import React from "react";
-import Header from "./Header/Header";
-import HeroSection from "./HeroSection/HeroSection";
-import Footer from "./Footer/Footer";
+import React, { Suspense, lazy, useContext } from "react";
+import { GlobalContext } from "../context/GlobalContext";
+const HeroSection = lazy(() => import("./HeroSection/HeroSection"));
+
 const Home = () => {
+  const { themeMode } = useContext(GlobalContext);
   return (
     <div>
-      <HeroSection />
+      <Suspense
+        fallback={
+          <div
+            className={`text-center flex items-center h-screen ${
+              themeMode === "dark" ? "text-white" : "text-black"
+            }`}
+          >
+            Loading...
+          </div>
+        }
+      >
+        <HeroSection />
+      </Suspense>
     </div>
   );
 };

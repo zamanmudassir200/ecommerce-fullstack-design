@@ -1,10 +1,9 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, Suspense, lazy } from "react";
 import { Package, Clock, CheckCircle, Truck, XCircle } from "react-feather";
 import { GlobalContext } from "../../context/GlobalContext";
 import { toast } from "react-toastify";
 import url from "../../utils/url";
-import CancelOrderModal from "./CancelOrderModal";
-
+const CancelOrderModal = lazy(() => import("./CancelOrderModal"));
 const Orders = () => {
   const { handleApiCall, themeMode } = useContext(GlobalContext);
   const [orders, setOrders] = useState([]);
@@ -18,11 +17,9 @@ const Orders = () => {
         `${url}/orders/user/getOrdersByUser`,
         "get"
       );
-      console.log("response from getOrdersByUser", response);
       setOrders(response?.data?.orders);
     } catch (error) {
       toast.error("Error fetching orders");
-      console.error("Error fetching orders:", error);
     } finally {
       setLoading(false);
     }
@@ -38,7 +35,6 @@ const Orders = () => {
       setIsCancelModalOpen(false);
     } catch (error) {
       toast.error("Error occurred while cancelling order ");
-      console.log(error);
     }
   };
 
@@ -317,11 +313,19 @@ const Orders = () => {
       </div>
       {/* Modal for canceling the order */}
       {isCancelModalOpen && (
-        <CancelOrderModal
-          onClose={handleCloseModal} // Close modal without canceling
-          orderId={selectedOrderId}
-          onConfirm={() => handleCancelOrder(selectedOrderId)} // Handle order cancellation
-        />
+        <Suspense
+          fallback={
+            <div className="text-center flex items-center justify-center h-screen ">
+              Loading...
+            </div>
+          }
+        >
+          <CancelOrderModal
+            onClose={handleCloseModal} // Close modal without canceling
+            orderId={selectedOrderId}
+            onConfirm={() => handleCancelOrder(selectedOrderId)} // Handle order cancellation
+          />
+        </Suspense>
       )}
     </div>
   );

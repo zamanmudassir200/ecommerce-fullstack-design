@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { GlobalContext } from "../../context/GlobalContext";
+import { motion } from "framer-motion";
 
 const RelatedProducts = ({ recommendedProducts }) => {
   const navigate = useNavigate();
@@ -24,18 +25,22 @@ const RelatedProducts = ({ recommendedProducts }) => {
           className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 my-3 `}
         >
           {recommendedProducts.map((product) => (
-            <div
+            <motion.div
               onClick={() =>
                 navigate(`/product-detail/${product._id}`, {
                   replace: true,
                 })
               }
               key={product._id}
-              className={`flex flex-col items-center gap-3 p-3  cursor-pointer rounded-lg transition-colors duration-200 ${
+              className={`flex flex-col items-center gap-3 p-3 cursor-pointer rounded-lg transition-colors duration-200 ${
                 themeMode === "dark"
                   ? "border-2 hover:bg-slate-800 text-white"
                   : "hover:bg-gray-200 border-2 border-gray-200"
               }`}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
             >
               <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
                 {product.images?.[0] ? (
@@ -43,6 +48,7 @@ const RelatedProducts = ({ recommendedProducts }) => {
                     className="h-full w-full object-contain p-2"
                     src={product.images[0]}
                     alt={product.productName}
+                    loading="lazy"
                   />
                 ) : (
                   <span
@@ -68,7 +74,7 @@ const RelatedProducts = ({ recommendedProducts }) => {
                   {product.price} Rs
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       ) : (

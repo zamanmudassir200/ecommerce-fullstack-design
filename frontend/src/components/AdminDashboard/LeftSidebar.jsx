@@ -1,9 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, Suspense, lazy } from "react";
 import { GlobalContext } from "../../context/GlobalContext";
 import { AiOutlineProduct } from "react-icons/ai";
 import { MdHistoryToggleOff } from "react-icons/md";
 import { IoIosLogOut } from "react-icons/io";
-import Logout from "./Logout";
+const Logout = lazy(() => import("./Logout"));
 
 const tabs = [
   { name: "products", label: "Products", icon: <AiOutlineProduct size={20} /> },
@@ -55,7 +55,16 @@ const LeftSidebar = () => {
       </div>
 
       {isLogoutModalOpen && (
-        <Logout setIsLogoutModalOpen={setIsLogoutModalOpen} />
+        <Suspense
+          fallback={
+            <div className={`text-center flex items-center h-screen `}>
+              Loading...
+            </div>
+          }
+        >
+          {" "}
+          <Logout setIsLogoutModalOpen={setIsLogoutModalOpen} />
+        </Suspense>
       )}
     </div>
   );

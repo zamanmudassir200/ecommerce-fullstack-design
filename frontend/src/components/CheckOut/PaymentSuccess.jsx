@@ -9,7 +9,6 @@ import { useParams } from "react-router-dom";
 const PaymentSuccess = () => {
   const { handleApiCall, themeMode } = useContext(GlobalContext);
   const params = useParams();
-  console.log("params", params);
   const [order, setOrder] = useState([]);
   const navigate = useNavigate();
   const getAllOrders = async () => {
@@ -18,7 +17,6 @@ const PaymentSuccess = () => {
         `${url}/orders/${params.orderId}`,
         "get"
       );
-      console.log("response", response);
       setOrder(response.data.order);
     } catch (error) {
       toast.error("Error occured while fetching orders");
