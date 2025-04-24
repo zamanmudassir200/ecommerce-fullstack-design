@@ -1,5 +1,6 @@
-import React, { Suspense, lazy } from "react";
-const Signup = lazy(() => import("./Auth/Signup"));
+import React, { Suspense, lazy, useContext } from "react";
+import { GlobalContext } from "../../context/GlobalContext";
+const Signup = lazy(() => import("../Auth/Signup"));
 
 const AdminPanel = () => {
   const { themeMode } = useContext(GlobalContext);
@@ -17,7 +18,6 @@ const AdminPanel = () => {
           </div>
         }
       >
-        {" "}
         <Signup title={"Seller Register "} />
       </Suspense>
     </div>
