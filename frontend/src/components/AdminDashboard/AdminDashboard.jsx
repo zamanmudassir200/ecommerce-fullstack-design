@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, lazy, Suspense } from "react";
-const LeftSidebar = (lazy = () => import("./LeftSidebar"));
-const RightSidebar = (lazy = () => import("./RightSidebar"));
+const LeftSidebar = lazy(() => import("./LeftSidebar"));
+const RightSidebar = lazy(() => import("./RightSidebar"));
 import url from "../../utils/url.js";
 import { GlobalContext } from "../../context/GlobalContext.jsx";
 import { useNavigate } from "react-router-dom";

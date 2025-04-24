@@ -17,11 +17,9 @@ const OrderHistory = () => {
   const getAllOrders = async () => {
     try {
       const response = await handleApiCall(`${url}/orders`, "get");
-      console.log("response from orderhistory", response.data.orders);
       setOrders(response.data.orders);
     } catch (error) {
       toast.error("Error while fetching orders");
-      console.log(error);
     }
   };
 
@@ -54,7 +52,6 @@ const OrderHistory = () => {
       setOrderStatusModal(false);
     } catch (error) {
       toast.error("Error occurred while changing order status");
-      console.log(error);
     }
   };
   const handleOrderCancel = async (orderId) => {
@@ -68,7 +65,6 @@ const OrderHistory = () => {
       setCancelOrderModal(false);
     } catch (error) {
       toast.error("Error occurred while changing order status");
-      console.log(error);
     }
   };
   return (

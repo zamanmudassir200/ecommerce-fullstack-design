@@ -109,11 +109,7 @@ const RightSidebar = () => {
       {showTabsData === "order history" && (
         <Suspense
           fallback={
-            <div
-              className={`text-center flex items-center h-screen ${
-                themeMode === "dark" ? "text-white" : "text-black"
-              }`}
-            >
+            <div className={`text-center flex items-center h-screen `}>
               Loading...
             </div>
           }
