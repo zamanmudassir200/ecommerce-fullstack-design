@@ -83,7 +83,15 @@ const Profile = () => {
     }
   };
   if (!user) {
-    return <p className="text-center text-lg mt-10">Loading...</p>;
+    return (
+      <p
+        className={`text-center text-lg pt-10 h-[500px] flex items-center justify-center ${
+          themeMode === "dark" ? "bg-slate-900 text-white " : ""
+        }`}
+      >
+        Loading...
+      </p>
+    );
   }
 
   return (

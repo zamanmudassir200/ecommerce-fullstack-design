@@ -17,7 +17,7 @@ const stripePromise = loadStripe(
 );
 
 const CheckoutForm = () => {
-  const { handleApiCall } = useContext(GlobalContext);
+  const { handleApiCall, themeMode } = useContext(GlobalContext);
   const params = useParams();
   const stripe = useStripe();
   const elements = useElements();
@@ -120,8 +120,16 @@ const CheckoutForm = () => {
   };
 
   return (
-    <div className="min-h-screen mx-2 flex py-6 justify-center bg-gray-50">
-      <div className="border border-gray-300 rounded-xl max-w-xl w-full p-6 bg-white shadow-md">
+    <div
+      className={`min-h-screen  flex py-6 justify-center  ${
+        themeMode === "dark" ? "bg-slate-900 text-white" : "bg-gray50"
+      }`}
+    >
+      <div
+        className={`border border-gray-300 rounded-xl max-w-xl w-full p-6  shadow-md ${
+          themeMode === "dark" ? "bg-slate-800 text-white" : "bg-white"
+        }`}
+      >
         <h1 className="text-2xl font-bold text-center mb-6">Checkout</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -172,7 +180,9 @@ const CheckoutForm = () => {
               name="payMethod"
               value={formData.payMethod}
               onChange={handleChange}
-              className="border p-2 w-full rounded-md"
+              className={`border p-2 w-full rounded-md ${
+                themeMode === "dark" ? "bg-slate-800 text-white" : ""
+              }`}
               required
             >
               <option value="">Select Payment Method</option>
@@ -183,7 +193,11 @@ const CheckoutForm = () => {
 
           {formData.payMethod === "Credit Card" && (
             <div className="space-y-4">
-              <label className="block text-sm font-medium text-gray-700">
+              <label
+                className={`block text-sm font-medium  ${
+                  themeMode === "dark" ? "text-white " : "text-gray-700"
+                }`}
+              >
                 Card Details
               </label>
               <div className="border p-3 rounded-md">
@@ -192,7 +206,9 @@ const CheckoutForm = () => {
                     style: {
                       base: {
                         fontSize: "16px",
-                        color: "#32325d",
+                        color: `${
+                          themeMode === "dark" ? "#ffffff" : "#32325d"
+                        }`,
                         "::placeholder": {
                           color: "#a0aec0",
                         },

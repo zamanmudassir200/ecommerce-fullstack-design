@@ -166,16 +166,22 @@ const Header = () => {
   };
 
   useEffect(() => {
-    const existingTheme = localStorage.getItem("themeMode");
-    console.log("existing Theme", existingTheme);
-    setThemeMode(existingTheme);
+    const savedTheme = localStorage.getItem("themeMode");
+    if (savedTheme) {
+      setThemeMode(savedTheme);
+    }
   }, []);
+
+  useEffect(() => {
+    if (themeMode) {
+      localStorage.setItem("themeMode", themeMode);
+    }
+  }, [themeMode]);
+
   return (
     <header
       className={` ${
-        themeMode === "light"
-          ? "bg-white text-black"
-          : "bg-slate-900 text-white"
+        themeMode === "dark" ? "bg-slate-900 text-white" : "bg-white text-black"
       } sticky top-0 z-50 shadow-sm`}
     >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
@@ -190,13 +196,17 @@ const Header = () => {
               <IoMdMenu />
             </button>
 
-            <Link to="/">
+            <Link
+              to="/"
+              className="block max-w-[160px] w-full h-auto sm:max-w-[200px] md:max-w-[240px]"
+            >
               <img
-                src="./logo-colored.png"
-                alt="Logo"
-                className="h-8 sm:h-10 w-auto"
+                src="/logo-colored.png"
+                alt="Company Logo"
+                className="w-full h-auto object-contain"
               />
             </Link>
+
             <div className="cursor-pointer">
               {themeMode === "light" ? (
                 <MdDarkMode onClick={toggleThemeMode} size={28} />
@@ -241,7 +251,7 @@ const Header = () => {
                     setCloseSearchedResult(true);
                     setSearchValue(e.target.value);
                   }}
-                  className="flex-1 p-2 outline-none text-sm sm:text-base rounded-l-lg  w-full"
+                  className="flex-1 p-2 select-none outline-none text-sm sm:text-base rounded-l-lg  w-full"
                   value={closeSearchedResult === false ? "" : searchValue}
                   type="text"
                   placeholder="Search products..."
@@ -280,11 +290,19 @@ const Header = () => {
           {closeSearchedResult &&
             searchedResult &&
             searchedResult.length > 0 && (
-              <div className="absolute w-full mt-[-2px] bg-white border-2 h-[200px] min-h-[450px] overflow-y-auto border-[#127FFF] border-t-0 rounded-b-lg shadow-lg z-10">
+              <div
+                className={`absolute w-full mt-[-2px] border-2 h-[200px] min-h-[450px] overflow-y-auto border-[#127FFF] border-t-0 rounded-b-lg shadow-lg z-10 ${
+                  themeMode === "dark" ? "bg-slate-800 " : "bg-white"
+                }`}
+              >
                 {searchedResult.map((product) => (
                   <div
                     key={product._id}
-                    className="p-2 hover:bg-gray-100 cursor-pointer border-b first:border-t-[2px] border-gray-100 flex items-center gap-2  last:border-b-0"
+                    className={`p-2  cursor-pointer border-b first:border-t-[2px] border-gray-100 flex items-center gap-2  last:border-b-0 ${
+                      themeMode === "dark"
+                        ? "hover:bg-slate-700"
+                        : "hover:bg-gray-100"
+                    }`}
                     onClick={() => {
                       navigate(`/product-detail/${product._id}`);
                       setCloseSearchedResult(false);

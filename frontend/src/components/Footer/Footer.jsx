@@ -22,16 +22,22 @@ const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           {/* Company Info */}
           <div className="sm:col-span-2 lg:col-span-1 flex flex-col gap-4">
-            <img
-              src="./logo-colored.png"
-              alt="Company Logo"
-              className="h-8 w-auto"
-            />
+            <Link
+              to="/"
+              className="block max-w-[160px] w-full h-auto sm:max-w-[200px] md:max-w-[240px]"
+            >
+              <img
+                src="/logo-colored.png"
+                alt="Company Logo"
+                className="w-full h-auto object-contain"
+              />
+            </Link>
+
             <p className="text-gray-600 text-sm">
               Best information about the company gies here but now lorem ipsum
               is
             </p>
-            <div className="flex gap-3">
+            <div className="flex  gap-3">
               {[
                 { icon: <TiSocialFacebook size={20} /> },
                 { icon: <TiSocialTwitter size={20} /> },
@@ -81,13 +87,13 @@ const Footer = () => {
                 {section.links.map((link, linkIndex) => (
                   <li key={linkIndex}>
                     {typeof link === "string" ? (
-                      <Link className="text-gray-600 hover:text-gray-900 text-sm">
+                      <Link className="text-gray-600 hover:text-gray-700 text-sm">
                         {link}
                       </Link>
                     ) : (
                       <Link
                         to={link.to}
-                        className="text-gray-600 hover:text-gray-900 text-sm"
+                        className="text-gray-600 hover:text-gray-700 text-sm"
                       >
                         {link.text}
                       </Link>
@@ -102,7 +108,7 @@ const Footer = () => {
           <div className="mt-4 sm:mt-0">
             <h3 className="font-semibold text-gray-800 mb-3">Get app</h3>
             <div className="space-y-3">
-              <Link className="bg-black hover:bg-gray-800 p-2 rounded-lg flex gap-2 items-center text-white text-sm">
+              <Link className="bg-black hover:bg-gray-600 p-2 rounded-lg flex gap-2 items-center text-white text-sm">
                 <FaApple size={20} />
                 <div>
                   <p className="text-gray-300 text-xs">Download on the</p>

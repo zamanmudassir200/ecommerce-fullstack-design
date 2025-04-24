@@ -3,12 +3,14 @@ import { Package, Clock, CheckCircle, Truck, XCircle } from "react-feather";
 import { GlobalContext } from "../../context/GlobalContext";
 import { toast } from "react-toastify";
 import url from "../../utils/url";
+import CancelOrderModal from "./CancelOrderModal";
 
 const Orders = () => {
   const { handleApiCall, themeMode } = useContext(GlobalContext);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
   const getOrdersByUser = async () => {
     try {
       setLoading(true);
@@ -24,6 +26,24 @@ const Orders = () => {
     } finally {
       setLoading(false);
     }
+  };
+  const handleCancelOrder = async (orderId) => {
+    try {
+      const response = await handleApiCall(
+        `${url}/orders/cancel-order/${orderId}`,
+        "post"
+      );
+      toast.success(response.data.message);
+      getOrdersByUser(); // 👈 Refresh the orders list after status change
+      setIsCancelModalOpen(false);
+    } catch (error) {
+      toast.error("Error occurred while cancelling order ");
+      console.log(error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsCancelModalOpen(false); // Close modal without canceling
   };
 
   useEffect(() => {
@@ -249,7 +269,28 @@ const Orders = () => {
                     ))}
                   </div>
 
-                  <div className="mt-6 flex justify-end items-center">
+                  <div className="mt-6 flex justify-between items-center">
+                    <div>
+                      {order.orderStatus !== "Out for Delivery" &&
+                        order.orderStatus !== "Delivered" && (
+                          <button
+                            disabled={order.orderStatus === "Cancelled"}
+                            onClick={() => {
+                              setSelectedOrderId(order._id);
+                              setIsCancelModalOpen(true);
+                            }}
+                            className={`px-4 py-2  text-white rounded-lg ${
+                              order.orderStatus === "Cancelled"
+                                ? "bg-red-300 cursor-no-drop"
+                                : "bg-red-500 cursor-pointer"
+                            }`}
+                          >
+                            {order.orderStatus === "Cancelled"
+                              ? "Cancelled"
+                              : "Cancel Order"}{" "}
+                          </button>
+                        )}
+                    </div>
                     <div className="text-right">
                       <p
                         className={`text-sm ${
@@ -274,6 +315,14 @@ const Orders = () => {
           </div>
         )}
       </div>
+      {/* Modal for canceling the order */}
+      {isCancelModalOpen && (
+        <CancelOrderModal
+          onClose={handleCloseModal} // Close modal without canceling
+          orderId={selectedOrderId}
+          onConfirm={() => handleCancelOrder(selectedOrderId)} // Handle order cancellation
+        />
+      )}
     </div>
   );
 };

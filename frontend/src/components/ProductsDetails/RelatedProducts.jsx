@@ -20,7 +20,9 @@ const RelatedProducts = ({ recommendedProducts }) => {
       </h1>
 
       {recommendedProducts && recommendedProducts.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 my-3">
+        <div
+          className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 my-3 `}
+        >
           {recommendedProducts.map((product) => (
             <div
               onClick={() =>
@@ -29,7 +31,11 @@ const RelatedProducts = ({ recommendedProducts }) => {
                 })
               }
               key={product._id}
-              className="flex flex-col items-center gap-3 p-3 hover:bg-gray-100 cursor-pointer rounded-lg transition-colors duration-200"
+              className={`flex flex-col items-center gap-3 p-3  cursor-pointer rounded-lg transition-colors duration-200 ${
+                themeMode === "dark"
+                  ? "border-2 hover:bg-slate-800 text-white"
+                  : "hover:bg-gray-200 border-2 border-gray-200"
+              }`}
             >
               <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
                 {product.images?.[0] ? (
@@ -39,14 +45,28 @@ const RelatedProducts = ({ recommendedProducts }) => {
                     alt={product.productName}
                   />
                 ) : (
-                  <span className="text-gray-400 text-sm">No image</span>
+                  <span
+                    className={` text-sm ${
+                      themeMode === "dark" ? "text-white" : "text-gray-400"
+                    }`}
+                  >
+                    No image
+                  </span>
                 )}
               </div>
               <div className="w-full text-center">
                 <h1 className="text-sm sm:text-base font-semibold line-clamp-2">
                   {product.productName}
                 </h1>
-                <p className="text-sm text-gray-600 mt-1">{product.price} Rs</p>
+                <p
+                  className={`text-sm text-gray-600 mt-1 ${
+                    themeMode === "dark"
+                      ? "text-white opacity-65"
+                      : "text-gray-400"
+                  }`}
+                >
+                  {product.price} Rs
+                </p>
               </div>
             </div>
           ))}

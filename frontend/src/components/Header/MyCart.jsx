@@ -181,7 +181,11 @@ const MyCart = () => {
                   {cart?.items?.map((item, index) => (
                     <div
                       key={item?.product?._id || index} // Better to use product ID if available
-                      className="flex flex-col sm:flex-row hover:bg-gray-50 transition-colors duration-200 p-4 border-b border-gray-200 justify-between"
+                      className={`flex flex-col sm:flex-row transition-colors duration-200 p-4 border-b border-gray-200 justify-between ${
+                        themeMode === "dark"
+                          ? "hover:bg-slate-700 text-white"
+                          : "hover:bg-gray-50 "
+                      }`}
                     >
                       <div className="flex gap-4 mb-4 sm:mb-0">
                         <div className="w-16 h-16 sm:w-20 sm:h-20 border border-gray-200 rounded-lg overflow-hidden flex-shrink-0">
@@ -195,7 +199,13 @@ const MyCart = () => {
                           <h1 className="text-sm sm:text-base font-semibold line-clamp-2">
                             {item?.product?.productName}
                           </h1>
-                          <p className="text-xs sm:text-sm text-gray-600">
+                          <p
+                            className={`text-xs sm:text-sm  ${
+                              themeMode === "dark"
+                                ? "text-white opacity-55"
+                                : "text-gray-600"
+                            }`}
+                          >
                             Brand: {item?.product?.brand}
                           </p>
                           <div className="flex gap-2 mt-2">
@@ -415,38 +425,76 @@ const MyCart = () => {
         </div>
 
         {/* Features */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-8">
-          <div className="flex gap-3 p-4 bg-gray-50 rounded-lg">
-            <div className="bg-gray-200 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
+        <div
+          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-8 `}
+        >
+          <div
+            className={`flex gap-3 p-4 bg-gray-50 rounded-lg ${
+              themeMode === "dark" ? "bg-slate-700 text-white" : ""
+            }`}
+          >
+            <div
+              className={`bg-gray-200 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0 ${
+                themeMode === "dark" ? "bg-slate-600 text-white" : ""
+              }`}
+            >
               <IoIosLock size={20} />
             </div>
             <div>
               <h1 className="font-bold text-sm sm:text-base">Secure Payment</h1>
-              <p className="text-xs sm:text-sm text-gray-600">
+              <p
+                className={`text-xs sm:text-sm text-gray-600 ${
+                  themeMode === "dark" ? "text-white opacity-65" : ""
+                }`}
+              >
                 Your payment information is processed securely
               </p>
             </div>
           </div>
-          <div className="flex gap-3 p-4 bg-gray-50 rounded-lg">
-            <div className="bg-gray-200 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
+          <div
+            className={`flex gap-3 p-4 bg-gray-50 rounded-lg ${
+              themeMode === "dark" ? "bg-slate-700 text-white" : ""
+            }`}
+          >
+            <div
+              className={`bg-gray-200 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0 ${
+                themeMode === "dark" ? "bg-slate-600 text-white" : ""
+              }`}
+            >
               <MdMessage size={20} />
             </div>
             <div>
               <h1 className="font-bold text-sm sm:text-base">
                 Customer Support
               </h1>
-              <p className="text-xs sm:text-sm text-gray-600">
+              <p
+                className={`text-xs sm:text-sm text-gray-600 ${
+                  themeMode === "dark" ? "text-white opacity-65" : ""
+                }`}
+              >
                 24/7 customer support available
               </p>
             </div>
           </div>
-          <div className="flex gap-3 p-4 bg-gray-50 rounded-lg">
-            <div className="bg-gray-200 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
+          <div
+            className={`flex gap-3 p-4 bg-gray-50 rounded-lg ${
+              themeMode === "dark" ? "bg-slate-700 text-white" : ""
+            }`}
+          >
+            <div
+              className={`bg-gray-200 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0 ${
+                themeMode === "dark" ? "bg-slate-600 text-white" : ""
+              }`}
+            >
               <TbTruckDelivery size={20} />
             </div>
             <div>
               <h1 className="font-bold text-sm sm:text-base">Free Delivery</h1>
-              <p className="text-xs sm:text-sm text-gray-600">
+              <p
+                className={`text-xs sm:text-sm text-gray-600 ${
+                  themeMode === "dark" ? "text-white opacity-65" : ""
+                }`}
+              >
                 On orders over $50
               </p>
             </div>

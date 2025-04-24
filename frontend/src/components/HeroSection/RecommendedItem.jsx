@@ -6,7 +6,7 @@ const RecommendedItem = ({ image, price, description }) => {
   return (
     <div
       className={`border border-gray-200 rounded-md p-3 w-full h-full flex flex-col hover:shadow-md transition-shadow duration-200 ${
-        themeMode === "light" ? "bg-white" : "bg-slate-900 text-white"
+        themeMode === "dark" ? "bg-slate-900 text-white" : "bg-white"
       }`}
     >
       <div className="aspect-square overflow-hidden flex items-center justify-center">

@@ -17,11 +17,12 @@ const ProductDescription = ({ currentProduct }) => {
     fetchAllProductReviews,
     // productReviews,
     // setProductReviews,
+    themeMode,
   } = useContext(GlobalContext);
   const [productReviews, setProductReviews] = useState([]);
 
   const [recommendedProducts, setRecommendedProducts] = useState([]);
-  const [selectedTab, setSelectedTab] = useState("Reviews");
+  const [selectedTab, setSelectedTab] = useState("Description");
 
   const { productId } = useParams();
 
@@ -146,10 +147,20 @@ const ProductDescription = ({ currentProduct }) => {
                     productReviews?.map((review, index) => (
                       <div
                         key={index}
-                        className="border p-4 rounded-lg shadow-sm bg-white"
+                        className={`border p-4 rounded-lg shadow-sm  ${
+                          themeMode === "dark"
+                            ? "bg-slate-700 text-white"
+                            : "bg-white"
+                        }`}
                       >
                         <div className="flex  items-center justify-between">
-                          <div className="flex items-center gap-3 font-semibold text-gray-800">
+                          <div
+                            className={`flex items-center gap-3 font-semibold  ${
+                              themeMode === "dark"
+                                ? "text-white"
+                                : "text-gray-800"
+                            }`}
+                          >
                             <div className="my-2 rounded-2xl w-10 h-10 overflow-hidden">
                               <img
                                 className="w-full h-full rounded-2xl object-cover"
@@ -159,7 +170,13 @@ const ProductDescription = ({ currentProduct }) => {
                             </div>
                             <p className="capitalize">{review?.user?.name}</p>
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div
+                            className={`text-sm  ${
+                              themeMode === "dark"
+                                ? "text-white opacity-55"
+                                : "text-gray-500"
+                            }`}
+                          >
                             {new Date(review?.createdAt).toLocaleString()}
                           </div>
                         </div>
@@ -170,7 +187,15 @@ const ProductDescription = ({ currentProduct }) => {
                           </span>
                         </div>
 
-                        <p className="text-gray-700 mt-2">{review?.comment}</p>
+                        <p
+                          className={` mt-2 ${
+                            themeMode === "dark"
+                              ? "text-white"
+                              : "text-gray-700"
+                          }`}
+                        >
+                          {review?.comment}
+                        </p>
                       </div>
                     ))}
                 </div>
@@ -238,7 +263,11 @@ const ProductDescription = ({ currentProduct }) => {
                     })
                   }
                   key={product._id}
-                  className="flex items-center cursor-pointer gap-3 p-2 hover:bg-gray-100 rounded transition-colors"
+                  className={`flex items-center cursor-pointer gap-3 p-2 hover:bg-gray-100 rounded transition-colors ${
+                    themeMode === "dark"
+                      ? "hover:bg-slate-700"
+                      : "border-2 border-gray-200"
+                  } `}
                 >
                   <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gray-100 rounded flex items-center justify-center flex-shrink-0">
                     {product.images?.length > 0 ? (

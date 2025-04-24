@@ -94,9 +94,13 @@ const login = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "24h",
-    });
+    const token = jwt.sign(
+      { id: user._id, userType: user.userType },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "24h",
+      }
+    );
 
     // Smart cookie configuration that works in both dev and production
     const isProduction = process.env.NODE_ENV === "production";
@@ -209,12 +213,6 @@ const editUser = async (req, res) => {
       .json({ success: false, message: "Internal server error" });
   }
 };
-// const isSeller = (req, res, next) => {
-//   if (req.user.userType !== "seller") {
-//     return res.status(403).json({ message: "Access denied" });
-//   }
-//   next();
-// };
 
 module.exports = {
   upload,

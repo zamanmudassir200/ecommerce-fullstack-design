@@ -73,12 +73,12 @@ const HeroSection = () => {
   return (
     <main
       className={`min-h-screen ${
-        themeMode === "light" ? "bg-white " : "bg-slate-900"
+        themeMode === "dark" ? "bg-slate-900" : "bg-white "
       } `}
     >
       <div
         className={`${
-          themeMode === "light" ? "bg-white " : "bg-slate-900"
+          themeMode === "dark" ? "bg-slate-900" : "bg-white "
         } container mx-auto px-4 sm:px-6 lg:px-8 py-3 `}
       >
         {/* Main Hero Section */}
@@ -88,9 +88,9 @@ const HeroSection = () => {
           {/* Categories Sidebar - Hidden on small screens, shown on medium and up */}
           <div
             className={`hidden md:flex w-full lg:w-[25%] flex-col bg-gray-50 rounded-lg ${
-              themeMode === "light"
-                ? "bg-white text-black "
-                : "bg-slate-900 text-white "
+              themeMode === "dark"
+                ? "bg-slate-900 text-white "
+                : "bg-white text-black "
             } `}
           >
             <ul className="max-h-[370px] overflow-y-auto">

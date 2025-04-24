@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Star } from "react-feather";
 import { toast } from "react-toastify";
+import { GlobalContext } from "../../context/GlobalContext";
 
 const ReviewForm = ({ onSubmit }) => {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
-
+  const { themeMode } = useContext(GlobalContext);
   const handleSubmit = (e) => {
     e.preventDefault();
     if (rating === 0) return toast.warn("Please give a rating");
@@ -18,9 +19,17 @@ const ReviewForm = ({ onSubmit }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-4 bg-white p-4 rounded shadow-md"
+      className={`space-y-4  p-4 rounded shadow-md ${
+        themeMode === "dark" ? "bg-slate-800 text-white" : "bg-white"
+      }`}
     >
-      <h2 className="text-lg font-semibold text-gray-800">Write a Review</h2>
+      <h2
+        className={`text-lg font-semibold  ${
+          themeMode === "dark" ? "text-white " : "text-gray-800"
+        }`}
+      >
+        Write a Review
+      </h2>
 
       {/* Star Rating */}
       <div className="flex space-x-2">

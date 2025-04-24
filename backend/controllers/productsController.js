@@ -88,14 +88,17 @@ const createProduct = async (req, res) => {
       reviews,
     });
 
-    // existingUser = await userModel.findByIdAndUpdate(
+    // await userModel.findByIdAndUpdate(
     //   id,
     //   {
     //     $addToSet: { products: createdProduct._id },
     //   },
-    //   { new: true }
+    //   { new: true, validateBeforeSave: false }
     // );
 
+    // await existingUser.save();
+    // Or alternatively:
+    // existingUser.products.push(createdProduct._id);
     // await existingUser.save();
     // Manually populate category and subcategory
     const populatedProduct = await productModel

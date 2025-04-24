@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 
 const PaymentSuccess = () => {
-  const { handleApiCall } = useContext(GlobalContext);
+  const { handleApiCall, themeMode } = useContext(GlobalContext);
   const params = useParams();
   console.log("params", params);
   const [order, setOrder] = useState([]);
@@ -28,8 +28,16 @@ const PaymentSuccess = () => {
     getAllOrders();
   }, []);
   return (
-    <div className="min-h-screen py-10 bg-gray-50 flex  justify-center ">
-      <div className="bg-white mt-10 rounded-lg shadow-md p-8 max-w-md w-full text-center">
+    <div
+      className={`min-h-screen py-10 bg-gray-50 flex  justify-center ${
+        themeMode === "dark" ? "bg-slate-900 text-white" : ""
+      }`}
+    >
+      <div
+        className={` mt-10 rounded-lg shadow-md p-8 max-w-md w-full text-center ${
+          themeMode === "dark" ? "bg-slate-600 " : "bg-white"
+        }`}
+      >
         <div className="flex justify-center mb-6">
           <div className="animate-bounce">
             <CheckCircle
@@ -39,33 +47,61 @@ const PaymentSuccess = () => {
           </div>
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">
+        <h1
+          className={`text-2xl font-bold mb-2 ${
+            themeMode === "dark" ? "text-white " : "text-gray-800"
+          }`}
+        >
           Payment Successful!
         </h1>
-        <p className="text-gray-600 mb-6">
+        <p
+          className={` mb-6 ${
+            themeMode === "dark" ? "text-white opacity-75" : "text-gray-600"
+          }`}
+        >
           Thank you for your purchase. Your payment has been processed
           successfully.
         </p>
 
-        <div className="bg-green-50 border border-green-100 rounded-md p-4 mb-6 text-left">
-          <h2 className="font-medium text-green-800 mb-2">Order Details</h2>
-          <div className="flex justify-between text-sm text-gray-700 mb-1">
+        <div
+          className={`bg-green-50 border border-green-100 rounded-md p-4 mb-6 text-left ${
+            themeMode === "dark" ? "bg-slate-800 text-white " : "bg-white"
+          }`}
+        >
+          <h2 className="font-medium text-green-700 mb-2">Order Details</h2>
+          <div
+            className={`flex justify-between text-sm  mb-1 ${
+              themeMode === "dark" ? "text-white" : "text-gray-700"
+            }`}
+          >
             <span>Order ID:</span>
             <span className="font-bold">{order._id}</span>
           </div>
-          <div className="flex justify-between text-sm text-gray-700 mb-1">
+          <div
+            className={`flex justify-between text-sm  mb-1 ${
+              themeMode === "dark" ? "text-white" : "text-gray-700"
+            }`}
+          >
             <span>Date:</span>
             <span className="font-bold">
               {new Date(order.createdAt).toLocaleString()}
             </span>
           </div>
-          <div className="flex justify-between text-sm text-gray-700">
+          <div
+            className={`flex justify-between text-sm  mb-1 ${
+              themeMode === "dark" ? "text-white" : "text-gray-700"
+            }`}
+          >
             <span>Amount:</span>
             <span className="font-bold">{order.totalAmount} Rs</span>
           </div>
         </div>
 
-        <p className="text-sm text-gray-500 mb-6">
+        <p
+          className={`text-sm  mb-6 ${
+            themeMode === "dark" ? "text-white opacity-60" : "text-gray-500"
+          }`}
+        >
           A confirmation email has been sent to your registered email address.
         </p>
 

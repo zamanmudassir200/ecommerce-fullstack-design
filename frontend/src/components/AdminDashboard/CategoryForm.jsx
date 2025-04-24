@@ -64,7 +64,7 @@ const CategoryForm = ({
       {subCategories?.length > 0 && (
         <div className="mt-2">
           <p className="text-sm font-medium text-gray-700 mb-1">
-            Subcategories:
+            {/* Subcategories: */}
           </p>
           <div className="flex flex-wrap gap-2">
             {subCategories.map((cat, index) => (

@@ -170,49 +170,188 @@ const getOrdersByUser = async (req, res) => {
   }
 };
 
+// const approveOrder = async (req, res) => {
+//   try {
+//     const { orderId } = req.params;
+
+//     // Find the order and validate status
+//     const order = await orderModel.findById(orderId);
+//     if (!order) {
+//       return res.status(404).json({
+//         message: "Order not found",
+//         success: false,
+//       });
+//     }
+
+//     // Check if order is in processing state
+//     if (order.orderStatus !== "Processing") {
+//       return res.status(400).json({
+//         message: `Order cannot be shipped from current status: ${order.orderStatus}`,
+//         success: false,
+//         validCurrentStatuses: ["Processing"], // For client-side reference
+//       });
+//     }
+
+//     // Update the order status and set shipped timestamp
+//     const updatedOrder = await orderModel.findByIdAndUpdate(
+//       order._id,
+//       {
+//         orderStatus: "Shipped",
+//         shippedAt: new Date(), // Optional: Track when it was shipped
+//       },
+//       { new: true } // Return the updated document
+//     );
+
+//     return res.status(200).json({
+//       message: "Order shipped successfully",
+//       success: true,
+//       order: updatedOrder,
+//     });
+//   } catch (error) {
+//     console.error(`Shipping error for order ${orderId}:`, error);
+//     return res.status(500).json({
+//       message: "Failed to update order status",
+//       error: error.message,
+//     });
+//   }
+// };
+
 const approveOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
 
-    // Find the order and validate status
+    // Find order
     const order = await orderModel.findById(orderId);
     if (!order) {
       return res.status(404).json({
-        message: "Order not found",
         success: false,
+        message: "Order not found",
       });
     }
 
-    // Check if order is in processing state
+    // Validate current status
     if (order.orderStatus !== "Processing") {
       return res.status(400).json({
-        message: `Order cannot be shipped from current status: ${order.orderStatus}`,
         success: false,
-        validCurrentStatuses: ["Processing"], // For client-side reference
+        message: `Cannot ship order with current status: ${order.orderStatus}`,
+        validCurrentStatuses: ["Processing"], // Optional: for frontend logic
       });
     }
 
-    // Update the order status and set shipped timestamp
-    const updatedOrder = await orderModel.findByIdAndUpdate(
-      order._id,
-      {
-        orderStatus: "Shipped",
-        shippedAt: new Date(), // Optional: Track when it was shipped
-      },
-      { new: true } // Return the updated document
-    );
+    // Update order to Shipped
+    order.orderStatus = "Confirmed";
+    order.shippedAt = new Date(); // Optional field
+    await order.save();
 
     return res.status(200).json({
-      message: "Order shipped successfully",
       success: true,
-      order: updatedOrder,
+      message: "Order shipped successfully",
+      order,
     });
   } catch (error) {
-    console.error(`Shipping error for order ${orderId}:`, error);
+    console.error(`Shipping error for order ${req.params.orderId}:`, error);
     return res.status(500).json({
+      success: false,
       message: "Failed to update order status",
       error: error.message,
     });
+  }
+};
+
+const changeOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    // Define allowed status transitions in order
+    const statusSequence = [
+      "Processing",
+      "Confirmed",
+      "Shipped",
+      "Out for Delivery",
+      "Delivered",
+    ];
+
+    // Find order
+    const order = await orderModel.findById(orderId);
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    const currentStatus = order.orderStatus;
+    const currentIndex = statusSequence.indexOf(currentStatus);
+
+    if (currentIndex === -1) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid current status: ${currentStatus}`,
+      });
+    }
+
+    // If already at final status, stop further transition
+    if (currentIndex === statusSequence.length - 1) {
+      return res.status(400).json({
+        success: false,
+        message: `Order already in final status: ${currentStatus}`,
+      });
+    }
+
+    // Move to the next status
+    const nextStatus = statusSequence[currentIndex + 1];
+    order.orderStatus = nextStatus;
+
+    // Optional timestamps
+    if (nextStatus === "Shipped") {
+      order.shippedAt = new Date();
+    }
+    if (nextStatus === "Delivered") {
+      order.deliveredAt = new Date();
+    }
+
+    await order.save();
+
+    return res.status(200).json({
+      success: true,
+      message: `Order status updated to ${nextStatus}`,
+      order,
+    });
+  } catch (error) {
+    console.error("Error while updating order status:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+const cancelOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    // Check if order exists
+    const order = await orderModel.findById(orderId);
+    if (!order) {
+      return res
+        .status(404)
+        .json({ message: "Order not found", success: false });
+    }
+
+    // Update order status to "Cancelled"
+    order.orderStatus = "Cancelled";
+    await order.save();
+
+    return res.status(200).json({
+      message: `Order ${orderId} cancelled successfully`,
+      success: true,
+      order,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `Server error: ${error.message}`, success: false });
   }
 };
 module.exports = {
@@ -221,4 +360,6 @@ module.exports = {
   getOrderById,
   getOrdersByUser,
   approveOrder,
+  changeOrderStatus,
+  cancelOrder,
 };

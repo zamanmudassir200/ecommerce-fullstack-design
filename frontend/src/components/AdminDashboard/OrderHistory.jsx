@@ -2,10 +2,17 @@ import React, { useContext, useState, useEffect } from "react";
 import { GlobalContext } from "../../context/GlobalContext";
 import url from "../../utils/url";
 import { toast } from "react-toastify";
+import ApprovedModal from "./ApprovedModal";
+import ChangeOrderStatus from "./ChangeOrderStatus";
+import CancelOrder from "./CancelOrder";
 
 const OrderHistory = () => {
   const { handleApiCall } = useContext(GlobalContext);
   const [orders, setOrders] = useState([]);
+  const [approvedModal, setApprovedModal] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [orderStatusModal, setOrderStatusModal] = useState(false);
+  const [cancelOrderModal, setCancelOrderModal] = useState(false);
 
   const getAllOrders = async () => {
     try {
@@ -21,19 +28,51 @@ const OrderHistory = () => {
   useEffect(() => {
     getAllOrders();
   }, []);
+
   const handleApproveOrder = async (orderId) => {
     try {
       const response = await handleApiCall(
         `${url}/orders/approve-order/${orderId}`,
         "patch"
       );
-      console.log("response from approving order", response);
+      toast.success(response.data.message);
+      getAllOrders(); // 👈 Refresh the orders list after approval
+      setApprovedModal(false);
     } catch (error) {
-      toast.error("Error occured while approving order");
+      toast.error("Error occurred while approving order");
+    }
+  };
+
+  const handleChangeStatus = async (orderId) => {
+    try {
+      const response = await handleApiCall(
+        `${url}/orders/change-order-status/${orderId}`,
+        "post"
+      );
+      toast.success(response.data.message);
+      getAllOrders(); // 👈 Refresh the orders list after status change
+      setOrderStatusModal(false);
+    } catch (error) {
+      toast.error("Error occurred while changing order status");
+      console.log(error);
+    }
+  };
+  const handleOrderCancel = async (orderId) => {
+    try {
+      const response = await handleApiCall(
+        `${url}/orders/cancel-order/${orderId}`,
+        "post"
+      );
+      toast.success(response.data.message);
+      getAllOrders(); // 👈 Refresh the orders list after status change
+      setCancelOrderModal(false);
+    } catch (error) {
+      toast.error("Error occurred while changing order status");
+      console.log(error);
     }
   };
   return (
-    <div className="p-4">
+    <div className="relative p-4">
       <h1 className="text-2xl font-bold mb-6">🛍️ Order History</h1>
 
       {orders.length === 0 ? (
@@ -41,7 +80,14 @@ const OrderHistory = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {orders.reverse().map((order) => (
-            <div key={order._id} className={` border p-4 rounded-lg shadow-md`}>
+            <div
+              key={order._id}
+              className={` ${
+                order.orderStatus === "Cancelled" && "bg-red-100"
+              } ${
+                order.orderStatus === "Delivered" && "bg-green-100"
+              } border p-4 rounded-lg shadow-md`}
+            >
               <div className="mb-2 text-gray-700 text-sm">
                 <strong>Order ID:</strong> {order._id}
               </div>
@@ -92,15 +138,35 @@ const OrderHistory = () => {
                 <div className="flex gap-3 flex-wrap">
                   {order?.orderStatus === "Processing" && (
                     <button
-                      onClick={() => handleApproveOrder(order?._id)}
+                      onClick={() => {
+                        setSelectedOrderId(order._id);
+                        setApprovedModal(true);
+                      }}
                       className="bg-green-500 px-2 cursor-pointer text-white rounded-2xl"
                     >
                       Approved
                     </button>
                   )}
 
-                  <button className="bg-red-500 px-2 cursor-pointer text-white rounded-2xl">
-                    Cancel
+                  <button
+                    onClick={() => {
+                      setSelectedOrderId(order._id);
+                      setCancelOrderModal(true);
+                    }}
+                    disabled={
+                      order.orderStatus === "Cancelled" ||
+                      order.orderStatus === "Out for Delivery" ||
+                      order.orderStatus === "Delivered"
+                    }
+                    className={`px-2 text-white rounded-2xl ${
+                      order.orderStatus === "Cancelled" ||
+                      order.orderStatus === "Out for Delivery" ||
+                      order.orderStatus === "Delivered"
+                        ? "bg-red-300 cursor-not-allowed"
+                        : "bg-red-500 cursor-pointer"
+                    }`}
+                  >
+                    {order.orderStatus === "Cancelled" ? "Cancelled" : "Cancel"}
                   </button>
                 </div>
               </div>
@@ -108,18 +174,55 @@ const OrderHistory = () => {
                 <p className="text-gray-600">
                   <strong>Order Status:</strong>{" "}
                   <span
-                    className={`${
-                      order.orderStatus === "Confirmed"
-                        ? "text-green-500  "
-                        : ""
-                    } italic font-semibold`}
+                    className={`italic font-semibold ${
+                      order.orderStatus === "Delivered"
+                        ? "text-blue-500"
+                        : order.orderStatus === "Out for Delivery"
+                        ? "text-orange-400"
+                        : order.orderStatus === "Shipped"
+                        ? "text-purple-500"
+                        : order.orderStatus === "Confirmed"
+                        ? "text-green-600"
+                        : order.orderStatus === "Cancelled"
+                        ? "text-red-500"
+                        : "text-gray-600"
+                    }`}
                   >
                     {order.orderStatus}
                   </span>
                 </p>
-                <button className="bg-green-500 px-2 cursor-pointer text-white rounded-2xl">
-                  Change status
-                </button>
+
+                {order.orderStatus !== "Processing" && (
+                  <button
+                    onClick={() => {
+                      setSelectedOrderId(order._id);
+                      setOrderStatusModal(true);
+                    }}
+                    disabled={
+                      order.orderStatus === "Delivered" ||
+                      order.orderStatus === "Cancelled"
+                    } // final or cancelled
+                    className={`px-2 text-white rounded-2xl ${
+                      order.orderStatus === "Delivered" ||
+                      order.orderStatus === "Cancelled"
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-green-500 cursor-pointer"
+                    }`}
+                    title={
+                      order.orderStatus === "Delivered"
+                        ? "Order already delivered"
+                        : order.orderStatus === "Cancelled"
+                        ? "Order has been cancelled"
+                        : "Click to move to next status"
+                    }
+                  >
+                    {order.orderStatus === "Delivered"
+                      ? "Final Stage"
+                      : order.orderStatus === "Cancelled"
+                      ? "Cancelled"
+                      : "Change Status"}
+                  </button>
+                )}
               </div>
 
               <div className="text-sm text-gray-600 mb-2">
@@ -144,6 +247,27 @@ const OrderHistory = () => {
             </div>
           ))}
         </div>
+      )}
+      {approvedModal && (
+        <ApprovedModal
+          orderId={selectedOrderId}
+          onConfirm={() => handleApproveOrder(selectedOrderId)}
+          onClose={() => setApprovedModal(false)}
+        />
+      )}
+      {orderStatusModal && (
+        <ChangeOrderStatus
+          orderId={selectedOrderId}
+          onConfirm={() => handleChangeStatus(selectedOrderId)}
+          onClose={() => setOrderStatusModal(false)}
+        />
+      )}
+      {cancelOrderModal && (
+        <CancelOrder
+          orderId={selectedOrderId}
+          onConfirm={() => handleOrderCancel(selectedOrderId)}
+          onClose={() => setCancelOrderModal(false)}
+        />
       )}
     </div>
   );

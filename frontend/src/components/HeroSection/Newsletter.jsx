@@ -7,7 +7,7 @@ const Newsletter = () => {
   return (
     <div
       className={` py-8 px-4 sm:py-12 ${
-        themeMode === "dark" ? "bg-slate-850 text-white " : "bg-[#EFF2F4]"
+        themeMode === "dark" ? "bg-slate-800 text-white " : "bg-[#EFF2F4]"
       }`}
     >
       <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
