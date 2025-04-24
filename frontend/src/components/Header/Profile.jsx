@@ -10,23 +10,22 @@ const Profile = () => {
   const [updatedUser, setUpdatedUser] = useState({});
   const { handleApiCall, themeMode } = useContext(GlobalContext);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkUserLoggedIn = async () => {
-      try {
-        const response = await handleApiCall(`${url}/checkAuth`, "get");
-        if (response?.data?.loggedIn) {
-          setUser(response.data.user);
-          setUpdatedUser(response.data.user);
-        } else {
-          navigate("/login");
-        }
-      } catch (error) {
-        toast.error("Failed to fetch user details");
+  const checkUserLoggedIn = async () => {
+    try {
+      const response = await handleApiCall(`${url}/checkAuth`, "get");
+      if (response?.data?.loggedIn) {
+        setUser(response.data.user);
+        setUpdatedUser(response.data.user);
+      } else {
+        navigate("/login");
       }
-    };
+    } catch (error) {
+      toast.error("Failed to fetch user details");
+    }
+  };
+  useEffect(() => {
     checkUserLoggedIn();
-  }, [navigate, handleApiCall, user]);
+  }, [navigate]);
 
   const handleLogout = async () => {
     try {
@@ -77,7 +76,11 @@ const Profile = () => {
         "patch"
       );
 
-      setUser(response.data.user);
+      // setUser(response.data.user);
+      setUser((prevUser) => ({
+        ...prevUser,
+        ...response.data.user,
+      }));
     } catch (error) {
       console.log("Error removing item from wishlist:", error);
     }

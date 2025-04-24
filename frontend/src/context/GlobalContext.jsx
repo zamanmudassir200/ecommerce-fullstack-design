@@ -1,5 +1,5 @@
 import axios, { isAxiosError } from "axios";
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 export const GlobalContext = createContext(null);
 import myurl from "../utils/url";
@@ -17,7 +17,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isUserLogin, setIsUserLogin] = useState(false);
   const [themeMode, setThemeMode] = useState("light");
-  const handleApiCall = async (url, method, data) => {
+  const handleApiCall = useCallback(async (url, method, data) => {
     try {
       const response = await axios({
         url,
@@ -32,7 +32,7 @@ export const GlobalContextProvider = ({ children }) => {
         return error?.response?.data?.message;
       }
     }
-  };
+  });
 
   // const fetchProducts = async () => {
   //   setLoading(true);
